@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reservations</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.ts"></script>
+  </head>
+  <body>
+    <h1>Reservations</h1>
+    <form id="reserve">
+      <input name="user" placeholder="Your name" required />
+      <input name="resource" placeholder="friday-7pm-table-4" required />
+      <button>Reserve</button>
+    </form>
+    <p id="status"></p>
+    <ul id="reservations"></ul>
+  </body>
+</html>
