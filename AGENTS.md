@@ -38,17 +38,7 @@ When writing or updating tests (e.g., `src/concepts/*.test.ts`):
 
 ---
 
-## 3. Technical Writing & Design Notes Checklist
-
-When logging progress in `reflections/journal.md`:
-- **Incremental Plan:** Document initial implementation order and how it was adjusted over time.
-- **Decision Rationale:** Record significant architectural decisions, trade-offs, and challenges encountered during development.
-- **AI Agent Review Log:** Document how agent-generated code was reviewed, tested, and modified before committing.
-- **Honest Accounting:** Accurately summarize what was completed for P2 and what remains to be built for P3.
-
----
-
-## 4. Workflow Protocol for Codex
+## 4. Workflow Protocol
 Before outputting any code or file edits, execute this internal checklist:
 1. Did I check `design/` specs to ensure exact naming and refusal strings match?
 2. Did I introduce any cross-concept imports? (If yes, move logic to a Sync reaction).
