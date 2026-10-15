@@ -13,6 +13,7 @@ Starting from an empty database, a reviewer registers, adds a real game such as 
 - Design notes and reflections: `reflections/journal.md` in the private individual repository.
 - Concept specifications: [design/concepts/](design/concepts/)
 - Composition specifications: [design/compositions/](design/compositions/)
+- P1 feedback and P3 concept refinements: [design/evolution-p3.md](design/evolution-p3.md)
 - Concept implementations and unit tests: [src/concepts/](src/concepts/)
 - Endpoints, formers, views, and reactions: [src/compositions/](src/compositions/)
 - HTTP policy: [src/http.ts](src/http.ts)
@@ -39,7 +40,7 @@ Last validation run:
 
 - `bun run check:design`: passes for all 12 design files.
 - `bun run check`: passes sync-engine artifact checks and TypeScript.
-- `bun test --timeout 20000`: 66 passing tests, 0 failing tests.
+- `bun test --timeout 20000`: 70 passing tests, 0 failing tests.
 
 The tests use concept actions and real endpoints rather than direct MongoDB writes for setup. The integration suite drives the HTTP handler against MongoDB and checks the core journey, error cases, access control, and that ratings are attributed to the authenticated session rather than user-supplied fields.
 
@@ -139,8 +140,14 @@ URL. A passing local preview does not establish that the deployed version works.
 
 ## P3 Scope
 
-The beta keeps the five original concepts and adds the independent Federating concept
-from ConceptBox. Compositions connect Commons identities to Gamexplorer accounts.
+The beta uses six concepts, including the independent Federating concept from ConceptBox.
+The P1 feedback led to three reusable evaluation mechanisms: DimensionDefining gives
+named dimensions stable identities within a subject, Rating evaluates opaque targets,
+and ThresholdFiltering matches received numeric values against an owner's requirements.
+Compositions supply the game-specific associations and connect Commons identities to
+Gamexplorer accounts. Existing game/aspect identities, reviews, and filters are preserved;
+compatibility tests create genuine P2 state through the archived concept actions and
+exercise the current endpoints against it. See [the refinement record](design/evolution-p3.md).
 Steam cover metadata is included in catalog and discovery responses.
 It applies the visual study's pixel headings and navy/ruby palette,
 separates page components, and improves discovery criteria editing, rating feedback,
@@ -203,5 +210,6 @@ full-page refreshes. Source choices and font licensing are documented in
 be linked after they are exported into this repository.
 
 See [browser validation](validation/browser-checks.md) for the exercised journeys,
-negative cases, viewport checks, and current limitations. These checks used a local
-production preview; class-platform validation and the beta recording are still pending.
+negative cases, viewport checks, and current limitations. [Hosted validation](validation/deployment.md)
+separately records the class-platform deployment and Commons sign-in. The full hosted
+write journey and beta recording still need to be completed.

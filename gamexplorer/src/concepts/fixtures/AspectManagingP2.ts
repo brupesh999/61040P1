@@ -1,3 +1,4 @@
+// Archived P2 implementation, used only to create genuine legacy state in compatibility tests.
 import { MongoServerError, type Collection, type Db } from "mongodb";
 
 export class EmptyAspectName extends Error {}

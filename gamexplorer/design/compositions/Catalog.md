@@ -27,8 +27,15 @@ Catalog.GameDetail at /games/detail
 ```
 
 A signed-in user can [create an aspect](reaction:Catalog.CreateAspect) for a game that
-exists. Aspects are dynamic: any reviewer can add a dimension that matters to them, such as
-"Narrative Depth", without a fixed form.
+exists. Authentication resolves the session first. A GameCatalog query in where checks
+the subject exists, then GameDimensions.define creates its dimension. GameDimensions
+prevents normalized duplicate names for that game, so reviews do not split between
+ambiguous copies of "Narrative Depth". Another game can define that name independently.
+The dimension's identity is the aspect identity used by the existing HTTP interface.
+
+GamePage joins GameDimensions._forSubject with DimensionRatings._forTarget and
+DimensionRatings._summary. The concepts never exchange game or dimension objects:
+the composition supplies identities and separately reads the values needed for display.
 
 ```endpoints
 Catalog.CreateAspect at /aspects/create

@@ -5,9 +5,9 @@ import { composition as accounts } from "./compositions/Accounts.ts";
 import { composition as catalog } from "./compositions/Catalog.ts";
 import { composition as rating } from "./compositions/Rating.ts";
 import { composition as discovery } from "./compositions/Discovery.ts";
-import { AspectFilteringConcept } from "./concepts/AspectFiltering.ts";
-import { AspectManagingConcept } from "./concepts/AspectManaging.ts";
-import { AspectRatingConcept } from "./concepts/AspectRating.ts";
+import { ThresholdFilteringConcept } from "./concepts/ThresholdFiltering.ts";
+import { DimensionDefiningConcept } from "./concepts/DimensionDefining.ts";
+import { RatingConcept } from "./concepts/Rating.ts";
 import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 import { UserAuthenticatingConcept } from "./concepts/UserAuthenticating.ts";
 import { applicationConceptSet } from "./concepts.ts";
@@ -23,9 +23,9 @@ export function assembleApplication(db: Db = defaultDb, provider: Provider = new
       UserAuthenticating: new UserAuthenticatingConcept(db),
       CommonsFederating: new FederatingConcept<string>(db, provider, "CommonsFederating"),
       GameCatalog: new GameCatalogConcept(db),
-      AspectManaging: new AspectManagingConcept(db),
-      AspectRating: new AspectRatingConcept(db),
-      AspectFiltering: new AspectFilteringConcept(db),
+      GameDimensions: new DimensionDefiningConcept(db),
+      DimensionRatings: new RatingConcept(db),
+      GameDiscovery: new ThresholdFilteringConcept(db),
     },
     composition: { Accounts: accounts, Commons: commons, Catalog: catalog, Rating: rating, Discovery: discovery },
     redaction: { fields: ["attempt", "nonce", "state", "code", "verifier", "code_verifier"] },

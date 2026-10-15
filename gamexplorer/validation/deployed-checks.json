@@ -1,0 +1,85 @@
+{
+  "url": "https://gamexplorer.mit-sdg.dev",
+  "commit": "272b540c2731dde141fb5d73265e3f71feed8662",
+  "checkedAt": "2026-10-15T15:19:22.328Z",
+  "checks": [
+    {
+      "check": "Hosted health endpoint reaches MongoDB",
+      "result": "PASS"
+    },
+    {
+      "check": "Hosted frontend HTML loads",
+      "result": "PASS"
+    },
+    {
+      "check": "Bundled JS and CSS are served from the hosted origin",
+      "result": "PASS"
+    },
+    {
+      "check": "Hosted MongoDB contains exactly 60 imported games",
+      "result": "PASS"
+    },
+    {
+      "check": "Each game has persisted Steam identity and remote cover metadata",
+      "result": "PASS"
+    },
+    {
+      "check": "All ten requested Final Fantasy, Phoenix Wright, and Resident Evil entries are present",
+      "result": "PASS"
+    },
+    {
+      "check": "All 60 imported game details have no aspects or reviews",
+      "result": "PASS"
+    },
+    {
+      "check": "Unauthenticated account reads are refused",
+      "result": "PASS"
+    },
+    {
+      "check": "Unauthenticated private-rating reads are refused",
+      "result": "PASS"
+    },
+    {
+      "check": "JSON credentials cannot impersonate a session",
+      "result": "PASS"
+    },
+    {
+      "check": "Foreign origin is refused at the HTTP boundary",
+      "result": "PASS"
+    },
+    {
+      "check": "Commons callback serves private, uncached HTML without reflecting query credentials",
+      "result": "PASS"
+    }
+  ],
+  "detailsChecked": 60,
+  "limitations": [
+    "No live ratings, aspects, games, or filters were added by the verification checks. Full write journeys remain to be rehearsed on the deployed app; isolated automated integration tests pass."
+  ],
+  "browserChecks": [
+    {
+      "check": "Commons approval completed by the user on the live domain",
+      "result": "PASS"
+    },
+    {
+      "check": "Authenticated identity remained after a deliberate full reload",
+      "result": "PASS"
+    },
+    {
+      "check": "My Ratings loaded the new account’s empty ratings list",
+      "result": "PASS"
+    },
+    {
+      "check": "Discover loaded the new account’s empty filter list",
+      "result": "PASS"
+    },
+    {
+      "check": "Visible official portrait covers loaded at 300 × 450",
+      "result": "PASS"
+    },
+    {
+      "check": "Class platform Overview reports Healthy and deployed commit 272b540c2",
+      "result": "PASS"
+    }
+  ]
+}

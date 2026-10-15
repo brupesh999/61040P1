@@ -1,3 +1,4 @@
+// Archived P2 implementation, used only to create genuine legacy state in compatibility tests.
 import type { Collection, Db } from "mongodb";
 
 export class EmptyFilterAspect extends Error {}

@@ -7,10 +7,13 @@ import { gamexplorerPolicy } from "./http.ts";
 import { testDb } from "./concepts/testing.ts";
 import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 import { importSteamCatalog } from "./catalogImport.ts";
+import { AspectManagingConcept } from "./concepts/fixtures/AspectManagingP2.ts";
+import { AspectRatingConcept } from "./concepts/fixtures/AspectRatingP2.ts";
+import { AspectFilteringConcept } from "./concepts/fixtures/AspectFilteringP2.ts";
 
 /**
  * Drives the real HTTP handler, reactions, and concepts against a throwaway Mongo database.
- * Nothing is mocked and every piece of state is created through endpoints.
+ * Nothing is mocked and state is created through concept actions or endpoints.
  */
 let db: Db;
 let reset: () => Promise<void>;
@@ -71,6 +74,49 @@ async function ratedAspect() {
 }
 
 describe("Rating aggregates remain consistent across reactions", () => {
+  test("P2 contributions remain editable through the current HTTP endpoints", async () => {
+    const session = await signUp("returning-player");
+    const user = (await call("/auth/me", { session })).body.me.user;
+    const game = (await call("/games/add", {
+      session, title: "Returning Game", developer: "Existing Studio", releaseYear: 2020,
+    })).body.game;
+    // Use the actual former implementation's actions to reproduce persisted P2 state.
+    const { aspect } = await new AspectManagingConcept(db).createAspect({
+      game, name: "Pacing", description: "An existing dimension.",
+    });
+    await new AspectRatingConcept(db).rateAspect({ user, game, aspect, score: 8, microNote: "Original review." });
+    const oldDiscovery = new AspectFilteringConcept(db);
+    await oldDiscovery.recordScore({ game, aspectName: "Pacing", average: 8, count: 1 });
+    await oldDiscovery.setFilter({ owner: user, aspectName: "Pacing", minScore: 7 });
+
+    const before = (await call("/games/detail", { game })).body.page.aspects[0];
+    expect(before).toMatchObject({ aspect, name: "Pacing", summary: { average: 8, count: 1 } });
+    expect(before.ratings[0]).toMatchObject({ score: 8, microNote: "Original review." });
+    expect((await call("/ratings/mine", { session })).body.mine.ratings[0]).toMatchObject({
+      game, aspect, score: 8, gameInfo: { title: "Returning Game" }, aspectInfo: { name: "Pacing" },
+    });
+    expect((await call("/discover/results", { session })).body.results.matches[0]).toMatchObject({ game });
+
+    expect((await call("/ratings/rate", {
+      session, aspect, game: "forged-parent", score: 9, microNote: "Updated review.",
+    })).status).toBe(200);
+    const after = (await call("/games/detail", { game })).body.page.aspects[0];
+    expect(after.summary).toEqual({ average: 9, count: 1 });
+    expect(after.ratings).toHaveLength(1);
+    expect(after.ratings[0]).toMatchObject({ score: 9, microNote: "Updated review." });
+    expect((await call("/discover/results", { session })).body.results.matches[0].scores[0].score)
+      .toEqual({ average: 9, count: 1 });
+
+    expect((await call("/ratings/remove", { session, aspect })).status).toBe(200);
+    expect((await call("/ratings/mine", { session })).body.mine.ratings).toEqual([]);
+    const discovery = (await call("/discover/results", { session })).body.results;
+    expect(discovery.matches).toEqual([]);
+    expect(discovery.filters).toEqual([{ aspectName: "Pacing", minScore: 7 }]);
+    expect((await call("/games/detail", { game })).body.page.aspects[0]).toMatchObject({
+      aspect, name: "Pacing", summary: { average: 0, count: 0 }, ratings: [],
+    });
+  });
+
   test("rejected updates preserve the saved rating and discovery aggregate", async () => {
     const { reviewer, buyer, game, aspect } = await ratedAspect();
     const before = (await call("/discover/results", { session: buyer })).body;
@@ -84,6 +130,31 @@ describe("Rating aggregates remain consistent across reactions", () => {
       expect(detail.ratings[0]).toMatchObject({ score: 9, microNote: "Gripping dialogue." });
       expect((await call("/discover/results", { session: buyer })).body).toEqual(before);
     }
+  });
+
+  test("overlapping reviewers leave discovery equal to the final stored average", async () => {
+    const { reviewer, buyer, game, aspect } = await ratedAspect();
+    const third = await signUp("third-reviewer");
+    // Separate HTTP roots contend for the same dimension; no core logic is mocked.
+    for (const scores of [[1, 4, 10], [10, 9, 8], [3, 7, 9]]) {
+      const replies = await Promise.all([reviewer, buyer, third].map((session, index) =>
+        call("/ratings/rate", { session, aspect, score: scores[index], microNote: "Concurrent review." }),
+      ));
+      expect(replies.map(reply => reply.status)).toEqual([200, 200, 200]);
+      const expected = { average: Math.round(scores.reduce((sum, score) => sum + score, 0) / 3 * 10) / 10, count: 3 };
+      expect((await call("/games/detail", { game })).body.page.aspects[0].summary).toEqual(expected);
+      const minimum = expected.average + 0.1;
+      const excluded = await call("/discover/set", { session: buyer, aspectName: "Narrative Depth", minScore: minimum });
+      expect(excluded.body.results.matches).toEqual([]);
+      const included = await call("/discover/set", { session: buyer, aspectName: "Narrative Depth", minScore: expected.average });
+      expect(included.body.results.matches).toHaveLength(1);
+      expect(included.body.results.matches[0].scores[0].score).toEqual(expected);
+    }
+    expect((await Promise.all([reviewer, buyer, third].map(session =>
+      call("/ratings/remove", { session, aspect }),
+    ))).map(reply => reply.status)).toEqual([200, 200, 200]);
+    expect((await call("/discover/results", { session: buyer })).body.results.matches).toEqual([]);
+    expect((await call("/games/detail", { game })).body.page.aspects[0].summary).toEqual({ average: 0, count: 0 });
   });
 
   test("removing the final rating removes discovery scores and a later rating restores them", async () => {
@@ -195,7 +266,7 @@ describe("Gamexplorer user journey", () => {
     await call("/ratings/rate", { session: buyer, aspect: story, score: 8, microNote: "" });
     await call("/ratings/rate", { session: reviewer, aspect: otherStory, score: 4, microNote: "Thin." });
 
-    // The reaction pushed the averages into AspectFiltering; a filter of >= 8 finds only Lantern Tales.
+    // The reaction projected averages into GameDiscovery; a filter of >= 8 finds only Lantern Tales.
     const { body: discovered } = await call("/discover/set", { session: buyer, aspectName: "Narrative Depth", minScore: 8 });
     expect(discovered.results.matches).toHaveLength(1);
     expect(discovered.results.matches[0].game).toBe(game);

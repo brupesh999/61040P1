@@ -6,7 +6,7 @@ import { each, form, former, no, where } from "@mit-sdg/sync-engine/language";
 import { concepts } from "../concepts.ts";
 import { shape } from "./validators.ts";
 
-const { UserAuthenticating, GameCatalog, AspectManaging, AspectRating } = concepts;
+const { UserAuthenticating, GameCatalog, GameDimensions, DimensionRatings } = concepts;
 
 const SteamCover = former("the Steam cover of (game)", ({ game }, { steamAppId, coverUrl }) =>
   where(GameCatalog._steamCover({ game }).is({ steamAppId, coverUrl })).form({ steamAppId, coverUrl }),
@@ -48,7 +48,7 @@ const AddGame = endpoint(
 );
 
 const AspectSummary = former("the summary of (aspect)", ({ aspect }, { average, count }) =>
-  where(AspectRating._summary({ aspect }).is({ average, count })).form({ average, count }),
+  where(DimensionRatings._summary({ target: aspect }).is({ average, count })).form({ average, count }),
 );
 
 const ReviewerName = former("the reviewer name of (user)", ({ user }, { username }) =>
@@ -65,12 +65,12 @@ const GamePage = former(
       developer,
       releaseYear,
       cover: SteamCover({ game }),
-      aspects: each(AspectManaging._getAspects({ game }).is({ aspect, name, description })).form({
+      aspects: each(GameDimensions._forSubject({ subject: game }).is({ dimension: aspect, name, description })).form({
         aspect,
         name,
         description,
         summary: AspectSummary({ aspect }),
-        ratings: each(AspectRating._forAspect({ aspect }).is({ user, score, microNote })).form({
+        ratings: each(DimensionRatings._forTarget({ target: aspect }).is({ rater: user, score, note: microNote })).form({
           user,
           score,
           microNote,
@@ -96,7 +96,7 @@ const GameDetail = endpoint(
 );
 
 /**
- * AspectManaging accepts any game identity by design. Requiring the game to exist in the
+ * GameDimensions accepts any game identity by design. Requiring the game to exist in the
  * catalog is this application's decision, so it is a sibling split here.
  */
 const CreateAspect = endpoint(
@@ -106,7 +106,7 @@ const CreateAspect = endpoint(
       .then(UserAuthenticating.current({ session }).responds({ user }))
       .then(
         where(GameCatalog._get({ game }))
-          .then(AspectManaging.createAspect({ game, name, description }).responds({ aspect }))
+          .then(GameDimensions.define({ subject: game, name, description }).responds({ dimension: aspect }))
           .then(respond({ aspect }))
           .named("game-exists"),
         where(no(GameCatalog._get({ game })))

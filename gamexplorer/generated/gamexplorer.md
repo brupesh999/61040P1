@@ -8,78 +8,26 @@ _specifications and composition source, then regenerate this file._
 
 ## Concepts
 
-### AspectFiltering
+### DimensionDefining
 
-Defined in [AspectFiltering](../design/concepts/AspectFiltering.md), line 1.
-
-#### Actions
-
-- `recordScore(game: Game, aspectName: String, average: Number, count: Number) : returns ()`
-- `setFilter(owner: User, aspectName: String, minScore: Number) : returns ()`
-  - Refuses `EMPTY_FILTER_ASPECT`: A filter needs an aspect name.
-  - Refuses `INVALID_THRESHOLD`: Threshold score must be between 1 and 10.
-- `removeFilter(owner: User, aspectName: String) : returns ()`
-  - Refuses `FILTER_NOT_FOUND`: There is no filter on that aspect.
-- `clearFilters(owner: User) : returns ()`
-
-#### Queries
-
-- `_filters(owner: User) : many (aspectName: String, minScore: Number)`
-- `_matchGames(owner: User) : many (game: Game)`
-- `_score(game: Game, aspectName: String) : optional (average: Number, count: Number)`
-- `_aspectNames() : many (aspectName: String)`
-
-#### Instances
-
-- `AspectFiltering` — instance of `AspectFiltering` — [Application types](../design/types.md), line 31.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 33.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 32.
-
-### AspectManaging
-
-Defined in [AspectManaging](../design/concepts/AspectManaging.md), line 1.
+Defined in [DimensionDefining](../design/concepts/DimensionDefining.md), line 1.
 
 #### Actions
 
-- `createAspect(game: Game, name: String, description: String) : returns (aspect: Aspect)`
-  - Refuses `EMPTY_ASPECT_NAME`: An aspect needs a name.
-  - Refuses `ASPECT_EXISTS`: This aspect already exists for the specified game.
+- `define(subject: Subject, name: String, description: String) : returns (dimension: Dimension)`
+  - Refuses `EMPTY_DIMENSION_NAME`: A dimension needs a name.
+  - Refuses `DIMENSION_EXISTS`: This dimension name is already defined for this subject.
 
 #### Queries
 
-- `_getAspects(game: Game) : many (aspect: Aspect, name: String, description: String)`
-- `_get(aspect: Aspect) : optional (game: Game, name: String, description: String)`
+- `_forSubject(subject: Subject) : many (dimension: Dimension, name: String, description: String)`
+- `_get(dimension: Dimension) : optional (subject: Subject, name: String, description: String)`
+- `_named(subject: Subject, name: String) : optional (dimension: Dimension, description: String)`
 
 #### Instances
 
-- `AspectManaging` — instance of `AspectManaging` — [Application types](../design/types.md), line 23.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 24.
-
-### AspectRating
-
-Defined in [AspectRating](../design/concepts/AspectRating.md), line 1.
-
-#### Actions
-
-- `rateAspect(user: User, game: Game, aspect: Aspect, score: Number, microNote: String) : returns ()`
-  - Refuses `INVALID_SCORE`: Score must be an integer between 1 and 10.
-  - Refuses `NOTE_TOO_LONG`: A micro note must be at most 280 characters.
-- `removeRating(user: User, game: Game, aspect: Aspect) : returns ()`
-  - Refuses `RATING_NOT_FOUND`: No rating exists for this aspect by the user.
-
-#### Queries
-
-- `_getRatingsForGame(game: Game) : many (user: User, aspect: Aspect, score: Number, microNote: String)`
-- `_getUserRatings(user: User) : many (game: Game, aspect: Aspect, score: Number, microNote: String)`
-- `_forAspect(aspect: Aspect) : many (user: User, score: Number, microNote: String)`
-- `_summary(aspect: Aspect) : one (average: Number, count: Number)`
-
-#### Instances
-
-- `AspectRating` — instance of `AspectRating` — [Application types](../design/types.md), line 26.
-  - `Aspect` is `AspectManaging.Aspect` — [Application types](../design/types.md), line 29.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 28.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 27.
+- `GameDimensions` — instance of `DimensionDefining` — [Application types](../design/types.md), line 22.
+  - `Subject` is `GameCatalog.Game` — [Application types](../design/types.md), line 23.
 
 ### Federating
 
@@ -102,8 +50,8 @@ Defined in [Federating](../design/concepts/Federating.md), line 1.
 
 #### Instances
 
-- `CommonsFederating` — instance of `Federating` — [Application types](../design/types.md), line 18.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 19.
+- `CommonsFederating` — instance of `Federating` — [Application types](../design/types.md), line 17.
+  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 18.
 
 ### GameCatalog
 
@@ -127,7 +75,61 @@ Defined in [GameCatalog](../design/concepts/GameCatalog.md), line 1.
 
 #### Instances
 
-- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 21.
+- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 20.
+
+### Rating
+
+Defined in [Rating](../design/concepts/Rating.md), line 1.
+
+#### Actions
+
+- `rate(rater: Rater, target: Target, score: Number, note: String) : returns ()`
+  - Refuses `INVALID_SCORE`: Score must be an integer between 1 and 10.
+  - Refuses `NOTE_TOO_LONG`: A review note must be at most 280 characters.
+- `remove(rater: Rater, target: Target) : returns ()`
+  - Refuses `RATING_NOT_FOUND`: This rater has no evaluation of this target.
+
+#### Queries
+
+- `_byRater(rater: Rater) : many (target: Target, score: Number, note: String)`
+- `_forTarget(target: Target) : many (rater: Rater, score: Number, note: String)`
+- `_summary(target: Target) : one (average: Number, count: Number)`
+
+#### Instances
+
+- `DimensionRatings` — instance of `Rating` — [Application types](../design/types.md), line 25.
+  - `Rater` is `UserAuthenticating.User` — [Application types](../design/types.md), line 26.
+  - `Target` is `GameDimensions.Dimension` — [Application types](../design/types.md), line 27.
+
+### ThresholdFiltering
+
+Defined in [ThresholdFiltering](../design/concepts/ThresholdFiltering.md), line 1.
+
+#### Actions
+
+- `recordValue(item: Item, criterion: String, value: Number) : returns ()`
+  - Refuses `EMPTY_CRITERION`: A criterion needs a name.
+  - Refuses `INVALID_VALUE`: A recorded value must be a finite number.
+- `forgetValue(item: Item, criterion: String) : returns ()`
+- `setCriterion(owner: Owner, criterion: String, minimum: Number) : returns ()`
+  - Refuses `EMPTY_CRITERION`: A criterion needs a name.
+  - Refuses `INVALID_MINIMUM`: A minimum must be a finite number.
+- `removeCriterion(owner: Owner, criterion: String) : returns ()`
+  - Refuses `CRITERION_NOT_FOUND`: This owner has no requirement for this criterion.
+- `clearCriteria(owner: Owner) : returns ()`
+
+#### Queries
+
+- `_criteria(owner: Owner) : many (criterion: String, minimum: Number)`
+- `_matches(owner: Owner) : many (item: Item)`
+- `_value(item: Item, criterion: String) : optional (value: Number)`
+- `_criterionNames() : many (criterion: String)`
+
+#### Instances
+
+- `GameDiscovery` — instance of `ThresholdFiltering` — [Application types](../design/types.md), line 29.
+  - `Item` is `GameCatalog.Game` — [Application types](../design/types.md), line 31.
+  - `Owner` is `UserAuthenticating.User` — [Application types](../design/types.md), line 30.
 
 ### UserAuthenticating
 
@@ -157,7 +159,7 @@ Defined in [UserAuthenticating](../design/concepts/UserAuthenticating.md), line 
 
 #### Instances
 
-- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 16.
+- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 15.
 
 ## Formers
 
@@ -168,7 +170,7 @@ _the authored explanation; this section records the generated shape._
 
 Authored path: `Catalog.SteamCover`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 6.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 39.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 46.
 
 ```former
 Former "the Steam cover of (game)" — inputs (game); bindings (steamAppId, coverUrl); promises exactly one record — forms:
@@ -181,7 +183,7 @@ Former "the Steam cover of (game)" — inputs (game); bindings (steamAppId, cove
 ### the discovery cover of (game)
 
 Authored path: `Discovery.SteamCover`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 29.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 34.
 
 ```former
 Former "the discovery cover of (game)" — inputs (game); bindings (steamAppId, coverUrl); promises exactly one record — forms:
@@ -194,7 +196,7 @@ Former "the discovery cover of (game)" — inputs (game); bindings (steamAppId, 
 ### the catalog entry of (game)
 
 Authored path: `Discovery.GameInfo`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 27.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 32.
 
 ```former
 Former "the catalog entry of (game)" — inputs (game); bindings (title, developer, releaseYear); promises at most one record — forms:
@@ -222,12 +224,13 @@ Former "the current user (user)" — inputs (user); bindings (username); promise
 ### the score of (game) on (aspectName)
 
 Authored path: `Discovery.MatchedScore`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 28.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 33.
 
 ```former
-Former "the score of (game) on (aspectName)" — inputs (game, aspectName); bindings (average, count); promises at most one record — forms:
+Former "the score of (game) on (aspectName)" — inputs (game, aspectName); bindings (target, average, count); promises at most one record — forms:
   a record of
-    where AspectFiltering._score (aspectName, game) has (average, count)
+    where GameDimensions._named (name: aspectName, subject: game) has (dimension: target)
+    where DimensionRatings._summary (target) has (average, count)
     average
     count
 ```
@@ -240,18 +243,18 @@ Authored path: `Discovery.DiscoveryResults`.
 ```former
 Former "the discovery results of (owner)" — inputs (owner); bindings (aspectName, minScore, available, game, filtered); promises exactly one record — forms:
   a record of
-    aspectNames: each AspectFiltering._aspectNames () has (aspectName: available)
+    aspectNames: each GameDiscovery._criterionNames () has (criterion: available)
       form a record of
         aspectName: available
-    filters: each AspectFiltering._filters (owner) has (aspectName, minScore)
+    filters: each GameDiscovery._criteria (owner) has (criterion: aspectName, minimum: minScore)
       form a record of
         aspectName
         minScore
-    matches: each AspectFiltering._matchGames (owner) has (game)
+    matches: each GameDiscovery._matches (owner) has (item: game)
       form a record of
         game
         info: former "the catalog entry of (game)" with (game)
-        scores: each AspectFiltering._filters (owner) has (aspectName: filtered)
+        scores: each GameDiscovery._criteria (owner) has (criterion: filtered)
           form a record of
             aspectName: filtered
             score: former "the score of (game) on (aspectName)" with (aspectName: filtered, game)
@@ -260,7 +263,7 @@ Former "the discovery results of (owner)" — inputs (owner); bindings (aspectNa
 ### the reviewer name of (user)
 
 Authored path: `Catalog.ReviewerName`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 37.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 44.
 
 ```former
 Former "the reviewer name of (user)" — inputs (user); bindings (username); promises at most one record — forms:
@@ -277,7 +280,7 @@ Authored path: `Catalog.AspectSummary`.
 ```former
 Former "the summary of (aspect)" — inputs (aspect); bindings (average, count); promises exactly one record — forms:
   a record of
-    where AspectRating._summary (aspect) has (average, count)
+    where DimensionRatings._summary (target: aspect) has (average, count)
     average
     count
 ```
@@ -291,12 +294,12 @@ Authored path: `Catalog.GamePage`.
 Former "the game page of (game)" — inputs (game); bindings (title, developer, releaseYear, aspect, name, description, user, score, microNote); promises exactly one record — forms:
   a record of
     where GameCatalog._get (game) has (developer, releaseYear, title)
-    aspects: each AspectManaging._getAspects (game) has (aspect, description, name)
+    aspects: each GameDimensions._forSubject (subject: game) has (description, dimension: aspect, name)
       form a record of
         aspect
         description
         name
-        ratings: each AspectRating._forAspect (aspect) has (microNote, score, user)
+        ratings: each DimensionRatings._forTarget (target: aspect) has (note: microNote, rater: user, score)
           form a record of
             microNote
             reviewer: former "the reviewer name of (user)" with (user)
@@ -310,22 +313,10 @@ Former "the game page of (game)" — inputs (game); bindings (title, developer, 
     title
 ```
 
-### the name of (aspect)
-
-Authored path: `Rating.AspectName`.
-- Covered by [Rating](../design/compositions/Rating.md), line 28.
-
-```former
-Former "the name of (aspect)" — inputs (aspect); bindings (name); promises at most one record — forms:
-  a record of
-    where AspectManaging._get (aspect) has (name)
-    name
-```
-
 ### the title of (game)
 
 Authored path: `Rating.GameTitle`.
-- Covered by [Rating](../design/compositions/Rating.md), line 27.
+- Covered by [Rating](../design/compositions/Rating.md), line 12.
 
 ```former
 Former "the title of (game)" — inputs (game); bindings (title); promises at most one record — forms:
@@ -337,15 +328,17 @@ Former "the title of (game)" — inputs (game); bindings (title); promises at mo
 ### the ratings by (user)
 
 Authored path: `Rating.MyRatings`.
-- Covered by [Rating](../design/compositions/Rating.md), line 11.
+- Covered by [Rating](../design/compositions/Rating.md), line 10.
 
 ```former
-Former "the ratings by (user)" — inputs (user); bindings (game, aspect, score, microNote); promises exactly one record — forms:
+Former "the ratings by (user)" — inputs (user); bindings (game, aspect, name, score, microNote); promises exactly one record — forms:
   a record of
-    ratings: each AspectRating._getUserRatings (user) has (aspect, game, microNote, score)
+    ratings: each DimensionRatings._byRater (rater: user) has (note: microNote, score, target: aspect)
+      where GameDimensions._get (dimension: aspect) has (name, subject: game)
       form a record of
         aspect
-        aspectInfo: former "the name of (aspect)" with (aspect)
+        aspectInfo: a record of
+          name
         game
         gameInfo: former "the title of (game)" with (game)
         microNote
@@ -531,7 +524,7 @@ then
 
 Authored path: `Catalog.CreateAspect`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 29.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 41.
 
 ```reaction
 when RequestBoundary.request (description, game, name, path: "/aspects/create", requestId, session)
@@ -543,7 +536,7 @@ then
 
 Authored path: `Catalog.CreateAspect`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 29.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 41.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Catalog.CreateAspect
@@ -551,17 +544,17 @@ where
   earlier, RequestBoundary.request (description, game, name, path: "/aspects/create", requestId, session)
   GameCatalog._get (game)
 then
-  AspectManaging.createAspect (description, game, name)
+  GameDimensions.define (description, name, subject: game)
 ```
 
 ### Catalog.CreateAspect:game-exists#3
 
 Authored path: `Catalog.CreateAspect`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 29.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 41.
 
 ```reaction
-when AspectManaging.createAspect (description, game, name, aspect), asked by Catalog.CreateAspect:game-exists#2
+when GameDimensions.define (description, name, subject: game, dimension: aspect), asked by Catalog.CreateAspect:game-exists#2
 where
   earlier, RequestBoundary.request (description, game, name, path: "/aspects/create", requestId, session)
 then
@@ -572,7 +565,7 @@ then
 
 Authored path: `Catalog.CreateAspect`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 29.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 41.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Catalog.CreateAspect
@@ -852,7 +845,7 @@ Authored path: `Discovery.ClearFilters`.
 ```reaction
 when UserAuthenticating.current (session, user), asked by Discovery.ClearFilters
 then
-  AspectFiltering.clearFilters (owner: user)
+  GameDiscovery.clearCriteria (owner: user)
 ```
 
 ### Discovery.ClearFilters#3
@@ -862,7 +855,7 @@ Authored path: `Discovery.ClearFilters`.
 - Covered by [Discovery](../design/compositions/Discovery.md), line 24.
 
 ```reaction
-when AspectFiltering.clearFilters (owner: user), asked by Discovery.ClearFilters#2
+when GameDiscovery.clearCriteria (owner: user), asked by Discovery.ClearFilters#2
 where
   earlier, RequestBoundary.request (path: "/discover/clear", requestId, session)
 then
@@ -892,7 +885,7 @@ when UserAuthenticating.current (session, user), asked by Discovery.RemoveFilter
 where
   earlier, RequestBoundary.request (aspectName, path: "/discover/remove", requestId, session)
 then
-  AspectFiltering.removeFilter (aspectName, owner: user)
+  GameDiscovery.removeCriterion (criterion: aspectName, owner: user)
 ```
 
 ### Discovery.RemoveFilter#3
@@ -902,7 +895,7 @@ Authored path: `Discovery.RemoveFilter`.
 - Covered by [Discovery](../design/compositions/Discovery.md), line 23.
 
 ```reaction
-when AspectFiltering.removeFilter (aspectName, owner: user), asked by Discovery.RemoveFilter#2
+when GameDiscovery.removeCriterion (criterion: aspectName, owner: user), asked by Discovery.RemoveFilter#2
 where
   earlier, RequestBoundary.request (aspectName, path: "/discover/remove", requestId, session)
 then
@@ -958,7 +951,7 @@ when UserAuthenticating.current (session, user), asked by Discovery.SetFilter
 where
   earlier, RequestBoundary.request (aspectName, minScore, path: "/discover/set", requestId, session)
 then
-  AspectFiltering.setFilter (aspectName, minScore, owner: user)
+  GameDiscovery.setCriterion (criterion: aspectName, minimum: minScore, owner: user)
 ```
 
 ### Discovery.SetFilter#3
@@ -968,18 +961,32 @@ Authored path: `Discovery.SetFilter`.
 - Covered by [Discovery](../design/compositions/Discovery.md), line 22.
 
 ```reaction
-when AspectFiltering.setFilter (aspectName, minScore, owner: user), asked by Discovery.SetFilter#2
+when GameDiscovery.setCriterion (criterion: aspectName, minimum: minScore, owner: user), asked by Discovery.SetFilter#2
 where
   earlier, RequestBoundary.request (aspectName, minScore, path: "/discover/set", requestId, session)
 then
   RequestBoundary.respond (requestId, results: former "the discovery results of (owner)" with (owner: user))
 ```
 
+### Rating.ForgetValueAfterRemoval
+
+Authored path: `Rating.ForgetValueAfterRemoval`.
+- Covered by [Rating](../design/compositions/Rating.md), line 27.
+
+```reaction
+when DimensionRatings.remove (target)
+where
+  GameDimensions._get (dimension: target) has (name, subject)
+  DimensionRatings._summary (target) has (count: 0)
+then
+  GameDiscovery.forgetValue (criterion: name, item: subject)
+```
+
 ### Rating.Mine
 
 Authored path: `Rating.Mine`.
 - Covered by [Rating](../design/compositions/Rating.md), line 10.
-- Covered by [Rating](../design/compositions/Rating.md), line 16.
+- Covered by [Rating](../design/compositions/Rating.md), line 18.
 
 ```reaction
 when RequestBoundary.request (path: "/ratings/mine", requestId, session)
@@ -991,7 +998,7 @@ then
 
 Authored path: `Rating.Mine`.
 - Covered by [Rating](../design/compositions/Rating.md), line 10.
-- Covered by [Rating](../design/compositions/Rating.md), line 16.
+- Covered by [Rating](../design/compositions/Rating.md), line 18.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Rating.Mine
@@ -1005,7 +1012,7 @@ then
 
 Authored path: `Rating.Rate`.
 - Covered by [Rating](../design/compositions/Rating.md), line 3.
-- Covered by [Rating](../design/compositions/Rating.md), line 14.
+- Covered by [Rating](../design/compositions/Rating.md), line 16.
 
 ```reaction
 when RequestBoundary.request (aspect, microNote, path: "/ratings/rate", requestId, score, session)
@@ -1017,79 +1024,81 @@ then
 
 Authored path: `Rating.Rate`.
 - Covered by [Rating](../design/compositions/Rating.md), line 3.
-- Covered by [Rating](../design/compositions/Rating.md), line 14.
+- Covered by [Rating](../design/compositions/Rating.md), line 16.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Rating.Rate
 where
   earlier, RequestBoundary.request (aspect, microNote, path: "/ratings/rate", requestId, score, session)
-  AspectManaging._get (aspect) has (game)
+  GameDimensions._get (dimension: aspect)
 then
-  AspectRating.rateAspect (aspect, game, microNote, score, user)
+  DimensionRatings.rate (note: microNote, rater: user, score, target: aspect)
 ```
 
 ### Rating.Rate:aspect-exists#3
 
 Authored path: `Rating.Rate`.
 - Covered by [Rating](../design/compositions/Rating.md), line 3.
-- Covered by [Rating](../design/compositions/Rating.md), line 14.
+- Covered by [Rating](../design/compositions/Rating.md), line 16.
 
 ```reaction
-when AspectRating.rateAspect (aspect, game, microNote, score, user), asked by Rating.Rate:aspect-exists#2
+when DimensionRatings.rate (note: microNote, rater: user, score, target: aspect), asked by Rating.Rate:aspect-exists#2
 where
   earlier, RequestBoundary.request (aspect, microNote, path: "/ratings/rate", requestId, score, session)
 then
-  RequestBoundary.respond (aspect, game, requestId)
+  RequestBoundary.respond (aspect, requestId)
 ```
 
 ### Rating.Rate:aspect-missing#2
 
 Authored path: `Rating.Rate`.
 - Covered by [Rating](../design/compositions/Rating.md), line 3.
-- Covered by [Rating](../design/compositions/Rating.md), line 14.
+- Covered by [Rating](../design/compositions/Rating.md), line 16.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Rating.Rate
 where
   earlier, RequestBoundary.request (aspect, microNote, path: "/ratings/rate", requestId, score, session)
-  no AspectManaging._get (aspect)
+  no GameDimensions._get (dimension: aspect)
 then
   RequestBoundary.respond (error: "ASPECT_NOT_FOUND", requestId)
 ```
 
-### Rating.RecordScoreAfterRating
+### Rating.RecordValueAfterRating
 
-Authored path: `Rating.RecordScoreAfterRating`.
-- Covered by [Rating](../design/compositions/Rating.md), line 21.
+Authored path: `Rating.RecordValueAfterRating`.
+- Covered by [Rating](../design/compositions/Rating.md), line 23.
 
 ```reaction
-when AspectRating.rateAspect (aspect, game)
+when DimensionRatings.rate (target)
 where
-  AspectManaging._get (aspect) has (name)
-  AspectRating._summary (aspect) has (average, count)
+  GameDimensions._get (dimension: target) has (name, subject)
+  DimensionRatings._summary (target) has (average)
+  no DimensionRatings._summary (target) has (count: 0)
 then
-  AspectFiltering.recordScore (aspectName: name, average, count, game)
+  GameDiscovery.recordValue (criterion: name, item: subject, value: average)
 ```
 
-### Rating.RecordScoreAfterRemoval
+### Rating.RecordValueAfterRemoval
 
-Authored path: `Rating.RecordScoreAfterRemoval`.
-- Covered by [Rating](../design/compositions/Rating.md), line 22.
+Authored path: `Rating.RecordValueAfterRemoval`.
+- Covered by [Rating](../design/compositions/Rating.md), line 24.
 
 ```reaction
-when AspectRating.removeRating (aspect, game)
+when DimensionRatings.remove (target)
 where
-  AspectManaging._get (aspect) has (name)
-  AspectRating._summary (aspect) has (average, count)
+  GameDimensions._get (dimension: target) has (name, subject)
+  DimensionRatings._summary (target) has (average)
+  no DimensionRatings._summary (target) has (count: 0)
 then
-  AspectFiltering.recordScore (aspectName: name, average, count, game)
+  GameDiscovery.recordValue (criterion: name, item: subject, value: average)
 ```
 
 ### Rating.Remove
 
 Authored path: `Rating.Remove`.
 - Covered by [Rating](../design/compositions/Rating.md), line 9.
-- Covered by [Rating](../design/compositions/Rating.md), line 15.
+- Covered by [Rating](../design/compositions/Rating.md), line 17.
 
 ```reaction
 when RequestBoundary.request (aspect, path: "/ratings/remove", requestId, session)
@@ -1101,42 +1110,42 @@ then
 
 Authored path: `Rating.Remove`.
 - Covered by [Rating](../design/compositions/Rating.md), line 9.
-- Covered by [Rating](../design/compositions/Rating.md), line 15.
+- Covered by [Rating](../design/compositions/Rating.md), line 17.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Rating.Remove
 where
   earlier, RequestBoundary.request (aspect, path: "/ratings/remove", requestId, session)
-  AspectManaging._get (aspect) has (game)
+  GameDimensions._get (dimension: aspect)
 then
-  AspectRating.removeRating (aspect, game, user)
+  DimensionRatings.remove (rater: user, target: aspect)
 ```
 
 ### Rating.Remove:aspect-exists#3
 
 Authored path: `Rating.Remove`.
 - Covered by [Rating](../design/compositions/Rating.md), line 9.
-- Covered by [Rating](../design/compositions/Rating.md), line 15.
+- Covered by [Rating](../design/compositions/Rating.md), line 17.
 
 ```reaction
-when AspectRating.removeRating (aspect, game, user), asked by Rating.Remove:aspect-exists#2
+when DimensionRatings.remove (rater: user, target: aspect), asked by Rating.Remove:aspect-exists#2
 where
   earlier, RequestBoundary.request (aspect, path: "/ratings/remove", requestId, session)
 then
-  RequestBoundary.respond (aspect, game, requestId)
+  RequestBoundary.respond (aspect, requestId)
 ```
 
 ### Rating.Remove:aspect-missing#2
 
 Authored path: `Rating.Remove`.
 - Covered by [Rating](../design/compositions/Rating.md), line 9.
-- Covered by [Rating](../design/compositions/Rating.md), line 15.
+- Covered by [Rating](../design/compositions/Rating.md), line 17.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Rating.Remove
 where
   earlier, RequestBoundary.request (aspect, path: "/ratings/remove", requestId, session)
-  no AspectManaging._get (aspect)
+  no GameDimensions._get (dimension: aspect)
 then
   RequestBoundary.respond (error: "ASPECT_NOT_FOUND", requestId)
 ```

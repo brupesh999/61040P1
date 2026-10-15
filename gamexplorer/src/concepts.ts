@@ -1,9 +1,9 @@
 import { conceptSet, registerConcept } from "@mit-sdg/sync-engine/assembly";
 import userAuthenticatingSpec from "@design/concepts/UserAuthenticating.md" with { type: "text" };
 import gameCatalogSpec from "@design/concepts/GameCatalog.md" with { type: "text" };
-import aspectManagingSpec from "@design/concepts/AspectManaging.md" with { type: "text" };
-import aspectRatingSpec from "@design/concepts/AspectRating.md" with { type: "text" };
-import aspectFilteringSpec from "@design/concepts/AspectFiltering.md" with { type: "text" };
+import dimensionSpec from "@design/concepts/DimensionDefining.md" with { type: "text" };
+import ratingSpec from "@design/concepts/Rating.md" with { type: "text" };
+import filteringSpec from "@design/concepts/ThresholdFiltering.md" with { type: "text" };
 import {
   EmptyCredentials,
   InvalidCredentials,
@@ -16,19 +16,14 @@ import {
 import federatingSpec from "@design/concepts/Federating.md" with { type: "text" };
 import { FederatingConcept, AlreadyLinked, NotConfirmed, SignInExpired, SignInRefused } from "./concepts/Federating/Federating.ts";
 import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound } from "./concepts/GameCatalog.ts";
-import { AspectExists, AspectManagingConcept, EmptyAspectName } from "./concepts/AspectManaging.ts";
+import { DimensionExists, DimensionDefiningConcept, EmptyDimensionName } from "./concepts/DimensionDefining.ts";
 import {
-  AspectRatingConcept,
+  RatingConcept,
   InvalidScore,
   NoteTooLong,
   RatingNotFound,
-} from "./concepts/AspectRating.ts";
-import {
-  AspectFilteringConcept,
-  EmptyFilterAspect,
-  FilterNotFound,
-  InvalidThreshold,
-} from "./concepts/AspectFiltering.ts";
+} from "./concepts/Rating.ts";
+import { ThresholdFilteringConcept, EmptyCriterion, InvalidValue, InvalidMinimum, CriterionNotFound } from "./concepts/ThresholdFiltering.ts";
 
 const userAuthenticating = registerConcept({
   class: UserAuthenticatingConcept,
@@ -56,38 +51,34 @@ const gameCatalog = registerConcept({
   refusals: { INVALID_GAME: InvalidGame, GAME_EXISTS: GameExists, INVALID_COVER: InvalidCover, GAME_NOT_FOUND: GameNotFound },
 });
 
-const aspectManaging = registerConcept({
-  class: AspectManagingConcept,
-  spec: aspectManagingSpec,
-  refusals: { EMPTY_ASPECT_NAME: EmptyAspectName, ASPECT_EXISTS: AspectExists },
+class GameDimensions extends DimensionDefiningConcept<string> {}
+const dimensions = registerConcept({
+  class: GameDimensions,
+  spec: dimensionSpec,
+  refusals: { EMPTY_DIMENSION_NAME: EmptyDimensionName, DIMENSION_EXISTS: DimensionExists },
 });
 
-const aspectRating = registerConcept({
-  class: AspectRatingConcept,
-  spec: aspectRatingSpec,
-  refusals: {
-    INVALID_SCORE: InvalidScore,
-    NOTE_TOO_LONG: NoteTooLong,
-    RATING_NOT_FOUND: RatingNotFound,
-  },
+class DimensionRatings extends RatingConcept<string, string> {}
+const ratings = registerConcept({
+  class: DimensionRatings,
+  spec: ratingSpec,
+  refusals: { INVALID_SCORE: InvalidScore, NOTE_TOO_LONG: NoteTooLong, RATING_NOT_FOUND: RatingNotFound },
 });
 
-const aspectFiltering = registerConcept({
-  class: AspectFilteringConcept,
-  spec: aspectFilteringSpec,
-  refusals: {
-    EMPTY_FILTER_ASPECT: EmptyFilterAspect,
-    INVALID_THRESHOLD: InvalidThreshold,
-    FILTER_NOT_FOUND: FilterNotFound,
-  },
+class GameDiscovery extends ThresholdFilteringConcept<string, string> {}
+const filtering = registerConcept({
+  class: GameDiscovery,
+  spec: filteringSpec,
+  refusals: { EMPTY_CRITERION: EmptyCriterion, INVALID_VALUE: InvalidValue,
+    INVALID_MINIMUM: InvalidMinimum, CRITERION_NOT_FOUND: CriterionNotFound },
 });
 
 export const applicationConceptSet = conceptSet({
   UserAuthenticating: userAuthenticating,
   CommonsFederating: commonsFederating,
   GameCatalog: gameCatalog,
-  AspectManaging: aspectManaging,
-  AspectRating: aspectRating,
-  AspectFiltering: aspectFiltering,
+  GameDimensions: dimensions,
+  DimensionRatings: ratings,
+  GameDiscovery: filtering,
 });
 export const { concepts } = applicationConceptSet;

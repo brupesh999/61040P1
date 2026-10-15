@@ -210,13 +210,51 @@ layout had no horizontal overflow. [Capture](screenshots/aspect-type-hierarchy.j
 Design, generation, code/type/artifact, and whitespace checks passed; domain tests
 were not repeated for the CSS size change.
 
+## Hosted deployment
+
+The app is now deployed at https://gamexplorer.mit-sdg.dev from commit
+`272b540c2731dde141fb5d73265e3f71feed8662`. The class platform reports Healthy.
+Hosted checks are recorded separately in [deployment evidence](deployment.md) and
+[the programmatic report](deployed-checks.json). Commons sign-in and session
+persistence were also verified in the browser after the user approved the live domain.
+These hosted checks did not create reviews or aspects; the full write journey remains
+to be rehearsed on the public app before recording.
+
 ## Limits and remaining evidence
 
-- These are local production-preview results, not evidence of class-platform deployment.
+- Earlier sections describe local preview checks. The hosted deployment section records separate live evidence.
 - This pass used the Codex in-app browser. Other browser engines, assistive technology,
   and a full accessibility audit have not been tested.
 - Titles without available portrait artwork use a title tile. New games added manually
   do not automatically fetch a cover yet.
-- The visual-study export, deployed URL/commit verification, and narrated beta recording
+- The visual-study export, full hosted write journey, and narrated beta recording
   remain to be added. The design notebook stays in the private individual repository.
 - Saved outputs must be refreshed if subsequent source changes affect their checks.
+
+## P1 concept feedback refinement
+
+The backend now instantiates DimensionDefining, Rating, and ThresholdFiltering under
+application aliases. No Vue components, styles, or navigation changed in this refinement.
+After restarting the same isolated preview database, the existing Commons session and
+Devil May Cry 5 deep link still worked. Combat Depth retained its identity, description,
+both reviews, and average 9.0 across two ratings; Narrative Depth remained unrated.
+
+The existing beta-reviewer test account signed in through the local-account dialog.
+Its saved score 10 and review populated the editor. Updating to 9 changed the visible
+average to 8.5 while the count stayed two, without a page refresh. Restoring 10 returned
+the average to 9.0. My Ratings displayed the correct game, dimension, review, and edit
+link, and that link opened the populated editor. Discover retained Combat Depth ≥ 8
+and showed Hades and Devil May Cry 5 with their correct averages and counts.
+The user's Commons preview account was restored afterward using its existing approval.
+
+[Reviewer interface after refinement](screenshots/reviewer-refinement.jpg) shows the
+implemented reviewer affordances omitted from P1's sketches. Only test-account reviews
+in the isolated preview database were edited. The public deployment was not used for
+these writes. Temporary viewport settings were reset.
+
+The saved suite now passes **70 tests, 518 assertions**, including actual P2-action
+fixtures read and edited through current HTTP endpoints, independent book/restaurant/room
+uses, and concurrent reviewer replacement/removal. Design, generation, artifact, and
+TypeScript checks pass. The concurrency test covers one running process and is not a
+claim of cross-process ordering or crash recovery. The design check still reports 12
+files and the code check still reports 21 advisories.

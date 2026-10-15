@@ -16,15 +16,15 @@ export type AppWideError = never;
 export type GamexplorerWire = {
   "/aspects/create": {
     input: {
-      "description": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["description"]>>;
-      "game": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["game"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>]>>;
-      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["name"]>>;
+      "description": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["description"]>>;
+      "game": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["subject"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>]>>;
+      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["name"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>>, ["aspect"]>>;
+      "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>>, ["dimension"]>>;
     };
-    error: { error: AppWideError | "ASPECT_EXISTS" | "EMPTY_ASPECT_NAME" | "GAME_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "DIMENSION_EXISTS" | "EMPTY_DIMENSION_NAME" | "GAME_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
   "/auth/commons/choose": {
     input: {
@@ -116,14 +116,14 @@ export type GamexplorerWire = {
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -134,10 +134,10 @@ export type GamexplorerWire = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -147,20 +147,20 @@ export type GamexplorerWire = {
   };
   "/discover/remove": {
     input: {
-      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["removeFilter"]>[0], ["aspectName"]>>;
+      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["removeCriterion"]>[0], ["criterion"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -171,16 +171,16 @@ export type GamexplorerWire = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
       };
     };
-    error: { error: AppWideError | "FILTER_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "CRITERION_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
   "/discover/results": {
     input: {
@@ -189,14 +189,14 @@ export type GamexplorerWire = {
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -207,10 +207,10 @@ export type GamexplorerWire = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -220,21 +220,21 @@ export type GamexplorerWire = {
   };
   "/discover/set": {
     input: {
-      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["aspectName"]>>;
-      "minScore": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["minScore"]>>;
+      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["setCriterion"]>[0], ["criterion"]>>;
+      "minScore": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["setCriterion"]>[0], ["minimum"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -245,16 +245,16 @@ export type GamexplorerWire = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
       };
     };
-    error: { error: AppWideError | "EMPTY_FILTER_ASPECT" | "INVALID_INPUT" | "INVALID_THRESHOLD" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "EMPTY_CRITERION" | "INVALID_INPUT" | "INVALID_MINIMUM" | "UNKNOWN_SESSION" };
   };
   "/games/add": {
     input: {
@@ -275,20 +275,20 @@ export type GamexplorerWire = {
     output: {
       "page": {
         "aspects": {
-          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["aspect"]>>;
-          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["description"]>>;
-          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["name"]>>;
+          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["dimension"]>>;
+          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["description"]>>;
+          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["name"]>>;
           "ratings": {
-            "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["microNote"]>>;
+            "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["note"]>>;
             "reviewer": {
               "username": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["_username"]>>>, ["username"]>>;
             };
-            "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["score"]>>;
-            "user": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["user"]>>;
+            "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["score"]>>;
+            "user": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["rater"]>>;
           }[];
           "summary": {
-            "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["average"]>>;
-            "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["count"]>>;
+            "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+            "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
           };
         }[];
         "cover": {
@@ -330,16 +330,16 @@ export type GamexplorerWire = {
     output: {
       "mine": {
         "ratings": {
-          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["aspect"]>>;
+          "aspect": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>, AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["target"]>]>>;
           "aspectInfo": {
-            "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>>>, ["name"]>>;
+            "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>>>, ["name"]>>;
           };
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>>>, ["subject"]>>;
           "gameInfo": {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
-          "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["microNote"]>>;
-          "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["score"]>>;
+          "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["note"]>>;
+          "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["score"]>>;
         }[];
       };
     };
@@ -347,27 +347,25 @@ export type GamexplorerWire = {
   };
   "/ratings/rate": {
     input: {
-      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
-      "microNote": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["microNote"]>>;
-      "score": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["score"]>>;
+      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["target"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>]>>;
+      "microNote": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["note"]>>;
+      "score": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["score"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>>;
-      "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["game"]>>;
+      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["target"]>>;
     };
-    error: { error: AppWideError | "ASPECT_NOT_FOUND" | "INVALID_INPUT" | "INVALID_SCORE" | "NOTE_TOO_LONG" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ASPECT_NOT_FOUND" | "EMPTY_CRITERION" | "INVALID_INPUT" | "INVALID_SCORE" | "INVALID_VALUE" | "NOTE_TOO_LONG" | "UNKNOWN_SESSION" };
   };
   "/ratings/remove": {
     input: {
-      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
+      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["remove"]>[0], ["target"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>>;
-      "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["game"]>>;
+      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["remove"]>[0], ["target"]>>;
     };
-    error: { error: AppWideError | "ASPECT_NOT_FOUND" | "INVALID_INPUT" | "RATING_NOT_FOUND" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ASPECT_NOT_FOUND" | "EMPTY_CRITERION" | "INVALID_INPUT" | "INVALID_VALUE" | "RATING_NOT_FOUND" | "UNKNOWN_SESSION" };
   };
 };
 
@@ -376,12 +374,12 @@ export type HttpAppWideError = never;
 export type GamexplorerWireHttp = {
   "/aspects/create": {
     input: {
-      "description": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["description"]>>;
-      "game": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["game"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>]>>;
-      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["name"]>>;
+      "description": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["description"]>>;
+      "game": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["subject"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>]>>;
+      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>[0], ["name"]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>>, ["aspect"]>>;
+      "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>>, ["dimension"]>>;
     };
     error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
@@ -455,14 +453,14 @@ export type GamexplorerWireHttp = {
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -473,10 +471,10 @@ export type GamexplorerWireHttp = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -486,19 +484,19 @@ export type GamexplorerWireHttp = {
   };
   "/discover/remove": {
     input: {
-      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["removeFilter"]>[0], ["aspectName"]>>;
+      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["removeCriterion"]>[0], ["criterion"]>>;
     };
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -509,10 +507,10 @@ export type GamexplorerWireHttp = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -525,14 +523,14 @@ export type GamexplorerWireHttp = {
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -543,10 +541,10 @@ export type GamexplorerWireHttp = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -556,20 +554,20 @@ export type GamexplorerWireHttp = {
   };
   "/discover/set": {
     input: {
-      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["aspectName"]>>;
-      "minScore": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["minScore"]>>;
+      "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["setCriterion"]>[0], ["criterion"]>>;
+      "minScore": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["setCriterion"]>[0], ["minimum"]>>;
     };
     output: {
       "results": {
         "aspectNames": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_aspectNames"]>>>, ["aspectName"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criterionNames"]>>>, ["criterion"]>>;
         }[];
         "filters": {
-          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
-          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["minScore"]>>;
+          "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
+          "minScore": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["minimum"]>>;
         }[];
         "matches": {
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_matches"]>>>, ["item"]>>;
           "info": {
             "cover": {
               "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
@@ -580,10 +578,10 @@ export type GamexplorerWireHttp = {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
           "scores": {
-            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_filters"]>>>, ["aspectName"]>>;
+            "aspectName": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDiscovery"]["_criteria"]>>>, ["criterion"]>>;
             "score": {
-              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["average"]>>;
-              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_score"]>>>, ["count"]>>;
+              "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+              "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
             };
           }[];
         }[];
@@ -609,20 +607,20 @@ export type GamexplorerWireHttp = {
     output: {
       "page": {
         "aspects": {
-          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["aspect"]>>;
-          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["description"]>>;
-          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_getAspects"]>>>, ["name"]>>;
+          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["dimension"]>>;
+          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["description"]>>;
+          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_forSubject"]>>>, ["name"]>>;
           "ratings": {
-            "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["microNote"]>>;
+            "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["note"]>>;
             "reviewer": {
               "username": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["_username"]>>>, ["username"]>>;
             };
-            "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["score"]>>;
-            "user": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_forAspect"]>>>, ["user"]>>;
+            "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["score"]>>;
+            "user": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_forTarget"]>>>, ["rater"]>>;
           }[];
           "summary": {
-            "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["average"]>>;
-            "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["count"]>>;
+            "average": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["average"]>>;
+            "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_summary"]>>>, ["count"]>>;
           };
         }[];
         "cover": {
@@ -662,16 +660,16 @@ export type GamexplorerWireHttp = {
     output: {
       "mine": {
         "ratings": {
-          "aspect": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["aspect"]>>;
+          "aspect": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>, AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["target"]>]>>;
           "aspectInfo": {
-            "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>>>, ["name"]>>;
+            "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>>>, ["name"]>>;
           };
-          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["game"]>>;
+          "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>>>, ["subject"]>>;
           "gameInfo": {
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
           };
-          "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["microNote"]>>;
-          "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_getUserRatings"]>>>, ["score"]>>;
+          "microNote": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["note"]>>;
+          "score": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["_byRater"]>>>, ["score"]>>;
         }[];
       };
     };
@@ -679,23 +677,21 @@ export type GamexplorerWireHttp = {
   };
   "/ratings/rate": {
     input: {
-      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
-      "microNote": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["microNote"]>>;
-      "score": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["score"]>>;
+      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["target"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>]>>;
+      "microNote": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["note"]>>;
+      "score": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["score"]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>>;
-      "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["game"]>>;
+      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["rate"]>[0], ["target"]>>;
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/ratings/remove": {
     input: {
-      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
+      "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["remove"]>[0], ["target"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_get"]>[0], ["dimension"]>]>>;
     };
     output: {
-      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>>;
-      "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["game"]>>;
+      "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["DimensionRatings"]["remove"]>[0], ["target"]>>;
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };

@@ -48,6 +48,7 @@ The implementation follows sync-engine's concept separation and files in `gamexp
 - [Deployment design](gamexplorer/design/deployment.md)
 - [Commons authentication design](gamexplorer/design/authentication.md)
 - [Beta interface specification](gamexplorer/design/interface.md)
+- [P1 feedback and P3 concept refinements](gamexplorer/design/evolution-p3.md)
 - [Updated beta user journey](gamexplorer/README.md#beta-user-journey)
 - [Browser journey validation](gamexplorer/validation/browser-checks.md)
 - [Saved automated validation output](gamexplorer/validation/)
