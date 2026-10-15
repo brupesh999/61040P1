@@ -8,11 +8,16 @@ import { shape } from "./validators.ts";
 
 const { UserAuthenticating, GameCatalog, AspectFiltering } = concepts;
 
+const SteamCover = former("the discovery cover of (game)", ({ game }, { steamAppId, coverUrl }) =>
+  where(GameCatalog._steamCover({ game }).is({ steamAppId, coverUrl })).form({ steamAppId, coverUrl }),
+);
+
 const GameInfo = former("the catalog entry of (game)", ({ game }, { title, developer, releaseYear }) =>
   where(GameCatalog._get({ game }).is({ title, developer, releaseYear })).form({
     title,
     developer,
     releaseYear,
+    cover: SteamCover({ game }),
   }),
 ).optional();
 
@@ -91,6 +96,7 @@ const ClearFilters = endpoint(
 );
 
 export const composition = {
+  SteamCover,
   Results,
   SetFilter,
   RemoveFilter,

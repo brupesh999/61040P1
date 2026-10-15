@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type { Db } from "mongodb";
-import { GameCatalogConcept, GameExists, InvalidGame } from "./GameCatalog.ts";
+import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound } from "./GameCatalog.ts";
 import { testDb } from "./testing.ts";
 
 let db: Db;
@@ -75,5 +75,53 @@ describe("GameCatalog", () => {
   test("unknown games answer no rows", async () => {
     await expect(await catalog._get({ game: "missing" })).toEqual([]);
     await expect(await catalog._getGame({ title: "missing" })).toEqual([]);
+  });
+
+  test("a Steam cover can be attached and replaced without changing game metadata", async () => {
+    const { game } = await catalog.addGame({ title: "Portal 2", developer: "Valve", releaseYear: 2011 });
+    expect(await catalog._steamCover({ game })).toEqual({ steamAppId: 0, coverUrl: "" });
+    expect(await catalog._steamCover({ game: "missing" })).toEqual({ steamAppId: 0, coverUrl: "" });
+    const coverUrl = "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620/header.jpg";
+    expect(await catalog.setSteamCover({ game, steamAppId: 620, coverUrl })).toEqual({});
+    expect(await catalog._steamCover({ game })).toEqual({ steamAppId: 620, coverUrl });
+    const replacement = "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/620/version/header.jpg?t=1";
+    await catalog.setSteamCover({ game, steamAppId: 620, coverUrl: replacement });
+    expect(await catalog._steamCover({ game })).toEqual({ steamAppId: 620, coverUrl: replacement });
+    expect(await catalog._get({ game })).toEqual([{ title: "Portal 2", developer: "Valve", releaseYear: 2011 }]);
+    expect(await catalog._searchGames({ query: "" })).toHaveLength(1);
+  });
+
+  test("invalid cover identities and untrusted URLs preserve the previous cover", async () => {
+    const { game } = await catalog.addGame({ title: "Portal 2", developer: "Valve", releaseYear: 2011 });
+    const coverUrl = "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620/header.jpg";
+    await catalog.setSteamCover({ game, steamAppId: 620, coverUrl });
+    const attempts = [
+      { steamAppId: 0, coverUrl }, { steamAppId: 1.5, coverUrl }, { steamAppId: Number.NaN, coverUrl },
+      { steamAppId: 620, coverUrl: "not a URL" },
+      { steamAppId: 620, coverUrl: coverUrl.replace("https:", "http:") },
+      { steamAppId: 620, coverUrl: coverUrl.replace("steamstatic.com", "steamstatic.com.example.org") },
+      { steamAppId: 620, coverUrl: coverUrl.replace("/620/", "/400/") },
+      { steamAppId: 620, coverUrl: "https://shared.akamai.steamstatic.com/steamcommunity/public/images/test.jpg" },
+      { steamAppId: 620, coverUrl: "https://user:password@shared.akamai.steamstatic.com/store_item_assets/steam/apps/620/header.jpg" },
+      { steamAppId: 620, coverUrl: coverUrl.replace(".jpg", ".html") },
+    ];
+    for (const invalid of attempts) {
+      await expect(catalog.setSteamCover({ game, ...invalid })).rejects.toThrow(InvalidCover);
+      expect(await catalog._steamCover({ game })).toEqual({ steamAppId: 620, coverUrl });
+    }
+    await expect(catalog.setSteamCover({ game, steamAppId: 0, coverUrl })).rejects.toThrow(
+      "A cover needs a positive Steam app ID and its HTTPS Steam store image URL.",
+    );
+  });
+
+  test("attaching a cover to an unknown game is refused without creating a game", async () => {
+    const attempt = catalog.setSteamCover({
+      game: "missing", steamAppId: 620,
+      coverUrl: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620/header.jpg",
+    });
+    await expect(attempt).rejects.toThrow(GameNotFound);
+    await expect(attempt).rejects.toThrow("This game could not be found.");
+    expect(await catalog._searchGames({ query: "" })).toEqual([]);
+    expect(await catalog._steamCover({ game: "missing" })).toEqual({ steamAppId: 0, coverUrl: "" });
   });
 });

@@ -1,7 +1,7 @@
 /**
  * Accounts: registering, logging in and out, and resolving the current user.
  *
- * The session travels in the JSON body. Every other composition resolves it with
+ * The HTTP boundary supplies the session from its cookie. Other compositions resolve it with
  * UserAuthenticating.current before acting, so no request chooses its own user.
  */
 import { endpoint, receive, respond } from "@mit-sdg/sync-engine/boundary";
@@ -16,20 +16,20 @@ const credentials = shape({ username: "string", password: "string" });
 /** Registering signs the new user in immediately by authenticating the same credentials. */
 const Register = endpoint(
   "/auth/register",
-  ({ username, password, user, session }) =>
+  ({ username, password, user, session, expiresAt }) =>
     receive({ username, password })
       .then(UserAuthenticating.register({ username, password }).responds({ user }))
-      .then(UserAuthenticating.authenticate({ username, password }).responds({ user, session }))
-      .then(respond({ session, user })),
+      .then(UserAuthenticating.authenticate({ username, password }).responds({ user, session, expiresAt }))
+      .then(respond({ session, user, expiresAt })),
   { input: { required: ["username", "password"] }, validators: { input: credentials } },
 );
 
 const Login = endpoint(
   "/auth/login",
-  ({ username, password, user, session }) =>
+  ({ username, password, user, session, expiresAt }) =>
     receive({ username, password })
-      .then(UserAuthenticating.authenticate({ username, password }).responds({ user, session }))
-      .then(respond({ session, user })),
+      .then(UserAuthenticating.authenticate({ username, password }).responds({ user, session, expiresAt }))
+      .then(respond({ session, user, expiresAt })),
   { input: { required: ["username", "password"] }, validators: { input: credentials } },
 );
 

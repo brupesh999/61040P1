@@ -10,8 +10,12 @@ import {
   UnknownSession,
   UserAuthenticatingConcept,
   UsernameTaken,
+  InvalidUsername,
+  UnknownUser,
 } from "./concepts/UserAuthenticating.ts";
-import { GameCatalogConcept, GameExists, InvalidGame } from "./concepts/GameCatalog.ts";
+import federatingSpec from "@design/concepts/Federating.md" with { type: "text" };
+import { FederatingConcept, AlreadyLinked, NotConfirmed, SignInExpired, SignInRefused } from "./concepts/Federating/Federating.ts";
+import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound } from "./concepts/GameCatalog.ts";
 import { AspectExists, AspectManagingConcept, EmptyAspectName } from "./concepts/AspectManaging.ts";
 import {
   AspectRatingConcept,
@@ -34,13 +38,22 @@ const userAuthenticating = registerConcept({
     USERNAME_TAKEN: UsernameTaken,
     INVALID_CREDENTIALS: InvalidCredentials,
     UNKNOWN_SESSION: UnknownSession,
+    INVALID_USERNAME: InvalidUsername,
+    UNKNOWN_USER: UnknownUser,
   },
+});
+
+class CommonsFederating extends FederatingConcept<string> {}
+const commonsFederating = registerConcept({
+  class: CommonsFederating,
+  spec: federatingSpec,
+  refusals: { SIGN_IN_EXPIRED: SignInExpired, SIGN_IN_REFUSED: SignInRefused, NOT_CONFIRMED: NotConfirmed, ALREADY_LINKED: AlreadyLinked },
 });
 
 const gameCatalog = registerConcept({
   class: GameCatalogConcept,
   spec: gameCatalogSpec,
-  refusals: { INVALID_GAME: InvalidGame, GAME_EXISTS: GameExists },
+  refusals: { INVALID_GAME: InvalidGame, GAME_EXISTS: GameExists, INVALID_COVER: InvalidCover, GAME_NOT_FOUND: GameNotFound },
 });
 
 const aspectManaging = registerConcept({
@@ -71,6 +84,7 @@ const aspectFiltering = registerConcept({
 
 export const applicationConceptSet = conceptSet({
   UserAuthenticating: userAuthenticating,
+  CommonsFederating: commonsFederating,
   GameCatalog: gameCatalog,
   AspectManaging: aspectManaging,
   AspectRating: aspectRating,

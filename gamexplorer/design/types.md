@@ -4,7 +4,8 @@ Gamexplorer binds every generic concept parameter to an identity owned by anothe
 so no concept needs a concrete application type.
 
 - A user that rates aspects or owns discovery filters is a `UserAuthenticating` user, so a
-  rating can only be attributed to someone who proved their password.
+  rating can only be attributed to someone with a valid server-side session. Commons
+  sign-in links its stable subject to this same user identity through compositions.
 - Aspects, ratings, and recorded scores all refer to `GameCatalog` games.
 - A rating refers to the `AspectManaging` aspect it scores.
 - `AspectFiltering` deliberately does not refer to `AspectManaging` aspects. It matches by
@@ -13,6 +14,9 @@ so no concept needs a concrete application type.
 
 ```instances
 instantiate UserAuthenticating
+
+instantiate Federating as CommonsFederating with
+  User is UserAuthenticating.User
 
 instantiate GameCatalog
 

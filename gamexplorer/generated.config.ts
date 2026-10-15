@@ -11,6 +11,7 @@ export default {
     documents: [
       new URL("./design/types.md", import.meta.url),
       new URL("./design/compositions/Accounts.md", import.meta.url),
+      new URL("./design/compositions/Commons.md", import.meta.url),
       new URL("./design/compositions/Catalog.md", import.meta.url),
       new URL("./design/compositions/Rating.md", import.meta.url),
       new URL("./design/compositions/Discovery.md", import.meta.url),

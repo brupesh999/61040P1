@@ -3,6 +3,7 @@
 Anyone, signed in or not, can [search the catalog](reaction:Catalog.Search). The
 [search results](former:Catalog.SearchResults) list each matching game's title, developer,
 and release year in title order.
+Each result also includes its optional [Steam cover](former:Catalog.SteamCover).
 
 ```endpoints
 Catalog.Search at /games/search
@@ -34,3 +35,8 @@ Catalog.CreateAspect at /aspects/create
 ```
 
 Each micro note on the game page is labelled with [the reviewer's username](former:Catalog.ReviewerName).
+
+The optional [Steam cover](former:Catalog.SteamCover) appears on the game detail page
+as well. Covers are publisher-supplied Steam store images attached through the
+catalog import action. There is no public endpoint accepting arbitrary artwork URLs.
+Games without a stored cover remain visible and usable.

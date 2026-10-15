@@ -8,6 +8,10 @@ import { shape } from "./validators.ts";
 
 const { UserAuthenticating, GameCatalog, AspectManaging, AspectRating } = concepts;
 
+const SteamCover = former("the Steam cover of (game)", ({ game }, { steamAppId, coverUrl }) =>
+  where(GameCatalog._steamCover({ game }).is({ steamAppId, coverUrl })).form({ steamAppId, coverUrl }),
+);
+
 const SearchResults = former(
   "the search results for (query)",
   ({ query }, { game, title, developer, releaseYear }) =>
@@ -17,6 +21,7 @@ const SearchResults = former(
         title,
         developer,
         releaseYear,
+        cover: SteamCover({ game }),
       }),
     }),
 );
@@ -59,6 +64,7 @@ const GamePage = former(
       title,
       developer,
       releaseYear,
+      cover: SteamCover({ game }),
       aspects: each(AspectManaging._getAspects({ game }).is({ aspect, name, description })).form({
         aspect,
         name,
@@ -116,6 +122,7 @@ const CreateAspect = endpoint(
 );
 
 export const composition = {
+  SteamCover,
   Search,
   SearchResults,
   AddGame,

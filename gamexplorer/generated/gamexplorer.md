@@ -31,9 +31,9 @@ Defined in [AspectFiltering](../design/concepts/AspectFiltering.md), line 1.
 
 #### Instances
 
-- `AspectFiltering` — instance of `AspectFiltering` — [Application types](../design/types.md), line 27.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 29.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 28.
+- `AspectFiltering` — instance of `AspectFiltering` — [Application types](../design/types.md), line 31.
+  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 33.
+  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 32.
 
 ### AspectManaging
 
@@ -52,8 +52,8 @@ Defined in [AspectManaging](../design/concepts/AspectManaging.md), line 1.
 
 #### Instances
 
-- `AspectManaging` — instance of `AspectManaging` — [Application types](../design/types.md), line 19.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 20.
+- `AspectManaging` — instance of `AspectManaging` — [Application types](../design/types.md), line 23.
+  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 24.
 
 ### AspectRating
 
@@ -76,10 +76,34 @@ Defined in [AspectRating](../design/concepts/AspectRating.md), line 1.
 
 #### Instances
 
-- `AspectRating` — instance of `AspectRating` — [Application types](../design/types.md), line 22.
-  - `Aspect` is `AspectManaging.Aspect` — [Application types](../design/types.md), line 25.
-  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 24.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 23.
+- `AspectRating` — instance of `AspectRating` — [Application types](../design/types.md), line 26.
+  - `Aspect` is `AspectManaging.Aspect` — [Application types](../design/types.md), line 29.
+  - `Game` is `GameCatalog.Game` — [Application types](../design/types.md), line 28.
+  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 27.
+
+### Federating
+
+Defined in [Federating](../design/concepts/Federating.md), line 1.
+
+#### Actions
+
+- `start() : returns (attempt: Attempt, expiresAt: DateTime, address: String)`
+- `finish(attempt: Attempt, nonce: String, code: String) : returns (username: String)`
+  - Refuses `SIGN_IN_EXPIRED`: This sign-in has expired. Start again.
+  - Refuses `SIGN_IN_REFUSED`: The other site didn't confirm this sign-in. Start again.
+- `link(attempt: Attempt, user: User) : returns (user: User)`
+  - Refuses `NOT_CONFIRMED`: This sign-in hasn't been confirmed.
+  - Refuses `ALREADY_LINKED`: This account on the other site is already linked.
+
+#### Queries
+
+- `_user(attempt: Attempt) : optional (user: User)`
+- `_linkable(attempt: Attempt) : one (linkable: Flag)`
+
+#### Instances
+
+- `CommonsFederating` — instance of `Federating` — [Application types](../design/types.md), line 18.
+  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 19.
 
 ### GameCatalog
 
@@ -90,16 +114,20 @@ Defined in [GameCatalog](../design/concepts/GameCatalog.md), line 1.
 - `addGame(title: String, developer: String, releaseYear: Number) : returns (game: Game)`
   - Refuses `INVALID_GAME`: A game needs a title, a developer, and a release year from 1950 to 2100.
   - Refuses `GAME_EXISTS`: A game with this title already exists.
+- `setSteamCover(game: Game, steamAppId: Number, coverUrl: String) : returns ()`
+  - Refuses `INVALID_COVER`: A cover needs a positive Steam app ID and its HTTPS Steam store image URL.
+  - Refuses `GAME_NOT_FOUND`: This game could not be found.
 
 #### Queries
 
 - `_getGame(title: String) : optional (game: Game)`
 - `_get(game: Game) : optional (title: String, developer: String, releaseYear: Number)`
 - `_searchGames(query: String) : many (game: Game, title: String, developer: String, releaseYear: Number)`
+- `_steamCover(game: Game) : one (steamAppId: Number, coverUrl: String)`
 
 #### Instances
 
-- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 17.
+- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 21.
 
 ### UserAuthenticating
 
@@ -110,8 +138,13 @@ Defined in [UserAuthenticating](../design/concepts/UserAuthenticating.md), line 
 - `register(username: String, password: String) : returns (user: User)`
   - Refuses `EMPTY_CREDENTIALS`: Username and password must not be empty.
   - Refuses `USERNAME_TAKEN`: The requested username is already registered.
-- `authenticate(username: String, password: String) : returns (user: User, session: Session)`
+- `authenticate(username: String, password: String) : returns (user: User, session: Session, expiresAt: DateTime)`
   - Refuses `INVALID_CREDENTIALS`: Invalid username or password.
+- `registerExternal(username: String) : returns (user: User)`
+  - Refuses `INVALID_USERNAME`: A username must have 3 to 32 letters, digits, underscores, or hyphens.
+  - Refuses `USERNAME_TAKEN`: The requested username is already registered.
+- `startSession(user: User) : returns (user: User, session: Session, expiresAt: DateTime)`
+  - Refuses `UNKNOWN_USER`: This user could not be found.
 - `current(session: Session) : returns (user: User)`
   - Refuses `UNKNOWN_SESSION`: You must be signed in to do that.
 - `logout(session: Session) : returns (user: User)`
@@ -124,12 +157,39 @@ Defined in [UserAuthenticating](../design/concepts/UserAuthenticating.md), line 
 
 #### Instances
 
-- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 15.
+- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 16.
 
 ## Formers
 
 _Formers name result shapes evaluated when asked. The source former owns_
 _the authored explanation; this section records the generated shape._
+
+### the Steam cover of (game)
+
+Authored path: `Catalog.SteamCover`.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 6.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 39.
+
+```former
+Former "the Steam cover of (game)" — inputs (game); bindings (steamAppId, coverUrl); promises exactly one record — forms:
+  a record of
+    where GameCatalog._steamCover (game) has (coverUrl, steamAppId)
+    coverUrl
+    steamAppId
+```
+
+### the discovery cover of (game)
+
+Authored path: `Discovery.SteamCover`.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 29.
+
+```former
+Former "the discovery cover of (game)" — inputs (game); bindings (steamAppId, coverUrl); promises exactly one record — forms:
+  a record of
+    where GameCatalog._steamCover (game) has (coverUrl, steamAppId)
+    coverUrl
+    steamAppId
+```
 
 ### the catalog entry of (game)
 
@@ -140,6 +200,7 @@ Authored path: `Discovery.GameInfo`.
 Former "the catalog entry of (game)" — inputs (game); bindings (title, developer, releaseYear); promises at most one record — forms:
   a record of
     where GameCatalog._get (game) has (developer, releaseYear, title)
+    cover: former "the discovery cover of (game)" with (game)
     developer
     releaseYear
     title
@@ -148,7 +209,7 @@ Former "the catalog entry of (game)" — inputs (game); bindings (title, develop
 ### the current user (user)
 
 Authored path: `Accounts.CurrentUser`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 26.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 27.
 
 ```former
 Former "the current user (user)" — inputs (user); bindings (username); promises exactly one record — forms:
@@ -199,7 +260,7 @@ Former "the discovery results of (owner)" — inputs (owner); bindings (aspectNa
 ### the reviewer name of (user)
 
 Authored path: `Catalog.ReviewerName`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 36.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 37.
 
 ```former
 Former "the reviewer name of (user)" — inputs (user); bindings (username); promises at most one record — forms:
@@ -211,7 +272,7 @@ Former "the reviewer name of (user)" — inputs (user); bindings (username); pro
 ### the summary of (aspect)
 
 Authored path: `Catalog.AspectSummary`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 22.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 23.
 
 ```former
 Former "the summary of (aspect)" — inputs (aspect); bindings (average, count); promises exactly one record — forms:
@@ -224,7 +285,7 @@ Former "the summary of (aspect)" — inputs (aspect); bindings (average, count);
 ### the game page of (game)
 
 Authored path: `Catalog.GamePage`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 19.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 20.
 
 ```former
 Former "the game page of (game)" — inputs (game); bindings (title, developer, releaseYear, aspect, name, description, user, score, microNote); promises exactly one record — forms:
@@ -242,6 +303,7 @@ Former "the game page of (game)" — inputs (game); bindings (title, developer, 
             score
             user
         summary: former "the summary of (aspect)" with (aspect)
+    cover: former "the Steam cover of (game)" with (game)
     developer
     game
     releaseYear
@@ -300,6 +362,7 @@ Former "the search results for (query)" — inputs (query); bindings (game, titl
   a record of
     games: each GameCatalog._searchGames (query) has (developer, game, releaseYear, title)
       form a record of
+        cover: former "the Steam cover of (game)" with (game)
         developer
         game
         releaseYear
@@ -327,18 +390,18 @@ Authored path: `Accounts.Login`.
 - Covered by [Accounts](../design/compositions/Accounts.md), line 14.
 
 ```reaction
-when UserAuthenticating.authenticate (password, username, session, user), asked by Accounts.Login
+when UserAuthenticating.authenticate (password, username, expiresAt, session, user), asked by Accounts.Login
 where
   earlier, RequestBoundary.request (password, path: "/auth/login", requestId, username)
 then
-  RequestBoundary.respond (requestId, session, user)
+  RequestBoundary.respond (expiresAt, requestId, session, user)
 ```
 
 ### Accounts.Logout
 
 Authored path: `Accounts.Logout`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 18.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
 
 ```reaction
 when RequestBoundary.request (path: "/auth/logout", requestId, session)
@@ -349,8 +412,8 @@ then
 ### Accounts.Logout#2
 
 Authored path: `Accounts.Logout`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 18.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
 
 ```reaction
 when UserAuthenticating.logout (session, user), asked by Accounts.Logout
@@ -363,8 +426,8 @@ then
 ### Accounts.Me
 
 Authored path: `Accounts.Me`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 18.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 22.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
 
 ```reaction
 when RequestBoundary.request (path: "/auth/me", requestId, session)
@@ -375,8 +438,8 @@ then
 ### Accounts.Me#2
 
 Authored path: `Accounts.Me`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 18.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 22.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Accounts.Me
@@ -417,18 +480,18 @@ Authored path: `Accounts.Register`.
 - Covered by [Accounts](../design/compositions/Accounts.md), line 13.
 
 ```reaction
-when UserAuthenticating.authenticate (password, username, session, user), asked by Accounts.Register#2
+when UserAuthenticating.authenticate (password, username, expiresAt, session, user), asked by Accounts.Register#2
 where
   earlier, RequestBoundary.request (password, path: "/auth/register", requestId, username)
 then
-  RequestBoundary.respond (requestId, session, user)
+  RequestBoundary.respond (expiresAt, requestId, session, user)
 ```
 
 ### Catalog.AddGame
 
 Authored path: `Catalog.AddGame`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 11.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 15.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 12.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 16.
 
 ```reaction
 when RequestBoundary.request (developer, path: "/games/add", releaseYear, requestId, session, title)
@@ -439,8 +502,8 @@ then
 ### Catalog.AddGame#2
 
 Authored path: `Catalog.AddGame`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 11.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 15.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 12.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 16.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Catalog.AddGame
@@ -453,8 +516,8 @@ then
 ### Catalog.AddGame#3
 
 Authored path: `Catalog.AddGame`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 11.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 15.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 12.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 16.
 
 ```reaction
 when GameCatalog.addGame (developer, releaseYear, title, game), asked by Catalog.AddGame#2
@@ -467,8 +530,8 @@ then
 ### Catalog.CreateAspect
 
 Authored path: `Catalog.CreateAspect`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 28.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 33.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 29.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
 
 ```reaction
 when RequestBoundary.request (description, game, name, path: "/aspects/create", requestId, session)
@@ -479,8 +542,8 @@ then
 ### Catalog.CreateAspect:game-exists#2
 
 Authored path: `Catalog.CreateAspect`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 28.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 33.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 29.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Catalog.CreateAspect
@@ -494,8 +557,8 @@ then
 ### Catalog.CreateAspect:game-exists#3
 
 Authored path: `Catalog.CreateAspect`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 28.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 33.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 29.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
 
 ```reaction
 when AspectManaging.createAspect (description, game, name, aspect), asked by Catalog.CreateAspect:game-exists#2
@@ -508,8 +571,8 @@ then
 ### Catalog.CreateAspect:game-missing#2
 
 Authored path: `Catalog.CreateAspect`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 28.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 33.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 29.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 34.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Catalog.CreateAspect
@@ -523,8 +586,8 @@ then
 ### Catalog.GameDetail:found
 
 Authored path: `Catalog.GameDetail`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 18.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 25.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 19.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 26.
 
 ```reaction
 when RequestBoundary.request (game, path: "/games/detail", requestId)
@@ -537,8 +600,8 @@ then
 ### Catalog.GameDetail:missing
 
 Authored path: `Catalog.GameDetail`.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 18.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 25.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 19.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 26.
 
 ```reaction
 when RequestBoundary.request (game, path: "/games/detail", requestId)
@@ -552,12 +615,200 @@ then
 
 Authored path: `Catalog.Search`.
 - Covered by [Catalog](../design/compositions/Catalog.md), line 3.
-- Covered by [Catalog](../design/compositions/Catalog.md), line 8.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 9.
 
 ```reaction
 when RequestBoundary.request (path: "/games/search", query, requestId)
 then
   RequestBoundary.respond (requestId, results: former "the search results for (query)" with (query))
+```
+
+### Commons.ChooseUsername:expired
+
+Authored path: `Commons.ChooseUsername`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 20.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 27.
+
+```reaction
+when RequestBoundary.request (attempt, path: "/auth/commons/choose", requestId, username)
+where
+  CommonsFederating._linkable (attempt) has (linkable: false)
+then
+  RequestBoundary.respond (error: "SIGN_IN_EXPIRED", requestId)
+```
+
+### Commons.ChooseUsername:linkable
+
+Authored path: `Commons.ChooseUsername`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 20.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 27.
+
+```reaction
+when RequestBoundary.request (attempt, path: "/auth/commons/choose", requestId, username)
+where
+  CommonsFederating._linkable (attempt) has (linkable: true)
+then
+  UserAuthenticating.registerExternal (username)
+```
+
+### Commons.ChooseUsername:linkable#2
+
+Authored path: `Commons.ChooseUsername`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 20.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 27.
+
+```reaction
+when UserAuthenticating.registerExternal (username, user), asked by Commons.ChooseUsername:linkable
+where
+  earlier, RequestBoundary.request (attempt, path: "/auth/commons/choose", requestId, username)
+then
+  CommonsFederating.link (attempt, user)
+```
+
+### Commons.ChooseUsername:linkable#3
+
+Authored path: `Commons.ChooseUsername`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 20.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 27.
+
+```reaction
+when CommonsFederating.link (attempt, user), asked by Commons.ChooseUsername:linkable#2
+then
+  UserAuthenticating.startSession (user)
+```
+
+### Commons.ChooseUsername:linkable#4
+
+Authored path: `Commons.ChooseUsername`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 20.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 27.
+
+```reaction
+when UserAuthenticating.startSession (user, expiresAt, session), asked by Commons.ChooseUsername:linkable#3
+where
+  earlier, RequestBoundary.request (attempt, path: "/auth/commons/choose", requestId, username)
+then
+  RequestBoundary.respond (expiresAt, requestId, session, user)
+```
+
+### Commons.FinishCommons
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when RequestBoundary.request (attempt, code, path: "/auth/commons/finish", requestId, state)
+then
+  CommonsFederating.finish (attempt, code, nonce: state)
+```
+
+### Commons.FinishCommons:new#2
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when CommonsFederating.finish (attempt, code, nonce: state, username), asked by Commons.FinishCommons
+where
+  no CommonsFederating._user (attempt)
+then
+  UserAuthenticating.registerExternal (username)
+```
+
+### Commons.FinishCommons:new#3
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when UserAuthenticating.registerExternal (username, user), asked by Commons.FinishCommons:new#2
+where
+  earlier, CommonsFederating.finish (attempt, code, nonce: state, username), asked by Commons.FinishCommons
+then
+  CommonsFederating.link (attempt, user)
+```
+
+### Commons.FinishCommons:new#4
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when CommonsFederating.link (attempt, user), asked by Commons.FinishCommons:new#3
+then
+  UserAuthenticating.startSession (user)
+```
+
+### Commons.FinishCommons:new#5
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when UserAuthenticating.startSession (user, expiresAt, session), asked by Commons.FinishCommons:new#4
+where
+  earlier, RequestBoundary.request (attempt, code, path: "/auth/commons/finish", requestId, state)
+then
+  RequestBoundary.respond (expiresAt, requestId, session, user)
+```
+
+### Commons.FinishCommons:returning#2
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when CommonsFederating.finish (attempt, code, nonce: state, username), asked by Commons.FinishCommons
+where
+  CommonsFederating._user (attempt) has (user)
+then
+  UserAuthenticating.startSession (user)
+```
+
+### Commons.FinishCommons:returning#3
+
+Authored path: `Commons.FinishCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 16.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 26.
+
+```reaction
+when UserAuthenticating.startSession (user, expiresAt, session), asked by Commons.FinishCommons:returning#2
+where
+  earlier, RequestBoundary.request (attempt, code, path: "/auth/commons/finish", requestId, state)
+then
+  RequestBoundary.respond (expiresAt, requestId, session, user)
+```
+
+### Commons.StartCommons
+
+Authored path: `Commons.StartCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 8.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 13.
+
+```reaction
+when RequestBoundary.request (path: "/auth/commons/start", requestId)
+then
+  CommonsFederating.start ()
+```
+
+### Commons.StartCommons#2
+
+Authored path: `Commons.StartCommons`.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 8.
+- Covered by [Commons sign-in](../design/compositions/Commons.md), line 13.
+
+```reaction
+when CommonsFederating.start (address, attempt, expiresAt), asked by Commons.StartCommons
+where
+  earlier, RequestBoundary.request (path: "/auth/commons/start", requestId)
+then
+  RequestBoundary.respond (address, attempt, expiresAt, requestId)
 ```
 
 ### DeliverFaultToAsker
@@ -898,6 +1149,8 @@ the path or missing key. A declared default fills an absent key. Endpoints
 not listed here have no explicit input contract.
 
 - `/aspects/create` — requires `session`, `game`, `name`, `description`
+- `/auth/commons/choose` — requires `attempt`, `username`
+- `/auth/commons/finish` — requires `attempt`, `state`, `code`
 - `/auth/login` — requires `username`, `password`
 - `/auth/logout` — requires `session`
 - `/auth/me` — requires `session`

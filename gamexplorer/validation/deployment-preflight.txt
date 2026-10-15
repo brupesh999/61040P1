@@ -1,0 +1,5 @@
+PASS: fresh production startup imports exactly 60 games with stored cover URLs.
+PASS: home, database health, game detail, and Commons callback serve successfully.
+PASS: imported game has no aspects or reviews.
+PASS: restarting with import enabled preserves all game identities with no duplicates.
+Scope: isolated random local MongoDB database; hosted checks are separate.

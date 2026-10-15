@@ -1,0 +1,9 @@
+Local production preview: beta interface, October 15, 2026
+PASS /health returns 200 with status ok
+PASS / serves the frontend HTML
+PASS bundled asset /chunk-nxcdz080.css
+PASS Bun embeds the complete local heading font in its stylesheet
+PASS bundled asset /chunk-agqakt9v.js
+PASS /api/games/search responds on the frontend origin
+Browser journeys and screenshots: see browser-checks.md and screenshots/
+Scope: local NODE_ENV=production preview only; class-platform deployment is still pending.

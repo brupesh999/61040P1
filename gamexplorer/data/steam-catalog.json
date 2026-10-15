@@ -1,0 +1,504 @@
+{
+  "retrievedOn": "2026-10-15",
+  "source": "Steam store metadata",
+  "games": [
+    {
+      "title": "Portal 2",
+      "developer": "Valve",
+      "releaseYear": 2011,
+      "steamAppId": 620,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/620/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/620/"
+    },
+    {
+      "title": "Portal",
+      "developer": "Valve",
+      "releaseYear": 2007,
+      "steamAppId": 400,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/400/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/400/"
+    },
+    {
+      "title": "Half-Life 2",
+      "developer": "Valve",
+      "releaseYear": 2004,
+      "steamAppId": 220,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/220/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/220/"
+    },
+    {
+      "title": "Half-Life",
+      "developer": "Valve",
+      "releaseYear": 1998,
+      "steamAppId": 70,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/70/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/70/"
+    },
+    {
+      "title": "Left 4 Dead 2",
+      "developer": "Valve",
+      "releaseYear": 2009,
+      "steamAppId": 550,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/550/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/550/"
+    },
+    {
+      "title": "Left 4 Dead",
+      "developer": "Valve",
+      "releaseYear": 2008,
+      "steamAppId": 500,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/500/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/500/"
+    },
+    {
+      "title": "Terraria",
+      "developer": "Re-Logic",
+      "releaseYear": 2011,
+      "steamAppId": 105600,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/105600/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/105600/"
+    },
+    {
+      "title": "Stardew Valley",
+      "developer": "ConcernedApe",
+      "releaseYear": 2016,
+      "steamAppId": 413150,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/413150/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/413150/"
+    },
+    {
+      "title": "Hollow Knight",
+      "developer": "Team Cherry",
+      "releaseYear": 2017,
+      "steamAppId": 367520,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/367520/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/367520/"
+    },
+    {
+      "title": "Celeste",
+      "developer": "Maddy Makes Games Inc., Extremely OK Games, Ltd.",
+      "releaseYear": 2018,
+      "steamAppId": 504230,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/504230/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/504230/"
+    },
+    {
+      "title": "Cuphead",
+      "developer": "Studio MDHR Entertainment Inc.",
+      "releaseYear": 2017,
+      "steamAppId": 268910,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/268910/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/268910/"
+    },
+    {
+      "title": "Undertale",
+      "developer": "tobyfox",
+      "releaseYear": 2015,
+      "steamAppId": 391540,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/391540/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/391540/"
+    },
+    {
+      "title": "Dead Cells",
+      "developer": "Motion Twin",
+      "releaseYear": 2018,
+      "steamAppId": 588650,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/588650/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/588650/"
+    },
+    {
+      "title": "Slay the Spire",
+      "developer": "Mega Crit",
+      "releaseYear": 2019,
+      "steamAppId": 646570,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/646570/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/646570/"
+    },
+    {
+      "title": "FTL: Faster Than Light",
+      "developer": "Subset Games",
+      "releaseYear": 2012,
+      "steamAppId": 212680,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/212680/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/212680/"
+    },
+    {
+      "title": "Into the Breach",
+      "developer": "Subset Games",
+      "releaseYear": 2018,
+      "steamAppId": 590380,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/590380/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/590380/"
+    },
+    {
+      "title": "Papers, Please",
+      "developer": "Lucas Pope",
+      "releaseYear": 2013,
+      "steamAppId": 239030,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/239030/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/239030/"
+    },
+    {
+      "title": "Return of the Obra Dinn",
+      "developer": "Lucas Pope",
+      "releaseYear": 2018,
+      "steamAppId": 653530,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/653530/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/653530/"
+    },
+    {
+      "title": "The Binding of Isaac: Rebirth",
+      "developer": "Nicalis, Inc., Edmund McMillen",
+      "releaseYear": 2014,
+      "steamAppId": 250900,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/250900/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/250900/"
+    },
+    {
+      "title": "Hotline Miami",
+      "developer": "Dennaton Games",
+      "releaseYear": 2012,
+      "steamAppId": 219150,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/219150/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/219150/"
+    },
+    {
+      "title": "Hotline Miami 2: Wrong Number",
+      "developer": "Dennaton Games",
+      "releaseYear": 2015,
+      "steamAppId": 274170,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/274170/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/274170/"
+    },
+    {
+      "title": "Super Meat Boy",
+      "developer": "Team Meat",
+      "releaseYear": 2010,
+      "steamAppId": 40800,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/40800/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/40800/"
+    },
+    {
+      "title": "FEZ",
+      "developer": "Polytron Corporation",
+      "releaseYear": 2013,
+      "steamAppId": 224760,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/224760/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/224760/"
+    },
+    {
+      "title": "Spelunky",
+      "developer": "Mossmouth",
+      "releaseYear": 2013,
+      "steamAppId": 239350,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/239350/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/239350/"
+    },
+    {
+      "title": "LIMBO",
+      "developer": "Playdead",
+      "releaseYear": 2011,
+      "steamAppId": 48000,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/48000/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/48000/"
+    },
+    {
+      "title": "INSIDE",
+      "developer": "Playdead",
+      "releaseYear": 2016,
+      "steamAppId": 304430,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/304430/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/304430/"
+    },
+    {
+      "title": "Braid",
+      "developer": "Number None",
+      "releaseYear": 2009,
+      "steamAppId": 26800,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/26800/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/26800/"
+    },
+    {
+      "title": "Bastion",
+      "developer": "Supergiant Games",
+      "releaseYear": 2011,
+      "steamAppId": 107100,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/107100/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/107100/"
+    },
+    {
+      "title": "Transistor",
+      "developer": "Supergiant Games",
+      "releaseYear": 2014,
+      "steamAppId": 237930,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/237930/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/237930/"
+    },
+    {
+      "title": "Pyre",
+      "developer": "Supergiant Games",
+      "releaseYear": 2017,
+      "steamAppId": 462770,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/462770/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/462770/"
+    },
+    {
+      "title": "Ori and the Blind Forest: Definitive Edition",
+      "developer": "Moon Studios GmbH",
+      "releaseYear": 2016,
+      "steamAppId": 387290,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/387290/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/387290/"
+    },
+    {
+      "title": "To the Moon",
+      "developer": "Freebird Games",
+      "releaseYear": 2012,
+      "steamAppId": 206440,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/206440/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/206440/"
+    },
+    {
+      "title": "Legend of Grimrock",
+      "developer": "Almost Human Games",
+      "releaseYear": 2012,
+      "steamAppId": 207170,
+      "coverUrl": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/207170/header.jpg?t=1447355394",
+      "sourceUrl": "https://store.steampowered.com/app/207170/"
+    },
+    {
+      "title": "Legend of Grimrock 2",
+      "developer": "Almost Human Games",
+      "releaseYear": 2014,
+      "steamAppId": 251730,
+      "coverUrl": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251730/header.jpg?t=1447358653",
+      "sourceUrl": "https://store.steampowered.com/app/251730/"
+    },
+    {
+      "title": "The Elder Scrolls V: Skyrim Special Edition",
+      "developer": "Bethesda Game Studios",
+      "releaseYear": 2016,
+      "steamAppId": 489830,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/489830/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/489830/"
+    },
+    {
+      "title": "The Elder Scrolls IV: Oblivion® Game of the Year Edition (2009)",
+      "developer": "Bethesda Game Studios",
+      "releaseYear": 2009,
+      "steamAppId": 22330,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/22330/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/22330/"
+    },
+    {
+      "title": "Fallout 3: Game of the Year Edition",
+      "developer": "Bethesda Game Studios",
+      "releaseYear": 2009,
+      "steamAppId": 22370,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/22370/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/22370/"
+    },
+    {
+      "title": "Fallout: New Vegas",
+      "developer": "Obsidian Entertainment",
+      "releaseYear": 2010,
+      "steamAppId": 22380,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/22380/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/22380/"
+    },
+    {
+      "title": "The Witcher 3: Wild Hunt — Remastered",
+      "developer": "CD PROJEKT RED",
+      "releaseYear": 2015,
+      "steamAppId": 292030,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/292030/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/292030/"
+    },
+    {
+      "title": "The Witcher 2: Assassins of Kings Enhanced Edition",
+      "developer": "CD PROJEKT RED",
+      "releaseYear": 2012,
+      "steamAppId": 20920,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/20920/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/20920/"
+    },
+    {
+      "title": "DARK SOULS™: REMASTERED",
+      "developer": "QLOC, FromSoftware, Inc.",
+      "releaseYear": 2018,
+      "steamAppId": 570940,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/570940/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/570940/"
+    },
+    {
+      "title": "DARK SOULS™ II: Scholar of the First Sin",
+      "developer": "FromSoftware, Inc.",
+      "releaseYear": 2015,
+      "steamAppId": 335300,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/335300/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/335300/"
+    },
+    {
+      "title": "DARK SOULS™ III",
+      "developer": "FromSoftware, Inc.",
+      "releaseYear": 2016,
+      "steamAppId": 374320,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/374320/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/374320/"
+    },
+    {
+      "title": "Sekiro™: Shadows Die Twice - GOTY Edition",
+      "developer": "FromSoftware, Inc.",
+      "releaseYear": 2019,
+      "steamAppId": 814380,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/814380/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/814380/"
+    },
+    {
+      "title": "Torchlight II",
+      "developer": "Runic Games",
+      "releaseYear": 2012,
+      "steamAppId": 200710,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/200710/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/200710/"
+    },
+    {
+      "title": "Borderlands 2",
+      "developer": "Gearbox Software, Aspyr (Mac), Aspyr (Linux)",
+      "releaseYear": 2012,
+      "steamAppId": 49520,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/49520/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/49520/"
+    },
+    {
+      "title": "BioShock Infinite",
+      "developer": "Irrational Games, Virtual Programming (Linux)",
+      "releaseYear": 2013,
+      "steamAppId": 8870,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/8870/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/8870/"
+    },
+    {
+      "title": "Dishonored",
+      "developer": "Arkane Studios",
+      "releaseYear": 2012,
+      "steamAppId": 205100,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/205100/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/205100/"
+    },
+    {
+      "title": "Life is Strange - Episode 1",
+      "developer": "DONTNOD Entertainment, Feral Interactive (Mac), Feral Interactive (Linux)",
+      "releaseYear": 2015,
+      "steamAppId": 319630,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/319630/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/319630/"
+    },
+    {
+      "title": "Castle Crashers®",
+      "developer": "The Behemoth",
+      "releaseYear": 2012,
+      "steamAppId": 204360,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/204360/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/204360/"
+    },
+    {
+      "title": "FINAL FANTASY VII",
+      "developer": "Square Enix, FINE Co., Ltd.",
+      "releaseYear": 2013,
+      "steamAppId": 3837340,
+      "coverUrl": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3837340/3b50db0d7b22ff324f322d4298bd399401bae1b6/library_capsule.jpg?t=1775108423",
+      "sourceUrl": "https://store.steampowered.com/app/3837340/"
+    },
+    {
+      "title": "FINAL FANTASY VII REMAKE INTERGRADE",
+      "developer": "Square Enix",
+      "releaseYear": 2022,
+      "steamAppId": 1462040,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1462040/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/1462040/"
+    },
+    {
+      "title": "FINAL FANTASY VII REBIRTH",
+      "developer": "Square Enix",
+      "releaseYear": 2025,
+      "steamAppId": 2909400,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/2909400/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/2909400/"
+    },
+    {
+      "title": "FINAL FANTASY XIV Online",
+      "developer": "Square Enix",
+      "releaseYear": 2014,
+      "steamAppId": 39210,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/39210/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/39210/"
+    },
+    {
+      "title": "FINAL FANTASY XVI",
+      "developer": "Square Enix",
+      "releaseYear": 2024,
+      "steamAppId": 2515020,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/2515020/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/2515020/"
+    },
+    {
+      "title": "Phoenix Wright: Ace Attorney Trilogy",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2019,
+      "steamAppId": 787480,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/787480/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/787480/"
+    },
+    {
+      "title": "Resident Evil",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2015,
+      "steamAppId": 304240,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/304240/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/304240/"
+    },
+    {
+      "title": "Resident Evil 2",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2019,
+      "steamAppId": 883710,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/883710/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/883710/"
+    },
+    {
+      "title": "Resident Evil 4",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2023,
+      "steamAppId": 2050650,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/2050650/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/2050650/"
+    },
+    {
+      "title": "Resident Evil Requiem",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2026,
+      "steamAppId": 3764200,
+      "coverUrl": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3764200/ed3b2cae7d15f598f41006f5f1e605ec5517b5e4/library_capsule.jpg?t=1779840172",
+      "sourceUrl": "https://store.steampowered.com/app/3764200/"
+    }
+  ],
+  "existingCovers": [
+    {
+      "title": "Devil May Cry 5",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2019,
+      "steamAppId": 601150,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/601150/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/601150/"
+    },
+    {
+      "title": "Hades",
+      "developer": "Supergiant Games",
+      "releaseYear": 2020,
+      "steamAppId": 1145360,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1145360/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/1145360/"
+    }
+  ]
+}

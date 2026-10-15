@@ -1,0 +1,13 @@
+{
+  "name": "gamexplorer-deployment",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "workspaces": ["gamexplorer"],
+  "overrides": {
+    "bson": "7.2.0"
+  },
+  "scripts": {
+    "start": "bun run --cwd gamexplorer start",
+    "preview": "bun run --cwd gamexplorer preview"
+  }
+}

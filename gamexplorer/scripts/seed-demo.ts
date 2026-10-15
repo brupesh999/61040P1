@@ -8,17 +8,20 @@ const application = assembleApplication(db);
 const handler = createHttpHandler({ application, gateway: createGateway({ application }), policy });
 
 async function call(path: string, body: Record<string, unknown>) {
+  const { session, ...input } = body;
   const response = await handler(
     new Request(`http://127.0.0.1:3000/api${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json", ...(typeof session === "string" ? { Cookie: `__Host-gamexplorer-session=${session}` } : {}) },
+      body: JSON.stringify(input),
     }),
   );
   const payload = (await response.json()) as Record<string, any>;
   if (!response.ok) {
     throw new Error(`${path} failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
+  const issued = response.headers.getSetCookie().find(line => line.startsWith("__Host-gamexplorer-session="));
+  if (issued) payload.session = issued.split(";")[0]!.split("=")[1];
   return payload;
 }
 

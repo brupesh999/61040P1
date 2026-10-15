@@ -17,7 +17,8 @@ export function shape(fields: Record<string, FieldKind>): EndpointValidator {
       return { ok: false, detail };
     }
     const record = value as Record<string, unknown>;
-    const ok = names.every((name) => typeof record[name] === fields[name]);
+    const ok = names.every((name) => typeof record[name] === fields[name] ||
+      ((name === "session" || name === "attempt") && record[name] === null));
     return ok ? { ok: true } : { ok: false, detail };
   };
 }

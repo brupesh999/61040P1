@@ -1,0 +1,87 @@
+{
+  "checkedOn": "2026-10-15",
+  "environment": "local production preview",
+  "requestedGames": [
+    {
+      "title": "FINAL FANTASY VII",
+      "steamAppId": 3837340,
+      "game": "996a8280-35d5-4661-a9bc-4184a73ac03a",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "FINAL FANTASY VII REMAKE INTERGRADE",
+      "steamAppId": 1462040,
+      "game": "be918de7-1e82-42ea-ad7d-2eabc7b27856",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "FINAL FANTASY VII REBIRTH",
+      "steamAppId": 2909400,
+      "game": "39f60385-6dfc-4f28-9358-c2669c13cba2",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "FINAL FANTASY XIV Online",
+      "steamAppId": 39210,
+      "game": "8985f9a5-18c3-4aa5-8e9d-d92b3feaa1a4",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "FINAL FANTASY XVI",
+      "steamAppId": 2515020,
+      "game": "b089441f-53bd-41db-ab63-aa543b5a6daf",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "Phoenix Wright: Ace Attorney Trilogy",
+      "steamAppId": 787480,
+      "game": "da241386-c69a-4963-85f7-323543636092",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "Resident Evil",
+      "steamAppId": 304240,
+      "game": "dc3febd4-96f1-4313-b3ce-1f3fe66b728e",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "Resident Evil 2",
+      "steamAppId": 883710,
+      "game": "5b9788aa-1fe0-4b97-8a90-170967d0b1f6",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "Resident Evil 4",
+      "steamAppId": 2050650,
+      "game": "2953e7c5-7d89-49a7-b6fd-22c4cfa9bdb8",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    },
+    {
+      "title": "Resident Evil Requiem",
+      "steamAppId": 3764200,
+      "game": "2344a13c-0764-408c-b6e2-9a837eeeedb3",
+      "coverStored": true,
+      "aspects": 0,
+      "reviews": 0
+    }
+  ],
+  "catalogCount": 62
+}

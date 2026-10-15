@@ -26,12 +26,51 @@ export type GamexplorerWire = {
     };
     error: { error: AppWideError | "ASPECT_EXISTS" | "EMPTY_ASPECT_NAME" | "GAME_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
+  "/auth/commons/choose": {
+    input: {
+      "attempt": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["_linkable"]>[0], ["attempt"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["link"]>[0], ["attempt"]>]>>;
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["registerExternal"]>[0], ["username"]>>;
+    };
+    output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["expiresAt"]>>;
+      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["session"]>>;
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    };
+    error: { error: AppWideError | "ALREADY_LINKED" | "INVALID_INPUT" | "INVALID_USERNAME" | "NOT_CONFIRMED" | "SIGN_IN_EXPIRED" | "UNKNOWN_USER" | "USERNAME_TAKEN" };
+  };
+  "/auth/commons/finish": {
+    input: {
+      "attempt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["finish"]>[0], ["attempt"]>>;
+      "code": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["finish"]>[0], ["code"]>>;
+      "state": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["finish"]>[0], ["nonce"]>>;
+    };
+    output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["expiresAt"]>>;
+      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["session"]>>;
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    } | {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["expiresAt"]>>;
+      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>>, ["session"]>>;
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    };
+    error: { error: AppWideError | "ALREADY_LINKED" | "INVALID_INPUT" | "INVALID_USERNAME" | "NOT_CONFIRMED" | "SIGN_IN_EXPIRED" | "SIGN_IN_REFUSED" | "UNKNOWN_USER" | "USERNAME_TAKEN" };
+  };
+  "/auth/commons/start": {
+    input: Record<string, never>;
+    output: {
+      "address": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["start"]>>, ["address"]>>;
+      "attempt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["start"]>>, ["attempt"]>>;
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["start"]>>, ["expiresAt"]>>;
+    };
+    error: { error: AppWideError };
+  };
   "/auth/login": {
     input: {
       "password": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>[0], ["password"]>>;
       "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>[0], ["username"]>>;
     };
     output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["expiresAt"]>>;
       "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["user"]>>;
     };
@@ -64,6 +103,7 @@ export type GamexplorerWire = {
       "username": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["register"]>[0], ["username"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>[0], ["username"]>]>>;
     };
     output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["expiresAt"]>>;
       "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["user"]>>;
     };
@@ -85,6 +125,10 @@ export type GamexplorerWire = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -118,6 +162,10 @@ export type GamexplorerWire = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -150,6 +198,10 @@ export type GamexplorerWire = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -184,6 +236,10 @@ export type GamexplorerWire = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -235,6 +291,10 @@ export type GamexplorerWire = {
             "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["count"]>>;
           };
         }[];
+        "cover": {
+          "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+          "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+        };
         "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
         "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>>;
         "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
@@ -250,6 +310,10 @@ export type GamexplorerWire = {
     output: {
       "results": {
         "games": {
+          "cover": {
+            "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+            "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+          };
           "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["developer"]>>;
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["game"]>>;
           "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["releaseYear"]>>;
@@ -315,12 +379,39 @@ export type GamexplorerWireHttp = {
       "description": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["description"]>>;
       "game": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["game"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>]>>;
       "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>[0], ["name"]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["createAspect"]>>, ["aspect"]>>;
     };
     error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+  };
+  "/auth/commons/choose": {
+    input: {
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["registerExternal"]>[0], ["username"]>>;
+    };
+    output: {
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" };
+  };
+  "/auth/commons/finish": {
+    input: {
+      "code": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["finish"]>[0], ["code"]>>;
+      "state": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["finish"]>[0], ["nonce"]>>;
+    };
+    output: {
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    } | {
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["startSession"]>[0], ["user"]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" };
+  };
+  "/auth/commons/start": {
+    input: Record<string, never>;
+    output: {
+      "address": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["start"]>>, ["address"]>>;
+    };
+    error: { error: HttpAppWideError };
   };
   "/auth/login": {
     input: {
@@ -328,24 +419,19 @@ export type GamexplorerWireHttp = {
       "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>[0], ["username"]>>;
     };
     output: {
-      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["user"]>>;
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
   "/auth/logout": {
-    input: {
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["logout"]>[0], ["session"]>>;
-    };
+    input: Record<string, never>;
     output: {
       "user": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["logout"]>>, ["user"]>>;
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
   "/auth/me": {
-    input: {
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
-    };
+    input: Record<string, never>;
     output: {
       "me": {
         "user": Jsonify<AllOf<[AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>>, ["user"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["_username"]>[0], ["user"]>]>>;
@@ -360,15 +446,12 @@ export type GamexplorerWireHttp = {
       "username": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["register"]>[0], ["username"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>[0], ["username"]>]>>;
     };
     output: {
-      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["authenticate"]>>, ["user"]>>;
     };
     error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
   "/discover/clear": {
-    input: {
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
-    };
+    input: Record<string, never>;
     output: {
       "results": {
         "aspectNames": {
@@ -381,6 +464,10 @@ export type GamexplorerWireHttp = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -400,7 +487,6 @@ export type GamexplorerWireHttp = {
   "/discover/remove": {
     input: {
       "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["removeFilter"]>[0], ["aspectName"]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "results": {
@@ -414,6 +500,10 @@ export type GamexplorerWireHttp = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -431,9 +521,7 @@ export type GamexplorerWireHttp = {
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/discover/results": {
-    input: {
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
-    };
+    input: Record<string, never>;
     output: {
       "results": {
         "aspectNames": {
@@ -446,6 +534,10 @@ export type GamexplorerWireHttp = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -466,7 +558,6 @@ export type GamexplorerWireHttp = {
     input: {
       "aspectName": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["aspectName"]>>;
       "minScore": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["setFilter"]>[0], ["minScore"]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "results": {
@@ -480,6 +571,10 @@ export type GamexplorerWireHttp = {
         "matches": {
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectFiltering"]["_matchGames"]>>>, ["game"]>>;
           "info": {
+            "cover": {
+              "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+              "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+            };
             "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
             "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
             "title": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["title"]>>;
@@ -500,7 +595,6 @@ export type GamexplorerWireHttp = {
     input: {
       "developer": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["addGame"]>[0], ["developer"]>>;
       "releaseYear": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["addGame"]>[0], ["releaseYear"]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
       "title": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["addGame"]>[0], ["title"]>>;
     };
     output: {
@@ -531,6 +625,10 @@ export type GamexplorerWireHttp = {
             "count": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["AspectRating"]["_summary"]>>>, ["count"]>>;
           };
         }[];
+        "cover": {
+          "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+          "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+        };
         "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["developer"]>>;
         "game": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>[0], ["game"]>>;
         "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_get"]>>>, ["releaseYear"]>>;
@@ -546,6 +644,10 @@ export type GamexplorerWireHttp = {
     output: {
       "results": {
         "games": {
+          "cover": {
+            "coverUrl": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["coverUrl"]>>;
+            "steamAppId": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_steamCover"]>>>, ["steamAppId"]>>;
+          };
           "developer": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["developer"]>>;
           "game": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["game"]>>;
           "releaseYear": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameCatalog"]["_searchGames"]>>>, ["releaseYear"]>>;
@@ -556,9 +658,7 @@ export type GamexplorerWireHttp = {
     error: { error: HttpAppWideError | "INVALID_REQUEST" };
   };
   "/ratings/mine": {
-    input: {
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
-    };
+    input: Record<string, never>;
     output: {
       "mine": {
         "ratings": {
@@ -582,7 +682,6 @@ export type GamexplorerWireHttp = {
       "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
       "microNote": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["microNote"]>>;
       "score": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["score"]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["rateAspect"]>[0], ["aspect"]>>;
@@ -593,7 +692,6 @@ export type GamexplorerWireHttp = {
   "/ratings/remove": {
     input: {
       "aspect": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectManaging"]["_get"]>[0], ["aspect"]>]>>;
-      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["UserAuthenticating"]["current"]>[0], ["session"]>>;
     };
     output: {
       "aspect": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["AspectRating"]["removeRating"]>[0], ["aspect"]>>;

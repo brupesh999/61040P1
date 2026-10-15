@@ -14,7 +14,8 @@ Accounts.Register at /auth/register
 Accounts.Login at /auth/login
 ```
 
-The frontend keeps the session and asks who it belongs to with
+The HTTP boundary keeps the session in an HttpOnly cookie and supplies it to the
+existing compositions. The frontend asks who it belongs to with
 [the current user](reaction:Accounts.Me). [Logging out](reaction:Accounts.Logout) ends the
 session, after which it no longer authorizes anything.
 
@@ -24,3 +25,6 @@ Accounts.Logout at /auth/logout
 ```
 
 The current user is shown with [their username](former:Accounts.CurrentUser).
+Register and Login return the session expiry to the HTTP boundary, which removes
+the credential and expiry from JSON responses. Body-supplied session values never
+override cookies. Browser requests using credentials must match PUBLIC_ORIGIN.

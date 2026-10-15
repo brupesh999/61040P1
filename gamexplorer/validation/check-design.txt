@@ -1,0 +1,2 @@
+$ sync-engine check-design design/concepts/*.md design/types.md design/compositions/*.md
+Design form check passed for 12 files.

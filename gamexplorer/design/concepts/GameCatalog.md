@@ -24,6 +24,8 @@ a set of Games with
   a unique title String
   a developer String
   a releaseYear Number
+  an optional steamAppId Number
+  an optional coverUrl String
 ```
 
 ## Actions
@@ -40,6 +42,18 @@ addGame(title: String, developer: String, releaseYear: Number) : returns (game: 
   then
     add a new game with the trimmed title, developer, and releaseYear
     returns game
+
+setSteamCover(game: Game, steamAppId: Number, coverUrl: String) : returns ()
+  where steamAppId is not a positive whole number, or coverUrl is not an HTTPS image URL on an approved Steam static host under the store-assets path for that steamAppId
+  then
+    refuses INVALID_COVER "A cover needs a positive Steam app ID and its HTTPS Steam store image URL."
+  where no entry in Games has identity game
+  then
+    refuses GAME_NOT_FOUND "This game could not be found."
+  where the cover is valid and an entry in Games has identity game
+  then
+    set that game's steamAppId and coverUrl, replacing its previous cover if present
+    returns
 ```
 
 ## Queries
@@ -55,4 +69,10 @@ _get(game: Game) : optional (title: String, developer: String, releaseYear: Numb
 _searchGames(query: String) : many (game: Game, title: String, developer: String, releaseYear: Number)
   Answers every game whose title contains query, ignoring case, ordered by title. An empty
   query answers every game. Answers no rows when nothing matches.
+
+_steamCover(game: Game) : one (steamAppId: Number, coverUrl: String)
+  Answers the stored Steam app identity and cover URL. For an unknown game or a game
+  without a cover, answers steamAppId 0 and coverUrl "". This total query lets a former
+  include cover metadata without dropping a game that has no artwork. Metadata queries
+  retain their existing return shapes.
 ```

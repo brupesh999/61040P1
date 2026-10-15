@@ -2,6 +2,8 @@ import { MongoServerError, type Collection, type Db } from "mongodb";
 
 export class InvalidGame extends Error {}
 export class GameExists extends Error {}
+export class InvalidCover extends Error {}
+export class GameNotFound extends Error {}
 
 interface GameDoc {
   _id: string;
@@ -10,6 +12,8 @@ interface GameDoc {
   titleKey: string;
   developer: string;
   releaseYear: number;
+  steamAppId?: number;
+  coverUrl?: string;
 }
 
 function keyOf(title: string): string {
@@ -78,6 +82,33 @@ export class GameCatalogConcept {
   async _getGame({ title }: { title: string }) {
     const found = await this.games.findOne({ titleKey: keyOf(String(title)) });
     return found ? [{ game: found._id }] : [];
+  }
+
+  async setSteamCover({ game, steamAppId, coverUrl }: { game: string; steamAppId: number; coverUrl: string }) {
+    const hosts = new Set([
+      "shared.fastly.steamstatic.com", "shared.akamai.steamstatic.com",
+      "shared.cloudflare.steamstatic.com", "cdn.akamai.steamstatic.com",
+      "cdn.cloudflare.steamstatic.com",
+    ]);
+    let valid = false;
+    try {
+      const url = new URL(coverUrl);
+      valid = typeof coverUrl === "string" && Number.isInteger(steamAppId) && steamAppId > 0 &&
+        url.protocol === "https:" && !url.username && !url.password && !url.port &&
+        hosts.has(url.hostname) && /\.(?:jpg|jpeg|png|webp)$/i.test(url.pathname) &&
+        [`/steam/apps/${steamAppId}/`, `/store_item_assets/steam/apps/${steamAppId}/`].some(prefix => url.pathname.startsWith(prefix));
+    } catch { /* Refuse malformed URLs with the same public error. */ }
+    if (!valid) throw new InvalidCover("A cover needs a positive Steam app ID and its HTTPS Steam store image URL.");
+    const result = await this.games.updateOne({ _id: game }, { $set: { steamAppId, coverUrl } });
+    if (result.matchedCount === 0) throw new GameNotFound("This game could not be found.");
+    return {};
+  }
+
+  async _steamCover({ game }: { game: string }) {
+    const found = await this.games.findOne({ _id: game });
+    return found?.steamAppId && found.coverUrl
+      ? { steamAppId: found.steamAppId, coverUrl: found.coverUrl }
+      : { steamAppId: 0, coverUrl: "" };
   }
 
   async _get({ game }: { game: string }) {

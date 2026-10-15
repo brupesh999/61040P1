@@ -26,3 +26,4 @@ Discovery.ClearFilters at /discover/clear
 
 Each match shows [its catalog entry](former:Discovery.GameInfo) and
 [its recorded score](former:Discovery.MatchedScore) for each filtered aspect.
+The catalog entry includes its optional [Steam cover](former:Discovery.SteamCover).
