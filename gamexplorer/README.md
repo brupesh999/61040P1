@@ -196,13 +196,15 @@ an empty deployment first needs contributions through the interface.
 1. Browse the public catalog, search for a title, and open its aspect breakdown.
    Unrated aspects are labelled explicitly, and each community average includes its
    rating count. Expand an aspect to read the reviewers' tiny reviews.
-2. Sign in and open Discover. Choose Combat Depth with a minimum average of 8.
+2. Sign in and open Discover. Choose Combat with a minimum average of 8.
    Add Narrative Depth with a minimum of 8. Results must satisfy both criteria, and
    each matching card explains its scores and counts.
 3. If nothing matches, edit a threshold or remove a criterion. Open a matching game
    to inspect the reviews that explain its strengths.
-4. After playing, submit a whole score from 1 to 10 for an aspect you know, optionally
-   adding a tiny review within 280 characters. Other aspects remain unrated.
+4. After playing, open an aspect you know. If it is missing, use Add an aspect to
+   search the shared list; Add a new aspect appears below it for a missing category.
+   Submit a whole score from 1 to 10, optionally adding a tiny review within 280
+   characters. Other aspects remain unrated.
 5. Open My Ratings and use Edit rating to return to that exact aspect. Update the
    score or review, or remove the rating after confirming. The community average
    and discovery contribution change with the saved rating.

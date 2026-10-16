@@ -288,3 +288,9 @@ suggestions, server-side duplicate enforcement, stricter legacy requirements, al
 removal, and preservation of conflicting old reviews when startup is refused. Design,
 generation, artifact, and TypeScript checks pass. The check now has 22 advisories: the
 additional ORDER_SENSITIVE_FORMER describes the deliberately ordered aspect choices.
+
+The change was deployed as `e003487f1`. Hosted checks confirm the 32 public choices,
+canonical Combat alias, catalog/detail integrity, and existing HTTP security behavior.
+After reload, the Commons session remained signed in. The production picker found Combat
+when searching combat depth and kept Add a new aspect below the shared list. No production
+write was made. See [hosted evidence](deployment.md#shared-aspect-deployment).

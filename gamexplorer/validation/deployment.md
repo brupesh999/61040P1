@@ -2,8 +2,8 @@
 
 URL: https://gamexplorer.mit-sdg.dev
 
-Running application commit: `8fa803a1d05945c4b4b2f11a233275e1f93aacea`.
-Deployment ID: `26493c42-e162-4c2b-b530-c85ff41bbf52`.
+Running application commit: `e003487f194ddd22ba571dc65c89fd158830b65c`.
+Deployment ID: `2d4df7b7-a4fb-4bc0-96a5-0a48c5e6bbba`.
 The platform Overview reports Healthy and the deployed commit above.
 The initial beta deployment was commit `272b540c2731dde141fb5d73265e3f71feed8662`;
 the evidence below distinguishes that initial run from the concept refinement.
@@ -37,7 +37,7 @@ or aspects were created on the public site.
 
 ## Concept-refinement deployment
 
-The checked refinement commit `8fa803a1d` is active on the same URL and database.
+The checked refinement commit `8fa803a1d` was deployed on the same URL and database.
 Startup reported zero added games and 60 attached covers, confirming the repeated
 catalog import did not create duplicates. The saved [hosted regression report](refinement-deployed-checks.json)
 passes health, frontend asset delivery, all 60 catalog/detail requests, persisted cover
@@ -48,8 +48,25 @@ After reloading the public app, the existing Commons session remained signed in.
 My Ratings and Discover loaded the account's stored empty state successfully. The checks
 did not submit reviews, aspects, or filters under the user's production account.
 [Platform capture](screenshots/refinement-deployment.jpg) records the active commit.
-The current automated run passes 70 tests with 518 assertions; compatibility and real
+That refinement's automated run passed 70 tests with 518 assertions; compatibility and real
 write journeys use isolated MongoDB databases and the local browser preview.
+
+## Shared-aspect deployment
+
+Commit `e003487f1` is now active. Its read-only [hosted checks](shared-aspects-deployed-checks.json)
+pass the new public aspect-options endpoint, its 32 presets and canonical Combat alias,
+all 60 catalog/detail requests, cover metadata, authentication refusals, forged credentials,
+origin enforcement, and callback privacy. A pre-deployment [naming check](naming-preflight.json)
+found no conflicting legacy dimensions on those games.
+
+The browser retained the existing Commons session after reload. Bastion's unchanged game
+link opened the new picker; searching combat depth returned Combat, and Add a new aspect
+appeared below the shared list. No aspect or review was submitted on production during
+these checks. The automated suite now passes 76 tests and 554 assertions. Local browser
+writes and legacy-data compatibility checks remain separate evidence from these public reads.
+
+- [Live shared picker](screenshots/live-shared-aspects.jpg)
+- [Active application commit](screenshots/shared-aspects-deployment.jpg)
 
 The full write journey still needs to be rehearsed on the public app before the
 beta recording. The automated write/error/access-control journeys used isolated
