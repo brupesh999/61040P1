@@ -258,3 +258,9 @@ uses, and concurrent reviewer replacement/removal. Design, generation, artifact,
 TypeScript checks pass. The concurrency test covers one running process and is not a
 claim of cross-process ordering or crash recovery. The design check still reports 12
 files and the code check still reports 21 advisories.
+
+The refinement was then deployed as commit `8fa803a1d` on the existing production
+database. The hosted read-only regression report passed all 60 catalog/detail requests
+and the HTTP security checks. Reloading retained the existing Commons session and the
+checked game link; My Ratings and Discover loaded successfully. The full hosted write
+journey remains separate work before recording. See [deployment evidence](deployment.md).
