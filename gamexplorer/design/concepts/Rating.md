@@ -35,6 +35,7 @@ a set of Ratings with
   a target Target
   a score Number
   a note String
+  an updatedAt DateTime
   unique rater and target
 ```
 
@@ -50,7 +51,7 @@ rate(rater: Rater, target: Target, score: Number, note: String) : returns ()
     refuses NOTE_TOO_LONG "A review note must be at most 280 characters."
   where score is an integer from 1 to 10 and the trimmed note is at most 280 characters
   then
-    replace the existing evaluation for rater and target with score and the trimmed note, or add it if absent
+    replace the existing evaluation for rater and target with score and the trimmed note, or add it if absent; set updatedAt to the current time
     returns
 
 remove(rater: Rater, target: Target) : returns ()
@@ -67,10 +68,10 @@ remove(rater: Rater, target: Target) : returns ()
 
 ```queries
 _byRater(rater: Rater) : many (target: Target, score: Number, note: String)
-  Answers the rater's evaluations, most recently updated first, or no rows when absent.
+  Answers the rater's evaluations, ordered by updatedAt descending, or no rows when absent. Ties are unspecified.
 
 _forTarget(target: Target) : many (rater: Rater, score: Number, note: String)
-  Answers the target's evaluations, most recently updated first, or no rows when absent.
+  Answers the target's evaluations, ordered by updatedAt descending, or no rows when absent. Ties are unspecified.
 
 _summary(target: Target) : one (average: Number, count: Number)
   Answers the mean score rounded to one decimal and the number of evaluations. With no

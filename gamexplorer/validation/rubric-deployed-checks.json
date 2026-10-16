@@ -1,0 +1,64 @@
+{
+  "url": "https://gamexplorer.mit-sdg.dev",
+  "commit": "9112e59d20918918e551449e11afde9a9d802b2c",
+  "checkedAt": "2026-10-16T04:43:33.598Z",
+  "checks": [
+    {
+      "check": "Shared options expose at least 33 presets, one canonical Combat name, and its searchable alias",
+      "result": "PASS"
+    },
+    {
+      "check": "Hosted health endpoint reaches MongoDB",
+      "result": "PASS"
+    },
+    {
+      "check": "Hosted frontend HTML loads",
+      "result": "PASS"
+    },
+    {
+      "check": "Bundled JS and CSS are served from the hosted origin",
+      "result": "PASS"
+    },
+    {
+      "check": "Hosted MongoDB contains exactly 60 imported games",
+      "result": "PASS"
+    },
+    {
+      "check": "Each game has persisted Steam identity and remote cover metadata",
+      "result": "PASS"
+    },
+    {
+      "check": "All ten requested Final Fantasy, Phoenix Wright, and Resident Evil entries are present",
+      "result": "PASS"
+    },
+    {
+      "check": "All 60 catalog detail pages retain their identities, titles, and consistent review counts",
+      "result": "PASS"
+    },
+    {
+      "check": "Unauthenticated account reads are refused",
+      "result": "PASS"
+    },
+    {
+      "check": "Unauthenticated private-rating reads are refused",
+      "result": "PASS"
+    },
+    {
+      "check": "JSON credentials cannot impersonate a session",
+      "result": "PASS"
+    },
+    {
+      "check": "Foreign origin is refused at the HTTP boundary",
+      "result": "PASS"
+    },
+    {
+      "check": "Commons callback serves private, uncached HTML without reflecting query credentials",
+      "result": "PASS"
+    }
+  ],
+  "detailsChecked": 60,
+  "aspectChoices": 33,
+  "limitations": [
+    "These hosted checks perform no authenticated writes. The saved HTTP tests and local browser exercise writes separately; full hosted write rehearsal remains."
+  ]
+}

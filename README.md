@@ -10,6 +10,7 @@ Aspect-based game evaluation and discovery platform for 6.1040 (Fall 2026).
 - Design notes and reflections: `reflections/journal.md` in the private individual repository.
 - [Concept Specifications](gamexplorer/design/concepts/)
 - [Composition Specifications](gamexplorer/design/compositions/)
+- [HTTP API Guide and Generated Contracts](gamexplorer/README.md#http-api-and-generated-contracts)
 - [Backend Concepts](gamexplorer/src/concepts/)
 - [Backend Compositions, Endpoints, Formers, and Reactions](gamexplorer/src/compositions/)
 - [Vue Frontend](gamexplorer/web/app.ts)
@@ -51,6 +52,7 @@ The implementation follows sync-engine's concept separation and files in `gamexp
 - [P1 feedback and P3 concept refinements](gamexplorer/design/evolution-p3.md)
 - [Updated beta user journey](gamexplorer/README.md#beta-user-journey)
 - [Browser journey validation](gamexplorer/validation/browser-checks.md)
+- [Completed-work rubric audit](gamexplorer/validation/browser-checks.md#rubric-audit--october-16-2026)
 - [Saved automated validation output](gamexplorer/validation/)
 
 The beta is in progress. Deployment uses the address above; its live checks are

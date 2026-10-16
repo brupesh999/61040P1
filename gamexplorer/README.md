@@ -17,11 +17,36 @@ Starting from an empty database, a reviewer registers, adds a real game such as 
 - Concept implementations and unit tests: [src/concepts/](src/concepts/)
 - Endpoints, formers, views, and reactions: [src/compositions/](src/compositions/)
 - HTTP policy: [src/http.ts](src/http.ts)
+- HTTP API and generated contracts: [API guide](#http-api-and-generated-contracts)
 - Vue app shell and account dialog: [web/app.ts](web/app.ts)
 - Page components: [web/pages/](web/pages/)
 - Shared account/request state: [web/state.ts](web/state.ts)
 - Beta interface specification: [design/interface.md](design/interface.md)
 - Full user-journey integration tests: [src/app.test.ts](src/app.test.ts)
+
+## HTTP API and generated contracts
+
+The [generated wire contracts](generated/wire.ts) define endpoint request fields,
+successful responses, and public errors. Use `GamexplorerWireHttp` for browser/HTTP
+callers. All application API endpoints accept JSON objects using `POST /api` plus
+their contract path; for example, `POST /api/games/detail` accepts `{ "game": "<game-id>" }`.
+An HTTP response is the successful object shown in the contract or `{ "error": "<category>" }`.
+The health endpoint is separate: `GET /health`.
+
+Protected endpoints obtain the caller from an HttpOnly session cookie. Send same-origin
+credentials; do not supply `session`, `attempt`, or a claimed user/owner in JSON as
+authentication. Login/registration and successful Commons sign-in issue cookies rather
+than returning credentials in JSON. Private reads and writes enforce authentication on
+the server. Public catalog search/detail and aspect choices need no session.
+The [authentication design](design/authentication.md), [HTTP policy](src/http.ts), and
+[Commons composition](src/compositions/Commons.ts) describe origin checks, sign-in
+attempt cookies, and public error categories.
+
+The [generated assembly read-back](generated/gamexplorer.md) documents the concepts,
+reactions, formers, and internal gateway contracts. Its `session`/`attempt` inputs and
+concept refusal codes describe the gateway before HTTP cookie/error projection; they
+are not fields that HTTP clients should send. Both generated files are checked by
+`bun run check` and refreshed by `bun run generate`.
 
 ## Validation
 

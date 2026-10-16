@@ -333,3 +333,37 @@ Long titles and Devil May Cry 5 were included. Temporary viewport overrides were
 The deployed catalog was checked at commit `9112e59d2`: all 60 titles use the requested
 font, weight, and synthesis setting without overflowing their containers. The Commons
 session remains signed in. [Live capture](screenshots/live-bold-catalog.jpg).
+
+
+## Rubric audit — October 16, 2026
+
+Scope: completed implementation, automated tests, interface, and public technical
+writing. This does not assess the unfinished visual-study export, beta recording,
+private notebook, or full hosted write journey. This is a code/evidence review, not
+an instructor grade.
+
+| Rubric quality | Evidence reviewed | Finding |
+| --- | --- | --- |
+| Faithfulness | Six concept definitions, composition specs/source, generated gateway and HTTP contracts | No behavioral mismatch found in the reviewed paths. Added Rating.updatedAt to logical state/action effects to specify the existing review ordering; linked the generated contracts and explained HTTP cookie/error projection in the README. |
+| Modularity | Concept implementations, assembly, rating projection reactions, Vue pages/state | No peer-concept imports/calls in concepts. Opaque identities are joined in compositions; authentication/ownership comes from the server session. Shared string helpers contain no concept state. Vue separates catalog, detail, discovery, personal ratings, and shared requests. |
+| Behavioral coverage/effective checks | Concept tests, Naming, Compatibility, HTTP journeys, Commons/provider tests | All 19 specified actions execute in tests. Principle, refusal, replacement/removal, owner isolation, legacy data, and alias cases use assertions. Fixtures use actions/endpoints; direct DB reads inspect password encoding, and DB drops isolate tests. |
+| Integration | Real HTTP handler and MongoDB journeys; saved local browser writes; hosted read-only report | Fresh suite passes 76 tests and 555 assertions. Fresh hosted reads pass all 60 detail pages, persisted covers, 33 shared choices, health, unauthenticated/forged-session/origin refusals, and callback privacy. These do not claim authenticated production-write coverage. |
+| Interaction | Rating/edit/removal, My Ratings, discovery controls, shared picker, account switching, error/empty/loading states | The reviewed flows support clear tasks, immediate feedback, retained refused drafts, explicit unrated states, and confirmed removal without forced refreshes. Saved browser checks include phone-width layouts. |
+| Visual design | Current catalog and reviewer captures, interface spec, CSS/font sources | Consistent navy/ruby palette and typography, readable hierarchy, coherent cover grid, separate primary actions, and no recorded phone-width overflow. Sampled text contrast ratios range from 6.21:1 to 16.56:1; this samples key token pairs rather than claiming a full accessibility audit. |
+| Intentional development/technical writing | Git increments, evolution-p3, interface/authentication specs, READMEs and saved validation | Public records explain the generic concepts, preservation of P2 data, explicit aliases, and interface revisions. Records distinguish historical/current and local/hosted checks. Personal review and reflection belong to the private notebook and are not inferred from agent checks. |
+
+The 22 checker advisories remain visible: 17 MISSING_ENDPOINT_FALLBACK diagnostics
+and five ORDER_SENSITIVE_FORMER diagnostics. The affected endpoint action/refusal and
+complementary query branches were inspected and their success/refusal tests pass;
+no timeout was reproduced. The formers intentionally preserve query order. These
+advisories are not suppressed or represented as resolved.
+
+The strongest evidence beyond routine happy paths is the legacy alias conflict case:
+startup refuses an unsafe policy instead of silently combining competing reviews,
+and a test verifies both reviews survive. Other regression tests verify final-rating
+withdrawal removes old discovery values and invalid updates preserve saved data.
+Concurrent HTTP tests cover one process; crash recovery and distributed ordering remain
+explicitly outside the demonstrated guarantees.
+
+References: [fresh automated output](tests.txt), [fresh hosted report](rubric-deployed-checks.json),
+[design evolution](../design/evolution-p3.md), [HTTP API guide](../README.md#http-api-and-generated-contracts).
