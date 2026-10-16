@@ -1,5 +1,5 @@
 {
-  "retrievedOn": "2026-10-15",
+  "retrievedOn": "2026-10-16",
   "source": "Steam store metadata",
   "games": [
     {
@@ -481,6 +481,70 @@
       "steamAppId": 3764200,
       "coverUrl": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3764200/ed3b2cae7d15f598f41006f5f1e605ec5517b5e4/library_capsule.jpg?t=1779840172",
       "sourceUrl": "https://store.steampowered.com/app/3764200/"
+    },
+    {
+      "title": "Devil May Cry HD Collection",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2018,
+      "steamAppId": 631510,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/631510/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/631510/"
+    },
+    {
+      "title": "Devil May Cry 4 Special Edition",
+      "developer": "CAPCOM Co., Ltd.",
+      "releaseYear": 2015,
+      "steamAppId": 329050,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/329050/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/329050/"
+    },
+    {
+      "title": "CRISIS CORE –FINAL FANTASY VII– REUNION",
+      "developer": "Square Enix, TOSE CO., LTD.",
+      "releaseYear": 2022,
+      "steamAppId": 1608070,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1608070/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/1608070/"
+    },
+    {
+      "title": "NieR:Automata™",
+      "developer": "Square Enix, PlatinumGames Inc.",
+      "releaseYear": 2017,
+      "steamAppId": 524220,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/524220/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/524220/"
+    },
+    {
+      "title": "NieR Replicant™ ver.1.22474487139...",
+      "developer": "Square Enix, Toylogic Inc.",
+      "releaseYear": 2021,
+      "steamAppId": 1113560,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1113560/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/1113560/"
+    },
+    {
+      "title": "FINAL FANTASY X/X-2 HD Remaster",
+      "developer": "Square Enix",
+      "releaseYear": 2016,
+      "steamAppId": 359870,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/359870/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/359870/"
+    },
+    {
+      "title": "FINAL FANTASY® XIII",
+      "developer": "Square Enix",
+      "releaseYear": 2014,
+      "steamAppId": 292120,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/292120/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/292120/"
+    },
+    {
+      "title": "FINAL FANTASY XV WINDOWS EDITION",
+      "developer": "Square Enix",
+      "releaseYear": 2018,
+      "steamAppId": 637650,
+      "coverUrl": "https://cdn.akamai.steamstatic.com/steam/apps/637650/library_600x900.jpg",
+      "sourceUrl": "https://store.steampowered.com/app/637650/"
     }
   ],
   "existingCovers": [

@@ -103,7 +103,7 @@ bun run seed:demo
 bun run dev
 ```
 
-To add 60 games with official Steam covers and no reviews:
+To import 68 games with official Steam covers and no reviews:
 
 ```sh
 bun run seed:catalog
@@ -156,7 +156,7 @@ Do not upload `.env` or local database credentials. `PUBLIC_ORIGIN` must match t
 exact browser origin, without a trailing slash; it configures Commons and the HTTP
 cookie/origin policy. Local data is not copied to the deployed database; add initial
 data through the deployed app or enable `IMPORT_STEAM_CATALOG=1`. That flag runs
-the existing idempotent 60-game importer through GameCatalog actions on startup,
+the existing idempotent 68-game importer through GameCatalog actions on startup,
 without adding reviews or resetting data. The MongoDB connection pool is limited to
 three application connections to fit overlapping versions within the platform limit.
 

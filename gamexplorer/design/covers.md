@@ -6,7 +6,7 @@ AI upscaling, or replacement artwork is used by this app. Source provenance does
 prove an image's production history; the initial list uses established games and their
 recognizable store artwork rather than automatically trusting community tags.
 
-A checked-in manifest records 60 selected games, their metadata, Steam app IDs, exact
+A checked-in manifest records 68 selected games, their metadata, Steam app IDs, exact
 official portrait library-cover URLs, source pages, and retrieval date. Steam's public
 store metadata is consulted when preparing the manifest, not on every catalog view.
 The importer replays this manifest through GameCatalog actions. It appends missing
@@ -65,6 +65,14 @@ and Resident Evil Requiem. The original VII uses its current Steam PC listing; y
 in this import refer to the Steam edition's release. These are imported as games with covers only, without
 aspects or reviews. Store metadata and artwork are checked against the specific
 Steam app IDs to distinguish remakes from the originals.
+
+The additional selection includes Devil May Cry HD Collection (the combined Steam
+release of 1–3), Devil May Cry 4 Special Edition, Crisis Core Reunion, NieR:Automata,
+NieR Replicant ver.1.22474487139..., Final Fantasy X/X-2 HD Remaster, XIII, and XV
+Windows Edition. These use the specific Steam edition's title, developer, release
+year, and verified portrait URL. The original PSP Crisis Core and Dirge of Cerberus
+are not part of this import. Rerunning the import attaches covers to matching games
+already added through the interface without replacing their identities or contributions.
 
 Non-Steam games such as Zelda are deferred. GameCatalog identities already exist
 independently of Steam IDs and manually added games need no Steam metadata. Supporting
