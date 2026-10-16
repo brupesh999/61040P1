@@ -59,3 +59,35 @@ The projection is updated by reactions after successful rating actions. Concurre
 replacement/removal tests check three reviewers in one process. There is no claim of
 distributed serialization or automatic reconstruction after an interrupted projection;
 those require a separate recovery design if the deployment grows beyond this scope.
+
+
+## Shared aspect naming
+
+The user identified that Combat and Combat Depth split discovery matches despite their
+intended equivalence. The chosen change is a broad preset list with reusable custom
+names and a lower Add a new aspect disclosure. Automatic semantic grouping was not
+chosen: names such as Difficulty and Accessibility can be related without meaning the
+same thing. Explicit aliases make the intended equivalence reviewable.
+
+This stays within the existing six concepts. DimensionDefining accepts immutable
+suggested names and alias rules as configuration; it still owns only subject/dimension
+associations. ThresholdFiltering accepts the same string rules for its own values and
+requirements. The application supplies this policy in compositions/assembly. A pure
+string helper shares no state, concept methods, or external identity properties.
+Aliases resolve old MongoDB labels when read, so dimension IDs, review targets, deep
+links, and review text remain unchanged. No database rewrite is required.
+
+Old duplicate criteria combine using the greatest minimum, preserving their original
+AND meaning. Editing or removing the canonical criterion updates all equivalent saved
+requirements. Replacing or forgetting a received value also handles its old alias keys,
+so removing the final Combat Depth rating cannot leave a stale Combat match.
+
+A read-only startup diagnostic blocks the alias policy if one game already has separate
+dimensions named both Combat and Combat Depth. Combining those could lose competing
+reviews by the same author; it requires a deliberate resolution rather than an automatic
+merge. A regression fixture verifies that both reviews survive the refused startup.
+
+The preset list is configuration and does not prepopulate every game with unrated cards.
+The current suite passes 76 tests and 554 assertions. Local browser checks confirm
+searching an alias, adding an unrated preset, duplicate refusal with the draft retained,
+old reviews and identities, the lower custom form, and no horizontal overflow at 390px.

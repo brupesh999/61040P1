@@ -107,3 +107,13 @@ refusals, sign-out/account switching, persistence after a deliberate reload, key
 operation, and narrow layouts through the browser. Backend authorization and aggregate
 coordination stay in the existing compositions and are covered by automated tests.
 Record browser findings separately from automated and deployed-platform results.
+
+
+## Shared aspect selection
+
+At the bottom of the game page, Add an aspect opens a searchable shared list. Presets
+appear first and previously added custom names are reusable across games. Already added
+names are disabled. Selecting a name shows its description and an Add aspect action.
+Below the list, a separate Add a new aspect disclosure contains the custom name and
+optional description fields. Unknown names are allowed; the placement makes reuse the
+usual path. Known aliases resolve on the server, with Combat Depth displayed as Combat.

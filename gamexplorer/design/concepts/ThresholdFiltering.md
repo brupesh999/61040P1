@@ -42,7 +42,9 @@ a set of Requirements with
   a minimum Number
   unique owner and criterion
 
-Rule: criterion names are compared after trimming, lowercasing, and collapsing internal whitespace.
+Rule: criterion names are compared after trimming, lowercasing, collapsing internal whitespace, and resolving aliases supplied as immutable string configuration by the instantiation.
+Rule: legacy equivalent requirements are treated as one requirement with the greatest minimum, preserving their AND meaning. An explicit set replaces them all; remove removes them all.
+Rule: if legacy received values use equivalent names for an item, a row stored under the canonical name takes precedence. recordValue replaces all equivalent received values; forgetValue removes them all.
 Rule: recorded values and minimums are finite numbers; negative values and values above 10 are allowed.
 ```
 

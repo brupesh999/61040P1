@@ -47,3 +47,21 @@ The optional [Steam cover](former:Catalog.SteamCover) appears on the game detail
 as well. Covers are publisher-supplied Steam store images attached through the
 catalog import action. There is no public endpoint accepting arbitrary artwork URLs.
 Games without a stored cover remain visible and usable.
+
+## Shared aspect choices
+
+The public [aspect options endpoint](reaction:Catalog.AspectOptions) lists
+[shared choices](former:Catalog.AspectChoices) from GameDimensions._names.
+The application configures a broad preset vocabulary and
+an explicit Combat Depth → Combat alias. The backend applies it even to direct requests.
+Other custom names remain allowed; defining one makes it available to other games.
+Names with different meanings are not merged through fuzzy matching.
+
+```endpoints
+Catalog.AspectOptions at /aspects/options
+```
+
+Before startup, the naming diagnostic checks for legacy dimensions on the same game
+that resolve to one name. Such a conflict stops the new deployment for review; it does
+not delete targets or overwrite ratings. Otherwise aliases work with existing IDs and
+stored names without a destructive data migration.

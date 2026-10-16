@@ -26,6 +26,19 @@ export type GamexplorerWire = {
     };
     error: { error: AppWideError | "DIMENSION_EXISTS" | "EMPTY_DIMENSION_NAME" | "GAME_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
+  "/aspects/options": {
+    input: Record<string, never>;
+    output: {
+      "choices": {
+        "options": {
+          "aliases": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["aliases"]>>;
+          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["description"]>>;
+          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["name"]>>;
+        }[];
+      };
+    };
+    error: { error: AppWideError };
+  };
   "/auth/commons/choose": {
     input: {
       "attempt": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["_linkable"]>[0], ["attempt"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["CommonsFederating"]["link"]>[0], ["attempt"]>]>>;
@@ -382,6 +395,19 @@ export type GamexplorerWireHttp = {
       "aspect": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["define"]>>, ["dimension"]>>;
     };
     error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+  };
+  "/aspects/options": {
+    input: Record<string, never>;
+    output: {
+      "choices": {
+        "options": {
+          "aliases": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["aliases"]>>;
+          "description": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["description"]>>;
+          "name": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["GameDimensions"]["_names"]>>>, ["name"]>>;
+        }[];
+      };
+    };
+    error: { error: HttpAppWideError };
   };
   "/auth/commons/choose": {
     input: {

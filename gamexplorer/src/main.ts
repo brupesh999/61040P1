@@ -6,6 +6,9 @@ import { db } from "./db.ts";
 import { frontendHandler } from "../web/serve.ts";
 import { CommonsProvider } from "./concepts/Federating/provider.ts";
 
+const { checkAspectNames } = await import("./compositions/aspectVocabulary.ts");
+await checkAspectNames(db);
+
 // Explicit opt-in for a fresh deployment; repeat imports preserve existing contributions.
 if (process.env.IMPORT_STEAM_CATALOG === "1") {
   const { importBundledSteamCatalog } = await import("./catalogImport.ts");

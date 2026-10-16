@@ -1,3 +1,4 @@
+import { aspectNaming, dimensionNaming } from "./compositions/aspectVocabulary.ts";
 import { assemble } from "@mit-sdg/sync-engine/assembly";
 import type { Db } from "mongodb";
 import { db as defaultDb } from "./db.ts";
@@ -23,9 +24,9 @@ export function assembleApplication(db: Db = defaultDb, provider: Provider = new
       UserAuthenticating: new UserAuthenticatingConcept(db),
       CommonsFederating: new FederatingConcept<string>(db, provider, "CommonsFederating"),
       GameCatalog: new GameCatalogConcept(db),
-      GameDimensions: new DimensionDefiningConcept(db),
+      GameDimensions: new DimensionDefiningConcept(db, dimensionNaming),
       DimensionRatings: new RatingConcept(db),
-      GameDiscovery: new ThresholdFilteringConcept(db),
+      GameDiscovery: new ThresholdFilteringConcept(db, aspectNaming),
     },
     composition: { Accounts: accounts, Commons: commons, Catalog: catalog, Rating: rating, Discovery: discovery },
     redaction: { fields: ["attempt", "nonce", "state", "code", "verifier", "code_verifier"] },

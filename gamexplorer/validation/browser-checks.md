@@ -264,3 +264,27 @@ database. The hosted read-only regression report passed all 60 catalog/detail re
 and the HTTP security checks. Reloading retained the existing Commons session and the
 checked game link; My Ratings and Discover loaded successfully. The full hosted write
 journey remains separate work before recording. See [deployment evidence](deployment.md).
+
+
+## Shared aspect presets and explicit aliases
+
+The preview was restarted against the same isolated database. Combat Depth now displays
+as Combat with the same dimension ID, two saved reviews, and average 9.0. Searching the
+new picker for combat depth finds Combat and marks it already added. Selecting Music
+and adding it immediately created an unrated card with its suggested description; no
+review or score was created. The Add a new aspect disclosure sits below the list.
+Submitting Combat Depth through that custom form was refused as a duplicate while
+preserving its draft. Error feedback appears in the form used for the request. Filtering the list so a prior
+selection is hidden disables Add aspect, preventing submission of an invisible choice.
+
+The list and custom form were checked at 390 × 844; page width remained 390px.
+Temporary viewport overrides were reset. Captures:
+[full page](screenshots/shared-aspects.jpg), [picker](screenshots/shared-aspect-picker.jpg).
+These writes were confined to the isolated preview database.
+
+The saved suite passes 76 tests with 554 assertions. The new HTTP journey covers a
+legacy Combat Depth review and new Combat review matching one criterion, shared custom
+suggestions, server-side duplicate enforcement, stricter legacy requirements, alias-aware
+removal, and preservation of conflicting old reviews when startup is refused. Design,
+generation, artifact, and TypeScript checks pass. The check now has 22 advisories: the
+additional ORDER_SENSITIVE_FORMER describes the deliberately ordered aspect choices.

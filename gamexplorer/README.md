@@ -40,7 +40,7 @@ Last validation run:
 
 - `bun run check:design`: passes for all 12 design files.
 - `bun run check`: passes sync-engine artifact checks and TypeScript.
-- `bun test --timeout 20000`: 70 passing tests, 0 failing tests.
+- `bun test --timeout 20000`: 76 passing tests, 0 failing tests.
 
 The tests use concept actions and real endpoints rather than direct MongoDB writes for setup. The integration suite drives the HTTP handler against MongoDB and checks the core journey, error cases, access control, and that ratings are attributed to the authenticated session rather than user-supplied fields.
 
@@ -49,7 +49,7 @@ They clear only their throwaway database between tests and delete it afterward; 
 do not clear the application database. Podman must be running. `MONGODB_URL` may be
 set in `.env`; otherwise tests use the local container's development connection.
 Saved design checks, code checks, and test output are in [validation/](validation/).
-The code check reports 21 sync-engine advisories; it exits successfully.
+The code check reports 22 sync-engine advisories; it exits successfully.
 
 ## Running Locally
 
@@ -148,6 +148,11 @@ Compositions supply the game-specific associations and connect Commons identitie
 Gamexplorer accounts. Existing game/aspect identities, reviews, and filters are preserved;
 compatibility tests create genuine P2 state through the archived concept actions and
 exercise the current endpoints against it. See [the refinement record](design/evolution-p3.md).
+The game page offers 32 shared aspect presets, reuses custom names added on other games,
+and keeps Add a new aspect in a lower disclosure. Explicit aliases currently map
+Combat Depth to Combat for definitions, stored criteria, and discovery values.
+This extends naming configuration in the existing concepts without adding a concept.
+Unrecognized custom synonyms remain distinct; the app does not infer meaning automatically.
 Steam cover metadata is included in catalog and discovery responses.
 It applies the visual study's pixel headings and navy/ruby palette,
 separates page components, and improves discovery criteria editing, rating feedback,

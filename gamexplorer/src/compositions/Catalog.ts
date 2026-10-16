@@ -26,6 +26,13 @@ const SearchResults = former(
     }),
 );
 
+const AspectChoices = former("the shared aspect choices", (_, { name, description, aliases }) =>
+  form({ options: each(GameDimensions._names({}).is({ name, description, aliases })).form({ name, description, aliases }) }),
+);
+const AspectOptions = endpoint("/aspects/options", () =>
+  receive({}).then(respond({ choices: AspectChoices({}) })),
+);
+
 const Search = endpoint(
   "/games/search",
   ({ query }) => receive({ query }).then(respond({ results: SearchResults({ query }) })),
@@ -123,6 +130,8 @@ const CreateAspect = endpoint(
 
 export const composition = {
   SteamCover,
+  AspectChoices,
+  AspectOptions,
   Search,
   SearchResults,
   AddGame,

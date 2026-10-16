@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
+import { computed, defineComponent, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
 import { client } from "../api.ts";
 import { account, notify, useRequest } from "../state.ts";
 
@@ -17,6 +17,24 @@ export default defineComponent({
     const drafts = reactive<Record<string, { score: number; microNote: string }>>({});
     const expanded = reactive<Record<string, boolean>>({});
     const newAspect = reactive({ name: "", description: "" });
+    type AspectChoice = { name: string; description: string; aliases: string };
+    const aspectChoices = ref<AspectChoice[]>([]);
+    const aspectSearch = ref("");
+    const selectedAspect = ref("");
+    const addingCustom = ref(false);
+    const choiceRequest = useRequest();
+    const filteredChoices = computed(() => {
+      const query = aspectSearch.value.trim().toLowerCase();
+      return aspectChoices.value.filter(choice => `${choice.name} ${choice.aliases}`.toLowerCase().includes(query));
+    });
+    const selectedChoice = computed(() => filteredChoices.value.find(choice => choice.name === selectedAspect.value));
+    const alreadyAdded = (name: string) => detail.value?.aspects.some(aspect => aspect.name.toLowerCase() === name.toLowerCase()) ?? false;
+    async function loadChoices() {
+      const result = await choiceRequest.run(() => client.aspects.options({}));
+      if (!result) return;
+      if ("error" in result) return choiceRequest.fail(result.error);
+      aspectChoices.value = result.choices.options;
+    }
     const removing = ref<string | null>(null);
     const activeEditor = ref("");
     const loadingRequest = useRequest();
@@ -67,11 +85,11 @@ export default defineComponent({
       notify("Rating removed.");
       await load();
     }
-    async function createAspect() {
-      if (!account.user) return;
-      if (!newAspect.name.trim()) { aspectRequest.error.value = "Give the aspect a name."; return; }
+    async function submitAspect(name: string, description: string) {
+      if (!account.user) return false;
+      if (!name.trim()) { aspectRequest.error.value = "Give the aspect a name."; return false; }
       const result = await aspectRequest.run(() => client.aspects.create({
-        game: props.game, name: newAspect.name, description: newAspect.description,
+        game: props.game, name, description,
       }));
       if (!result) return;
       if ("error" in result) return aspectRequest.fail(result.error, {
@@ -79,15 +97,29 @@ export default defineComponent({
         INVALID_REQUEST: "Give the aspect a name.",
       });
       expanded[result.aspect] = true;
-      notify(`Added ${newAspect.name.trim()}.`);
-      newAspect.name = "";
-      newAspect.description = "";
       await load();
+      notify(`Added ${detail.value?.aspects.find(item => item.aspect === result.aspect)?.name ?? name.trim()}.`);
+      await loadChoices();
+      return true;
     }
-    onMounted(load);
+    async function addSelectedAspect() {
+      addingCustom.value = false;
+      const choice = selectedChoice.value;
+      if (choice && await submitAspect(choice.name, choice.description)) selectedAspect.value = "";
+    }
+    async function createAspect() {
+      addingCustom.value = true;
+      if (await submitAspect(newAspect.name, newAspect.description)) {
+        newAspect.name = "";
+        newAspect.description = "";
+      }
+    }
+    onMounted(() => { void load(); void loadChoices(); });
     return {
       account, detail, coverFailed, checkCover, drafts, expanded, newAspect, removing, activeEditor, myRating,
-      load, rate, removeRating, createAspect,
+      load, rate, removeRating, createAspect, loadChoices, addSelectedAspect,
+      aspectSearch, selectedAspect, addingCustom, filteredChoices, selectedChoice, alreadyAdded,
+      choicesLoading: choiceRequest.busy, choicesError: choiceRequest.error,
       loading: loadingRequest.busy, loadError: loadingRequest.error,
       saving: ratingRequest.busy, saveError: ratingRequest.error,
       creating: aspectRequest.busy, aspectError: aspectRequest.error,
@@ -141,7 +173,22 @@ export default defineComponent({
         </div>
         <details v-if="account.user" class="contribution-panel">
           <summary><strong>Add an aspect</strong><span class="summary-action" aria-hidden="true">+</span></summary>
-          <form class="aspect-form" @submit.prevent="createAspect"><div class="field"><label for="aspect-name">Aspect name</label><input id="aspect-name" v-model="newAspect.name" placeholder="e.g. Combat Depth" required :disabled="creating"></div><div class="field"><label for="aspect-description">Description <span class="muted">(optional)</span></label><input id="aspect-description" v-model="newAspect.description" placeholder="What should reviewers consider?" :disabled="creating"></div><p v-if="aspectError" class="feedback error full-width" role="alert">{{ aspectError }}</p><div class="form-actions full-width"><span class="muted">Aspects are shared with everyone reviewing this game.</span><button class="primary" :disabled="creating">{{ creating ? 'Adding…' : 'Add aspect' }}</button></div></form>
+          <div class="aspect-picker">
+            <p v-if="choicesLoading" role="status">Loading aspects…</p>
+            <div v-if="choicesError" class="feedback error" role="alert"><span>{{ choicesError }}</span><button class="text-button" @click="loadChoices">Try again</button></div>
+            <form @submit.prevent="addSelectedAspect">
+              <div class="field"><label for="aspect-search">Search aspects</label><input id="aspect-search" type="search" v-model="aspectSearch" placeholder="Search existing aspects"></div>
+              <div class="field"><label for="shared-aspect">Aspect</label><select id="shared-aspect" v-model="selectedAspect" size="7" :disabled="creating || choicesLoading"><option v-for="choice in filteredChoices" :key="choice.name" :value="choice.name" :disabled="alreadyAdded(choice.name)">{{ choice.name }}{{ alreadyAdded(choice.name) ? ' (already added)' : '' }}</option></select></div>
+              <p v-if="!choicesLoading && !choicesError && !filteredChoices.length" class="muted">No matching aspects.</p>
+              <p v-if="selectedChoice" class="muted">{{ selectedChoice.description }}</p>
+              <p v-if="aspectError && !addingCustom" class="feedback error" role="alert">{{ aspectError }}</p>
+              <button class="primary" :disabled="creating || !selectedChoice || alreadyAdded(selectedAspect)">{{ creating ? 'Adding…' : 'Add aspect' }}</button>
+            </form>
+            <details class="custom-aspect-panel">
+              <summary>Add a new aspect</summary>
+              <form class="aspect-form" @submit.prevent="createAspect()"><div class="field"><label for="aspect-name">Aspect name</label><input id="aspect-name" v-model="newAspect.name" placeholder="New aspect name" required :disabled="creating"></div><div class="field"><label for="aspect-description">Description <span class="muted">(optional)</span></label><input id="aspect-description" v-model="newAspect.description" :disabled="creating"></div><p v-if="aspectError && addingCustom" class="feedback error full-width" role="alert">{{ aspectError }}</p><div class="form-actions full-width"><button class="secondary" :disabled="creating">{{ creating ? 'Adding…' : 'Create aspect' }}</button></div></form>
+            </details>
+          </div>
         </details>
       </template>
     </section>`,

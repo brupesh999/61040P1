@@ -32,3 +32,9 @@ Rating for current averages/counts; no review count is stored by ThresholdFilter
 Each match shows [its catalog entry](former:Discovery.GameInfo) and
 [its recorded score](former:Discovery.MatchedScore) for each filtered aspect.
 The catalog entry includes its optional [Steam cover](former:Discovery.SteamCover).
+
+The same immutable name vocabulary used for GameDimensions is supplied to GameDiscovery.
+Thus an existing Combat Depth criterion/value and a new Combat criterion use one key.
+Requirements that become equivalent retain the stricter minimum until explicitly edited.
+The matching former resolves the canonical name back to the game's dimension and reads
+Rating for its count. No concept queries its peer for naming rules.

@@ -11,6 +11,11 @@ aspect dependencies. The application gives their opaque identities these specifi
 - CommonsFederating links a Commons subject to the same local user identity used by ratings
   and filter ownership. No identity object carries properties from another concept.
 
+The application also supplies the same immutable string naming policy to GameDimensions
+and GameDiscovery: preset spellings are canonical, and Combat Depth resolves to Combat.
+Preset choices do not create a dimension on a game or any ratings. Custom names defined
+for one game become suggestions elsewhere. Neither concept reads another's vocabulary.
+
 ```instances
 instantiate UserAuthenticating
 

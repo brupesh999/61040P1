@@ -23,11 +23,13 @@ Defined in [DimensionDefining](../design/concepts/DimensionDefining.md), line 1.
 - `_forSubject(subject: Subject) : many (dimension: Dimension, name: String, description: String)`
 - `_get(dimension: Dimension) : optional (subject: Subject, name: String, description: String)`
 - `_named(subject: Subject, name: String) : optional (dimension: Dimension, description: String)`
+- `_names() : many (name: String, description: String, aliases: String)`
+- `_nameConflicts() : many (subject: Subject, name: String)`
 
 #### Instances
 
-- `GameDimensions` — instance of `DimensionDefining` — [Application types](../design/types.md), line 22.
-  - `Subject` is `GameCatalog.Game` — [Application types](../design/types.md), line 23.
+- `GameDimensions` — instance of `DimensionDefining` — [Application types](../design/types.md), line 27.
+  - `Subject` is `GameCatalog.Game` — [Application types](../design/types.md), line 28.
 
 ### Federating
 
@@ -50,8 +52,8 @@ Defined in [Federating](../design/concepts/Federating.md), line 1.
 
 #### Instances
 
-- `CommonsFederating` — instance of `Federating` — [Application types](../design/types.md), line 17.
-  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 18.
+- `CommonsFederating` — instance of `Federating` — [Application types](../design/types.md), line 22.
+  - `User` is `UserAuthenticating.User` — [Application types](../design/types.md), line 23.
 
 ### GameCatalog
 
@@ -75,7 +77,7 @@ Defined in [GameCatalog](../design/concepts/GameCatalog.md), line 1.
 
 #### Instances
 
-- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 20.
+- `GameCatalog` — instance of `GameCatalog` — [Application types](../design/types.md), line 25.
 
 ### Rating
 
@@ -97,9 +99,9 @@ Defined in [Rating](../design/concepts/Rating.md), line 1.
 
 #### Instances
 
-- `DimensionRatings` — instance of `Rating` — [Application types](../design/types.md), line 25.
-  - `Rater` is `UserAuthenticating.User` — [Application types](../design/types.md), line 26.
-  - `Target` is `GameDimensions.Dimension` — [Application types](../design/types.md), line 27.
+- `DimensionRatings` — instance of `Rating` — [Application types](../design/types.md), line 30.
+  - `Rater` is `UserAuthenticating.User` — [Application types](../design/types.md), line 31.
+  - `Target` is `GameDimensions.Dimension` — [Application types](../design/types.md), line 32.
 
 ### ThresholdFiltering
 
@@ -127,9 +129,9 @@ Defined in [ThresholdFiltering](../design/concepts/ThresholdFiltering.md), line 
 
 #### Instances
 
-- `GameDiscovery` — instance of `ThresholdFiltering` — [Application types](../design/types.md), line 29.
-  - `Item` is `GameCatalog.Game` — [Application types](../design/types.md), line 31.
-  - `Owner` is `UserAuthenticating.User` — [Application types](../design/types.md), line 30.
+- `GameDiscovery` — instance of `ThresholdFiltering` — [Application types](../design/types.md), line 34.
+  - `Item` is `GameCatalog.Game` — [Application types](../design/types.md), line 36.
+  - `Owner` is `UserAuthenticating.User` — [Application types](../design/types.md), line 35.
 
 ### UserAuthenticating
 
@@ -159,7 +161,7 @@ Defined in [UserAuthenticating](../design/concepts/UserAuthenticating.md), line 
 
 #### Instances
 
-- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 15.
+- `UserAuthenticating` — instance of `UserAuthenticating` — [Application types](../design/types.md), line 20.
 
 ## Formers
 
@@ -362,6 +364,21 @@ Former "the search results for (query)" — inputs (query); bindings (game, titl
         title
 ```
 
+### the shared aspect choices
+
+Authored path: `Catalog.AspectChoices`.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 54.
+
+```former
+Former "the shared aspect choices" — inputs (); bindings (name, description, aliases); promises exactly one record — forms:
+  a record of
+    options: each GameDimensions._names () has (aliases, description, name)
+      form a record of
+        aliases
+        description
+        name
+```
+
 ## Reactions
 
 ### Accounts.Login
@@ -518,6 +535,18 @@ where
   earlier, RequestBoundary.request (developer, path: "/games/add", releaseYear, requestId, session, title)
 then
   RequestBoundary.respond (game, requestId)
+```
+
+### Catalog.AspectOptions
+
+Authored path: `Catalog.AspectOptions`.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 53.
+- Covered by [Catalog](../design/compositions/Catalog.md), line 61.
+
+```reaction
+when RequestBoundary.request (path: "/aspects/options", requestId)
+then
+  RequestBoundary.respond (choices: former "the shared aspect choices", requestId)
 ```
 
 ### Catalog.CreateAspect
