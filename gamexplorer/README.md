@@ -148,8 +148,8 @@ Compositions supply the game-specific associations and connect Commons identitie
 Gamexplorer accounts. Existing game/aspect identities, reviews, and filters are preserved;
 compatibility tests create genuine P2 state through the archived concept actions and
 exercise the current endpoints against it. See [the refinement record](design/evolution-p3.md).
-The game page offers 32 shared aspect presets, reuses custom names added on other games,
-and keeps Add a new aspect in a lower disclosure. Explicit aliases currently map
+The game page offers 33 shared aspect presets, reuses custom names added on other games,
+and keeps Create a custom aspect in a lower disclosure. Explicit aliases currently map
 Combat Depth to Combat for definitions, stored criteria, and discovery values.
 This extends naming configuration in the existing concepts without adding a concept.
 Unrecognized custom synonyms remain distinct; the app does not infer meaning automatically.
@@ -201,8 +201,8 @@ an empty deployment first needs contributions through the interface.
    each matching card explains its scores and counts.
 3. If nothing matches, edit a threshold or remove a criterion. Open a matching game
    to inspect the reviews that explain its strengths.
-4. After playing, open an aspect you know. If it is missing, use Add an aspect to
-   search the shared list; Add a new aspect appears below it for a missing category.
+4. After playing, open an aspect you know. If it is missing, use Choose an aspect to
+   search the shared list; Create a custom aspect appears below it for a missing category.
    Submit a whole score from 1 to 10, optionally adding a tiny review within 280
    characters. Other aspects remain unrated.
 5. Open My Ratings and use Edit rating to return to that exact aspect. Update the

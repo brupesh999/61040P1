@@ -232,12 +232,14 @@ main { max-width: 1248px; margin: 0 auto; padding: 0 40px 5rem; min-height: calc
 .remove-confirm .button-row > button { font-size: .76rem; padding: .6rem .8rem; }
 .aspect-form { padding: 1.4rem; display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.2rem; }
 .aspect-picker { padding: 1.4rem; }
+.aspect-contribution > summary { font-size: 1.1rem; }
+.aspect-picker label { font-size: 1.05rem; }
 .aspect-picker > form { display: grid; gap: 1rem; }
 .aspect-picker select[size] { background-image: none; padding: .4rem; }
 .aspect-picker select[size] option { padding: .5rem; }
 .aspect-picker > form > button { justify-self: start; }
 .custom-aspect-panel { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-.custom-aspect-panel > summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+.custom-aspect-panel > summary { cursor: pointer; color: var(--muted); font-size: 1rem; }
 .custom-aspect-panel .aspect-form { padding: 1rem 0 0; }
 
 .discovery-layout { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 2rem; align-items: start; }

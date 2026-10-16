@@ -294,3 +294,20 @@ canonical Combat alias, catalog/detail integrity, and existing HTTP security beh
 After reload, the Commons session remained signed in. The production picker found Combat
 when searching combat depth and kept Add a new aspect below the shared list. No production
 write was made. See [hosted evidence](deployment.md#shared-aspect-deployment).
+
+
+## Voice Acting and picker labels
+
+Added Voice Acting as the 33rd shared preset. In the isolated preview, searching voice
+shows that choice and its description without creating a dimension or review. The panel
+is now Choose an aspect; the selection button is Add to this game; the lower disclosure
+is Create a custom aspect, whose submit button is Create and add aspect.
+
+Computed text sizes at the 15px root are 16.5px for the panel title, 15.75px for Search
+aspects and Aspect labels, and 15px for the custom disclosure. At 390 × 844, document
+width stays 390px. The temporary viewport override was reset.
+[Preview capture](screenshots/voice-acting-picker.jpg).
+
+Design, generation, artifact, and TypeScript checks pass; the existing 22 advisories
+remain. The saved full suite passes 76 tests with 555 assertions, including the new
+preset's exact label and description.

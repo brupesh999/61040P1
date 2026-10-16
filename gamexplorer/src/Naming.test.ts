@@ -36,7 +36,8 @@ async function signIn() {
 test("presets are public suggestions and do not create game dimensions or ratings", async () => {
   const result = await call("/aspects/options");
   expect(result.status).toBe(200);
-  expect(result.body.choices.options).toHaveLength(32);
+  expect(result.body.choices.options).toHaveLength(33);
+  expect(result.body.choices.options).toContainEqual({ name: "Voice Acting", description: "The quality and delivery of spoken performances.", aliases: "" });
   expect(result.body.choices.options[0]).toMatchObject({ name: "Combat", aliases: "combat depth" });
   expect((await call("/games/search", { query: "" })).body.results.games).toEqual([]);
   expect((await call("/aspects/create", { game: "unknown", name: "Combat", description: "" })).status).toBe(401);

@@ -111,9 +111,14 @@ Record browser findings separately from automated and deployed-platform results.
 
 ## Shared aspect selection
 
-At the bottom of the game page, Add an aspect opens a searchable shared list. Presets
+At the bottom of the game page, Choose an aspect opens a searchable shared list. Presets
 appear first and previously added custom names are reusable across games. Already added
-names are disabled. Selecting a name shows its description and an Add aspect action.
-Below the list, a separate Add a new aspect disclosure contains the custom name and
+names are disabled. Selecting a name shows its description and an Add to this game action.
+Below the list, a separate Create a custom aspect disclosure contains the custom name and
 optional description fields. Unknown names are allowed; the placement makes reuse the
 usual path. Known aliases resolve on the server, with Combat Depth displayed as Combat.
+
+The picker title uses 1.1rem, its field labels 1.05rem, and the custom-aspect disclosure
+1rem, so they are easier to distinguish from input text. The custom form submits with
+Create and add aspect, making clear that it defines a category and attaches it to this game.
+Voice Acting is a shared preset for the quality and delivery of spoken performances.

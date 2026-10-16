@@ -171,8 +171,8 @@ export default defineComponent({
             </div>
           </article>
         </div>
-        <details v-if="account.user" class="contribution-panel">
-          <summary><strong>Add an aspect</strong><span class="summary-action" aria-hidden="true">+</span></summary>
+        <details v-if="account.user" class="contribution-panel aspect-contribution">
+          <summary><strong>Choose an aspect</strong><span class="summary-action" aria-hidden="true">+</span></summary>
           <div class="aspect-picker">
             <p v-if="choicesLoading" role="status">Loading aspects…</p>
             <div v-if="choicesError" class="feedback error" role="alert"><span>{{ choicesError }}</span><button class="text-button" @click="loadChoices">Try again</button></div>
@@ -182,11 +182,11 @@ export default defineComponent({
               <p v-if="!choicesLoading && !choicesError && !filteredChoices.length" class="muted">No matching aspects.</p>
               <p v-if="selectedChoice" class="muted">{{ selectedChoice.description }}</p>
               <p v-if="aspectError && !addingCustom" class="feedback error" role="alert">{{ aspectError }}</p>
-              <button class="primary" :disabled="creating || !selectedChoice || alreadyAdded(selectedAspect)">{{ creating ? 'Adding…' : 'Add aspect' }}</button>
+              <button class="primary" :disabled="creating || !selectedChoice || alreadyAdded(selectedAspect)">{{ creating ? 'Adding…' : 'Add to this game' }}</button>
             </form>
             <details class="custom-aspect-panel">
-              <summary>Add a new aspect</summary>
-              <form class="aspect-form" @submit.prevent="createAspect()"><div class="field"><label for="aspect-name">Aspect name</label><input id="aspect-name" v-model="newAspect.name" placeholder="New aspect name" required :disabled="creating"></div><div class="field"><label for="aspect-description">Description <span class="muted">(optional)</span></label><input id="aspect-description" v-model="newAspect.description" :disabled="creating"></div><p v-if="aspectError && addingCustom" class="feedback error full-width" role="alert">{{ aspectError }}</p><div class="form-actions full-width"><button class="secondary" :disabled="creating">{{ creating ? 'Adding…' : 'Create aspect' }}</button></div></form>
+              <summary>Create a custom aspect</summary>
+              <form class="aspect-form" @submit.prevent="createAspect()"><div class="field"><label for="aspect-name">Aspect name</label><input id="aspect-name" v-model="newAspect.name" placeholder="New aspect name" required :disabled="creating"></div><div class="field"><label for="aspect-description">Description <span class="muted">(optional)</span></label><input id="aspect-description" v-model="newAspect.description" :disabled="creating"></div><p v-if="aspectError && addingCustom" class="feedback error full-width" role="alert">{{ aspectError }}</p><div class="form-actions full-width"><button class="secondary" :disabled="creating">{{ creating ? 'Adding…' : 'Create and add aspect' }}</button></div></form>
             </details>
           </div>
         </details>

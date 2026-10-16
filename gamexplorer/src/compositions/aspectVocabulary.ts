@@ -8,6 +8,7 @@ export const aspectPresets = [
   { name: "Pacing", description: "How the game balances progression, repetition, and downtime." },
   { name: "Characters", description: "Character development and relationships." },
   { name: "Dialogue", description: "Writing and delivery of conversations." },
+  { name: "Voice Acting", description: "The quality and delivery of spoken performances." },
   { name: "Worldbuilding", description: "The setting, history, and details of the world." },
   { name: "Exploration", description: "Places to discover and reasons to explore." },
   { name: "Level Design", description: "The layout and variety of playable spaces." },
