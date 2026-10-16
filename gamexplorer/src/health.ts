@@ -13,10 +13,18 @@ function failure(error: unknown): HealthResult {
   };
 }
 
-export function createHealthHandler(db: Db, report: (line: string) => void = console.info) {
+export function createHealthMonitor(
+  db: Db,
+  report: (line: string) => void = console.info,
+  now: () => number = () => performance.now(),
+) {
   let pending: Promise<HealthResult> | undefined;
   let previous: string | undefined;
-  let receivedProbe = false;
+  let available = false;
+  let lastSuccess: number | undefined;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  let responses = 0;
+  let previousHttpStatus: number | undefined;
 
   async function check(): Promise<HealthResult> {
     let result: HealthResult;
@@ -28,6 +36,8 @@ export function createHealthHandler(db: Db, report: (line: string) => void = con
     } catch (error) {
       result = failure(error);
     }
+    available = result.status === "ok";
+    if (available) lastSuccess = now();
     const diagnostic = JSON.stringify(result);
     if (diagnostic !== previous) {
       report(`Database health: ${diagnostic}`);
@@ -36,16 +46,35 @@ export function createHealthHandler(db: Db, report: (line: string) => void = con
     return result;
   }
 
-  return async (request?: Request): Promise<Response> => {
-    if (request && !receivedProbe) {
-      report("First HTTP health probe received.");
-      receivedProbe = true;
-    }
+  async function refresh(): Promise<boolean> {
     pending ??= check().finally(() => { pending = undefined; });
-    const result = await pending;
+    return (await pending).status === "ok";
+  }
+
+  function respond(request: Request): Response {
+    const age = lastSuccess === undefined ? undefined : Math.max(0, now() - lastSuccess);
+    const healthy = available && age !== undefined && age < 5000;
+    const status = healthy ? 200 : 503;
+    if (responses++ < 3 || status !== previousHttpStatus) {
+      const method = request.method === "GET" || request.method === "HEAD" ? request.method : "OTHER";
+      report(`HTTP health response: ${method} ${status}; database age ${age === undefined ? "unknown" : Math.round(age) + " ms"}.`);
+      previousHttpStatus = status;
+    }
     return Response.json(
-      { status: result.status },
-      { status: result.status === "ok" ? 200 : 503, headers: { "Cache-Control": "no-store" } },
+      { status: healthy ? "ok" : "unavailable" },
+      { status, headers: { "Cache-Control": "no-store" } },
     );
+  }
+
+  return {
+    refresh, respond,
+    start() {
+      timer ??= setInterval(() => { void refresh(); }, 2000);
+      timer.unref();
+    },
+    stop() {
+      clearInterval(timer);
+      timer = undefined;
+    },
   };
 }

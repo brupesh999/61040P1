@@ -21,22 +21,28 @@ and new versions overlap during deployment. On SIGTERM or SIGINT, stop accepting
 requests, let current requests finish, and close the shared MongoDB client before
 exiting. No local `.env` is committed.
 
-`/health` checks read access to `gameCatalog.games` with a two-second server limit
-and a three-second driver timeout and abort signal (including initial connection).
-The client also limits connection establishment and server selection to three
-seconds; a query timeout alone does not bound the driver's initial connection.
-It returns HTTP 200 with `status: ok`
-only after a successful read (an empty catalog is healthy), or HTTP 503 with
-`status: unavailable` after a failure. Both responses prohibit caching. Concurrent
-probes share the current database operation; its result is not cached for later
-probes. GET and HEAD must both work through the production Bun server.
+Readiness checks read access to `gameCatalog.games` before opening the HTTP
+listener and every two seconds afterward. Each read has a two-second server
+limit, plus a three-second driver timeout and abort signal, including initial
+connection. Overlapping checks share one database operation. The client also
+bounds connection establishment and server selection; a query timeout alone does
+not bound the driver's initial connection. A failed startup check prevents startup.
 
-Before opening the HTTP listener, run the same database check and fail startup if
-it fails. Log when the first HTTP health probe arrives, changes between healthy
-and unavailable, and graceful shutdown. Failure logs include only a sanitized
-error class and numeric error code, never connection strings, database contents,
-or arbitrary error messages. This distinguishes a worker that cannot read MongoDB
-from a worker whose health route is never reached by the platform.
+`/health` responds immediately without waiting for a database operation. It returns
+HTTP 200 with `status: ok` only when the latest completed database check succeeded
+and that success is less than five seconds old. It returns HTTP 503 with
+`status: unavailable` before any successful check, after a failed check, or when
+the last success is five seconds old, even if another check is still pending.
+An empty catalog is healthy. A failure that begins between checks can take up to
+five seconds to appear. Both responses prohibit caching; GET and HEAD must work
+through the production Bun server. This bounds freshness without making a health
+probe wait behind database network latency or connection-pool contention.
+
+Shutdown stops periodic checks before draining requests and closing MongoDB. Log
+database health transitions, the first three HTTP health response statuses, later
+HTTP status changes, and shutdown. Include the latest successful check's age in
+HTTP diagnostics. Failure logs include only a sanitized error class and numeric
+error code, never connection strings, database contents, or arbitrary messages.
 
 Set PUBLIC_ORIGIN to https://gamexplorer.mit-sdg.dev. The initial hosted database
 is populated with the existing 68-game manifest by setting IMPORT_STEAM_CATALOG=1.

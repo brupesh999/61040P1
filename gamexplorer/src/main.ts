@@ -3,7 +3,7 @@ import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import { assembleApplication } from "./assembly.ts";
 import { gamexplorerPolicy } from "./http.ts";
 import { client, db } from "./db.ts";
-import { createHealthHandler } from "./health.ts";
+import { createHealthMonitor } from "./health.ts";
 import { frontendHandler } from "../web/serve.ts";
 import { CommonsProvider } from "./concepts/Federating/provider.ts";
 
@@ -27,8 +27,8 @@ const application = assembleApplication(db, new CommonsProvider({
 const gateway = createGateway({ application });
 const api = createHttpHandler({ application, gateway, policy });
 const frontend = await frontendHandler();
-const health = createHealthHandler(db);
-if (!(await health()).ok) {
+const health = createHealthMonitor(db);
+if (!(await health.refresh())) {
   await client.close();
   throw new Error("Startup database readiness failed; see the database health diagnostic.");
 }
@@ -39,10 +39,11 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 3000),
   routes: {
     "/api/*": api,
-    "/health": health,
+    "/health": health.respond,
   },
   fetch: frontend,
 });
+health.start();
 
 console.log(`Backend ready on ${server.url}`);
 
@@ -50,6 +51,7 @@ let stopping = false;
 async function shutdown(signal: string) {
   if (stopping) return;
   stopping = true;
+  health.stop();
   console.info(`Shutdown: ${signal}; draining requests and closing MongoDB.`);
   const deadline = setTimeout(() => process.exit(1), 10_000);
   deadline.unref();
