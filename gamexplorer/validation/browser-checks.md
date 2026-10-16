@@ -316,3 +316,20 @@ The same labels and sizes were verified on production commit `441d0c1b2`, with t
 Commons session retained. Voice Acting was selected for inspection without submitting
 a contribution. [Live capture](screenshots/live-voice-acting-picker.jpg) and
 [focused hosted checks](voice-acting-deployed-checks.json) record this update.
+
+
+## Bold catalog game titles
+
+Catalog card titles now use Geist Pixel Square at weight 700 with weight synthesis
+enabled, matching the existing game-detail headings. The interface spec was updated
+before the CSS. Design, artifact generation, source, and TypeScript checks pass with
+the same 22 advisories. The existing 76-test result covers unchanged application logic;
+no new test was added for this CSS-only change.
+
+In the isolated preview, all 62 catalog titles report the specified font and weight.
+At 390px width, no title overflows its container and document width remains 390px.
+Long titles and Devil May Cry 5 were included. Temporary viewport overrides were reset.
+
+The deployed catalog was checked at commit `9112e59d2`: all 60 titles use the requested
+font, weight, and synthesis setting without overflowing their containers. The Commons
+session remains signed in. [Live capture](screenshots/live-bold-catalog.jpg).

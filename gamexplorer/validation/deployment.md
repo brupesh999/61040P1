@@ -1,9 +1,9 @@
-# Hosted deployment — October 15, 2026
+# Hosted deployment — updated October 16, 2026
 
 URL: https://gamexplorer.mit-sdg.dev
 
-Running application commit: `441d0c1b2d0ced42fbaf41c0e1acf23f54c6476f`.
-Deployment ID: `a5940dc1-d26e-46fa-8195-490a24f9b816`.
+Running application commit: `9112e59d20918918e551449e11afde9a9d802b2c`.
+Deployment ID: `57d68be1-e3ba-4ad9-9abb-144f9219a206`.
 The platform Overview reports Healthy and the deployed commit above.
 The initial beta deployment was commit `272b540c2731dde141fb5d73265e3f71feed8662`;
 the evidence below distinguishes that initial run from the concept refinement.
@@ -90,3 +90,15 @@ No production contribution was submitted. Temporary viewport overrides were rese
 The saved automated suite passes 76 tests with 555 assertions. This small update
 changes one suggested category and interface wording/styles; existing hosted regression
 evidence above covers the unchanged catalog and security behavior.
+
+
+## Bold catalog titles — October 16
+
+The platform made commit `9112e59d2` current and reported Deployment healthy. After
+reloading the public catalog, all 60 titles use Geist Pixel Square at weight 700 with
+weight synthesis enabled. No title overflows its container; the session remains signed
+in and the catalog still contains 60 entries. The screenshot shows the desktop layout.
+[Live catalog](screenshots/live-bold-catalog.jpg). Temporary viewport overrides were reset.
+
+This is a CSS-only change. Design, artifact generation, source, and TypeScript checks
+pass; unchanged application behavior retains the previously saved 76-test evidence.
