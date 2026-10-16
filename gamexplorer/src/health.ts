@@ -60,10 +60,16 @@ export function createHealthMonitor(
       report(`HTTP health response: ${method} ${status}; database age ${age === undefined ? "unknown" : Math.round(age) + " ms"}.`);
       previousHttpStatus = status;
     }
-    return Response.json(
-      { status: healthy ? "ok" : "unavailable" },
-      { status, headers: { "Cache-Control": "no-store" } },
-    );
+    const body = healthy ? '{"status":"ok"}' : '{"status":"unavailable"}';
+    return new Response(body, {
+      status,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": String(Buffer.byteLength(body)),
+        "Cache-Control": "no-store",
+        "Connection": "close",
+      },
+    });
   }
 
   return {

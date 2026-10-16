@@ -3,6 +3,7 @@ import { MongoClient, type CommandStartedEvent, type Db } from "mongodb";
 import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 import { testDb } from "./concepts/testing.ts";
 import { createHealthMonitor } from "./health.ts";
+import { checkHealthWire } from "./healthWire.ts";
 
 let db: Db;
 let close: () => Promise<void>;
@@ -15,22 +16,48 @@ test("production HTTP health accepts GET and HEAD with an empty or populated Mon
   expect(await health.refresh()).toBe(true);
   const server = Bun.serve({
     development: false, hostname: "0.0.0.0", port: 0,
-    routes: { "/health": health.respond }, fetch: () => new Response("Not found", { status: 404 }),
+    fetch: request => new URL(request.url).pathname === "/health"
+      ? health.respond(request) : new Response("Not found", { status: 404 }),
   });
   const url = `http://127.0.0.1:${server.port}/health`;
   try {
     const response = await fetch(url);
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(response.headers.get("Connection")).toBe("close");
+    expect(response.headers.get("Content-Length")).toBe("15");
     expect(await response.json()).toEqual({ status: "ok" });
     const head = await fetch(url, { method: "HEAD" });
     expect(head.status).toBe(200);
     expect(await head.text()).toBe("");
+    await expect(checkHealthWire(server.port!)).resolves.toBeUndefined();
     await new GameCatalogConcept(db).addGame({ title: "Health fixture", developer: "Test", releaseYear: 2026 });
     expect((await fetch(url)).status).toBe(200);
     expect(lines[0]).toBe('Database health: {"status":"ok"}');
     expect(lines.filter(line => line.startsWith("HTTP health response: GET 200"))).toHaveLength(2);
     expect(lines.some(line => line.startsWith("HTTP health response: HEAD 200"))).toBe(true);
+  } finally {
+    await server.stop(true);
+  }
+});
+
+test("wire verification rejects a 200 response that leaves its connection open", async () => {
+  const server = Bun.serve({
+    hostname: "127.0.0.1", port: 0, development: false,
+    fetch: () => Response.json({ status: "ok" }, { headers: { "Cache-Control": "no-store" } }),
+  });
+  try {
+    await expect(checkHealthWire(server.port!)).rejects.toThrow("TIMEOUT");
+  } finally {
+    await server.stop(true);
+  }
+});
+
+test("wire verification refuses a complete 503 response from an unready monitor", async () => {
+  const health = createHealthMonitor(db, () => {});
+  const server = Bun.serve({ hostname: "127.0.0.1", port: 0, fetch: health.respond });
+  try {
+    await expect(checkHealthWire(server.port!)).rejects.toThrow("RESPONSE_INVALID");
   } finally {
     await server.stop(true);
   }

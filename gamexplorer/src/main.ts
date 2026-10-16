@@ -4,6 +4,7 @@ import { assembleApplication } from "./assembly.ts";
 import { gamexplorerPolicy } from "./http.ts";
 import { client, db } from "./db.ts";
 import { createHealthMonitor } from "./health.ts";
+import { checkHealthWire, HealthWireError } from "./healthWire.ts";
 import { frontendHandler } from "../web/serve.ts";
 import { CommonsProvider } from "./concepts/Federating/provider.ts";
 
@@ -39,11 +40,24 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 3000),
   routes: {
     "/api/*": api,
-    "/health": health.respond,
   },
-  fetch: frontend,
+  fetch(request) {
+    if (new URL(request.url).pathname === "/health") return health.respond(request);
+    return frontend(request);
+  },
 });
 health.start();
+
+try {
+  await checkHealthWire(server.port!);
+  console.info("Wire health check: HTTP 200, complete JSON body, connection closed.");
+} catch (error) {
+  console.error(`Wire health check failed: ${error instanceof HealthWireError ? error.reason : "SOCKET_ERROR"}.`);
+  health.stop();
+  await server.stop(true);
+  await client.close();
+  throw new Error("Startup HTTP health response verification failed.");
+}
 
 console.log(`Backend ready on ${server.url}`);
 

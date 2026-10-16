@@ -44,6 +44,15 @@ HTTP status changes, and shutdown. Include the latest successful check's age in
 HTTP diagnostics. Failure logs include only a sanitized error class and numeric
 error code, never connection strings, database contents, or arbitrary messages.
 
+Health responses use an explicit JSON string, Content-Type, Content-Length,
+Cache-Control: no-store, and Connection: close. Dispatch `/health` through the
+server's fetch handler, separately from API routes. This gives one-shot health
+clients a complete, closed response without waiting for the keep-alive idle timer.
+After binding the listener, perform a raw loopback HTTP GET that checks the actual
+status line, headers, complete JSON body, and connection closure within one second.
+Log its success. If it fails, stop the monitor and server, close MongoDB, and fail
+startup. This verifies transmission rather than only logging the handler's result.
+
 Set PUBLIC_ORIGIN to https://gamexplorer.mit-sdg.dev. The initial hosted database
 is populated with the existing 68-game manifest by setting IMPORT_STEAM_CATALOG=1.
 The host invokes the same GameCatalog-action importer before serving requests.

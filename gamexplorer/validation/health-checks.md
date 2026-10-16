@@ -21,13 +21,13 @@ the database network round trip from the health probe's response deadline.
 Validation passed:
 
 - `bun run check:design`, `bun run generate`, and `bun run check`.
-- Full suite: 82 tests, 620 assertions, including six health tests using real
+- Full suite: 84 tests, 625 assertions, including eight health tests using real
   MongoDB reads and fixtures created through concept actions.
 - Production Bun process on `0.0.0.0`: GET and HEAD returned 200, 20 concurrent
   probes passed, and SIGTERM drained the server and exited with code 0.
 - Database loss returned 503; reconnection restored 200. Responses and diagnostics
   do not disclose connection strings or database contents.
-- The six health tests also passed under Linux with the official Bun 1.4.2 image
+- The eight health tests also passed under Linux with the official Bun 1.4.2 image
   and a read-only application filesystem. Fixtures were created with concept actions.
 - An isolated TCP proxy delayed real MongoDB responses by 1,500 ms. With a 500 ms
   HTTP deadline, the previous implementation timed out. The periodic-check version
@@ -35,6 +35,10 @@ Validation passed:
   continued through the delayed connection. No external database or user data was
   modified. This reproduces the response-latency risk; it does not establish the
   hosted platform's exact timeout configuration.
+- Raw TCP verification checks the complete status line, response framing, JSON,
+  and EOF within one second. The previous keep-alive response times out under this
+  check; the explicit Connection: close response succeeds. A complete 503 is refused.
+  The real Linux production process logs successful wire verification at startup.
 
 These are local results. Production resolution remains unverified until a new
 deployment passes the platform's worker health gate.
@@ -57,3 +61,11 @@ That attempt predates the periodic readiness refinement. The next rollout must
 verify the new worker rather than treating the old version's public health result
 as evidence of a successful deployment. HTTP diagnostics now include the returned
 status and the age of the database check, rather than only recording request arrival.
+
+The periodic-readiness commit `672ec25` was attempted in deployment
+`147f31f3-4160-4590-a679-10217413afcf`. It also failed the gate. Its first three
+HTTP samples were GET 200 with database ages 29, 37, and 46 ms; there were no
+recorded unavailable transitions. This rules out failed or stale readiness for
+those samples, but logging a returned Response does not prove its full transmission.
+The following correction uses fetch dispatch, explicit JSON framing and connection
+closure, and the raw socket startup self-check. The hosted cause is not yet claimed.
