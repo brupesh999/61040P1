@@ -2,7 +2,8 @@ import { createGateway } from "@mit-sdg/sync-engine/boundary";
 import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import { assembleApplication } from "./assembly.ts";
 import { gamexplorerPolicy } from "./http.ts";
-import { db } from "./db.ts";
+import { client, db } from "./db.ts";
+import { createHealthHandler } from "./health.ts";
 import { frontendHandler } from "../web/serve.ts";
 import { CommonsProvider } from "./concepts/Federating/provider.ts";
 
@@ -26,6 +27,11 @@ const application = assembleApplication(db, new CommonsProvider({
 const gateway = createGateway({ application });
 const api = createHttpHandler({ application, gateway, policy });
 const frontend = await frontendHandler();
+const health = createHealthHandler(db);
+if (!(await health()).ok) {
+  await client.close();
+  throw new Error("Startup database readiness failed; see the database health diagnostic.");
+}
 
 const server = Bun.serve({
   development: process.env.NODE_ENV !== "production",
@@ -33,19 +39,29 @@ const server = Bun.serve({
   port: Number(process.env.PORT ?? 3000),
   routes: {
     "/api/*": api,
-    "/health": async () => {
-      try {
-        await db.collection("gameCatalog.games").findOne({}, { maxTimeMS: 2000, timeoutMS: 3000 });
-        return Response.json({ status: "ok" }, { headers: { "Cache-Control": "no-store" } });
-      } catch {
-        return Response.json(
-          { status: "unavailable" },
-          { status: 503, headers: { "Cache-Control": "no-store" } },
-        );
-      }
-    },
+    "/health": health,
   },
   fetch: frontend,
 });
 
 console.log(`Backend ready on ${server.url}`);
+
+let stopping = false;
+async function shutdown(signal: string) {
+  if (stopping) return;
+  stopping = true;
+  console.info(`Shutdown: ${signal}; draining requests and closing MongoDB.`);
+  const deadline = setTimeout(() => process.exit(1), 10_000);
+  deadline.unref();
+  try {
+    await server.stop(false);
+    await client.close();
+    clearTimeout(deadline);
+    process.exit(0);
+  } catch {
+    console.error("Shutdown could not finish cleanly.");
+    process.exit(1);
+  }
+}
+process.once("SIGTERM", () => { void shutdown("SIGTERM"); });
+process.once("SIGINT", () => { void shutdown("SIGINT"); });

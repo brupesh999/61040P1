@@ -14,12 +14,32 @@ The repository root forwards `start` to the application in `gamexplorer/`. The c
 platform installs the root Bun workspace in `.`, uses Bun 1.4.2, leaves the
 build script empty, runs `start`, and checks `/health` on port 3000. The MongoDB
 variable is `MONGODB_URL`; the application's shared client uses `client.db()` to
-select the database supplied by the connection string. Use a pool of at most three
-application connections so two versions can overlap under the hosted ten-connection
-limit, leaving room for MongoDB monitoring connections. No local `.env` is committed.
+select the database supplied by the connection string. Use a pool of at most two
+application connections per server, with no minimum and a 30-second idle limit.
+MongoDB monitoring uses additional connections; leaving headroom matters when old
+and new versions overlap during deployment. On SIGTERM or SIGINT, stop accepting
+requests, let current requests finish, and close the shared MongoDB client before
+exiting. No local `.env` is committed.
+
+`/health` checks read access to `gameCatalog.games` with a two-second server limit
+and a three-second driver timeout and abort signal (including initial connection).
+The client also limits connection establishment and server selection to three
+seconds; a query timeout alone does not bound the driver's initial connection.
+It returns HTTP 200 with `status: ok`
+only after a successful read (an empty catalog is healthy), or HTTP 503 with
+`status: unavailable` after a failure. Both responses prohibit caching. Concurrent
+probes share the current database operation; its result is not cached for later
+probes. GET and HEAD must both work through the production Bun server.
+
+Before opening the HTTP listener, run the same database check and fail startup if
+it fails. Log when the first HTTP health probe arrives, changes between healthy
+and unavailable, and graceful shutdown. Failure logs include only a sanitized
+error class and numeric error code, never connection strings, database contents,
+or arbitrary error messages. This distinguishes a worker that cannot read MongoDB
+from a worker whose health route is never reached by the platform.
 
 Set PUBLIC_ORIGIN to https://gamexplorer.mit-sdg.dev. The initial hosted database
-is populated with the existing 60-game manifest by setting IMPORT_STEAM_CATALOG=1.
+is populated with the existing 68-game manifest by setting IMPORT_STEAM_CATALOG=1.
 The host invokes the same GameCatalog-action importer before serving requests.
 Repeated starts append no duplicate titles and preserve reviews and other concepts.
 This flag is optional; without it, normal startup does not import anything. Metadata
