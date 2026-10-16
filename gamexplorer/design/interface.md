@@ -11,13 +11,14 @@ titles, bold body text, section headings, navigation, labels, and buttons. This 
 the user's preferred font from the typography slide. Keep ordinary paragraphs,
 metadata, reviews, input text, and numeric count badges in locally hosted Archivo.
 Use Archivo at its natural width, with its real variable weights and italic face.
-Geist Pixel has one regular weight. Allow synthesized bold only for game-detail
-titles and the header navigation tabs, as requested by the user; keep other pixel
+Geist Pixel has one regular weight. Allow synthesized bold for catalog card titles,
+game-detail titles, and the header navigation tabs, as requested by the user; keep other pixel
 text at its existing weight and do not stretch the glyphs. Distribute the original
 font and Open Font License with attribution. One CSS variable controls the
 emphasis family so this choice can be revised without changing components.
 
-Game detail titles and header navigation tabs use bold Geist Pixel Square.
+Catalog card titles, game detail titles, and header navigation tabs use bold Geist Pixel Square.
+Catalog card titles use weight 700 with weight synthesis enabled, including wrapped titles.
 Every rating value, including the /10 denominator, uses Geist Pixel Square: aspect
 averages, individual reviews, your-rating badges, rating/filter slider outputs,
 range endpoint numbers, discovery criteria/matches, and My Ratings score tiles.

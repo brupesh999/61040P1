@@ -143,7 +143,7 @@ main { max-width: 1248px; margin: 0 auto; padding: 0 40px 5rem; min-height: calc
 .tile-year { position: absolute; right: 17px; top: 15px; font-size: .6rem; letter-spacing: .15em; color: #c1d0e3; }
 .tile-corner { position: absolute; right: 17px; bottom: 12px; font-size: 1.1rem; color: #afc0d7; }
 .game-card-copy { display: flex; flex-direction: column; gap: .35rem; padding: 1.25rem 1.3rem 1.35rem; }
-.game-title { font-weight: 650; font-size: 1.08rem; line-height: 1.4; overflow-wrap: anywhere; }
+.game-title { font-weight: 700; font-synthesis: weight; font-size: 1.08rem; line-height: 1.4; overflow-wrap: anywhere; }
 .game-card-copy .muted { font-size: .8rem; }
 .contribution-panel { margin-top: 2.5rem; border: 1px solid #33465e; background: #121b27; border-radius: 5px; }
 .contribution-panel > summary { padding: 1.1rem 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .83rem; list-style: none; }
