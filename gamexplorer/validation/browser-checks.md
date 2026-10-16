@@ -311,3 +311,8 @@ width stays 390px. The temporary viewport override was reset.
 Design, generation, artifact, and TypeScript checks pass; the existing 22 advisories
 remain. The saved full suite passes 76 tests with 555 assertions, including the new
 preset's exact label and description.
+
+The same labels and sizes were verified on production commit `441d0c1b2`, with the
+Commons session retained. Voice Acting was selected for inspection without submitting
+a contribution. [Live capture](screenshots/live-voice-acting-picker.jpg) and
+[focused hosted checks](voice-acting-deployed-checks.json) record this update.

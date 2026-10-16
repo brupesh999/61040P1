@@ -1,0 +1,16 @@
+{
+  "url": "https://gamexplorer.mit-sdg.dev",
+  "commit": "441d0c1b2d0ced42fbaf41c0e1acf23f54c6476f",
+  "checkedAt": "2026-10-16T03:41:42.294Z",
+  "aspectChoices": 33,
+  "checks": [
+    "Hosted health endpoint reaches MongoDB",
+    "Voice Acting preset has the specified label and description",
+    "Combat alias remains available",
+    "Hosted JS contains the four clarified action labels",
+    "Hosted CSS contains the scoped picker styles"
+  ],
+  "limitations": [
+    "Read-only hosted checks; no production aspects or reviews submitted."
+  ]
+}

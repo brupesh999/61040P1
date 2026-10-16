@@ -2,8 +2,8 @@
 
 URL: https://gamexplorer.mit-sdg.dev
 
-Running application commit: `e003487f194ddd22ba571dc65c89fd158830b65c`.
-Deployment ID: `2d4df7b7-a4fb-4bc0-96a5-0a48c5e6bbba`.
+Running application commit: `441d0c1b2d0ced42fbaf41c0e1acf23f54c6476f`.
+Deployment ID: `a5940dc1-d26e-46fa-8195-490a24f9b816`.
 The platform Overview reports Healthy and the deployed commit above.
 The initial beta deployment was commit `272b540c2731dde141fb5d73265e3f71feed8662`;
 the evidence below distinguishes that initial run from the concept refinement.
@@ -71,3 +71,22 @@ writes and legacy-data compatibility checks remain separate evidence from these 
 The full write journey still needs to be rehearsed on the public app before the
 beta recording. The automated write/error/access-control journeys used isolated
 MongoDB databases; they are separate evidence from the hosted checks above.
+
+
+## Voice Acting and picker wording
+
+Commit `441d0c1b2` is active on the same app and database. The focused
+[hosted checks](voice-acting-deployed-checks.json) pass MongoDB health, all 33 shared
+choices including Voice Acting, the existing Combat alias, the four clarified action
+labels in served JavaScript, and the scoped picker styles in served CSS.
+
+After reloading Bastion's existing game link, the Commons session remained signed in.
+Searching voice and selecting Voice Acting showed its description and Add to this game.
+The panel title is Choose an aspect; Create a custom aspect remains below the list.
+Computed title/field/disclosure text sizes match the specified 1.1rem/1.05rem/1rem.
+No production contribution was submitted. Temporary viewport overrides were reset.
+[Live page capture](screenshots/live-voice-acting-picker.jpg).
+
+The saved automated suite passes 76 tests with 555 assertions. This small update
+changes one suggested category and interface wording/styles; existing hosted regression
+evidence above covers the unchanged catalog and security behavior.
