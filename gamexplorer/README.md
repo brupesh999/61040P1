@@ -65,7 +65,7 @@ Last validation run:
 
 - `bun run check:design`: passes for all 12 design files.
 - `bun run check`: passes sync-engine artifact checks and TypeScript.
-- `bun test --timeout 20000`: 76 passing tests, 0 failing tests.
+- `bun test --timeout 20000`: 84 passing tests, 625 assertions, 0 failing tests (October 16).
 
 The tests use concept actions and real endpoints rather than direct MongoDB writes for setup. The integration suite drives the HTTP handler against MongoDB and checks the core journey, error cases, access control, and that ratings are attributed to the authenticated session rather than user-supplied fields.
 
@@ -158,7 +158,13 @@ cookie/origin policy. Local data is not copied to the deployed database; add ini
 data through the deployed app or enable `IMPORT_STEAM_CATALOG=1`. That flag runs
 the existing idempotent 68-game importer through GameCatalog actions on startup,
 without adding reviews or resetting data. The MongoDB connection pool is limited to
-three application connections to fit overlapping versions within the platform limit.
+two application connections to fit overlapping versions within the platform limit.
+
+The health correction passed the platform gate at commit
+`f0a1529e44b01e856dfb67ab3694877de646a6e5`. The [health validation record](validation/health-checks.md)
+separates the failed attempts from the successful rollout and records the limits of
+the diagnosis. [Hosted checks](validation/health-success-deployed-checks.json) verify
+the new deployment's response header, health, catalog, and requested game details.
 
 After deployment, verify sign-in, a write, discovery, and persistence on the public
 URL. A passing local preview does not establish that the deployed version works.

@@ -97,9 +97,18 @@ With no criteria the page asks the user to add one; with no matches it suggests 
 a threshold or removing a criterion. Existing criteria can be edited using the same
 form, removed individually, or cleared. An aspect with no remaining scores can still
 be removed from saved criteria. Filters remain owned by the authenticated user.
+Editing a saved criterion names that aspect above the form and focuses the minimum
+slider so keyboard and phone users can find the control. Cancel editing clears the
+form selection without changing the saved criterion. Cancellation returns keyboard
+focus to the aspect selector. Omit the introductory "Games must meet every selected
+minimum score" line. The no-match explanation uses "Games without ratings for a
+selected aspect will not match."
 
 My Ratings lists the current user's scores and notes, with an action to open the exact
 aspect for editing. Empty and failed states offer a route back to browsing or retry.
+Once detail data loads, an aspect-specific link scrolls to and focuses that aspect's
+score slider (or its heading when signed out). Adding an aspect likewise opens and
+focuses its rating control. Ordinary game links retain the page-heading focus.
 
 ## Validation
 

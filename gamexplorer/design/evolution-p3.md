@@ -91,3 +91,13 @@ The preset list is configuration and does not prepopulate every game with unrate
 The current suite passes 76 tests and 554 assertions. Local browser checks confirm
 searching an alias, adding an unrated preset, duplicate refusal with the draft retained,
 old reviews and identities, the lower custom form, and no horizontal overflow at 390px.
+
+## Review and filter navigation — October 16
+
+Aspect-specific links previously expanded the right card but left focus at the top
+of the game page. They now move directly to that aspect's score control after its
+data loads. Adding an aspect uses the same focus behavior. Editing a saved discovery
+filter now names the filter and focuses its slider; cancellation preserves the saved
+requirement and returns focus to the aspect selector. These interface refinements
+use the existing concepts and endpoints. A proposed excluded-game comparison was
+left out after user feedback; the existing threshold behavior remains sufficient.

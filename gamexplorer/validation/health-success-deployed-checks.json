@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-16T18:59:23.101475+00:00",
+  "activeCommit": "f0a1529e44b01e856dfb67ab3694877de646a6e5",
+  "deploymentId": "70b3379e-f6eb-4ee0-a89e-24ac067fd054",
+  "platformGate": "passed; deployment succeeded and this commit is current",
+  "deploymentHeaderConfirmedOnEveryRequest": true,
+  "healthChecks": [
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      },
+      "deploymentHeader": "70b3379e-f6eb-4ee0-a89e-24ac067fd054"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      },
+      "deploymentHeader": "70b3379e-f6eb-4ee0-a89e-24ac067fd054"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      },
+      "deploymentHeader": "70b3379e-f6eb-4ee0-a89e-24ac067fd054"
+    },
+    {
+      "method": "HEAD",
+      "status": 200,
+      "deploymentHeader": "70b3379e-f6eb-4ee0-a89e-24ac067fd054"
+    }
+  ],
+  "catalogCount": 69,
+  "requestedSteamEntriesAndDetailsPreserved": 8,
+  "frontendHTML": 200,
+  "fullLocalSuite": {
+    "tests": 84,
+    "assertions": 625,
+    "failures": 0
+  },
+  "linuxHealthSuite": {
+    "tests": 8,
+    "failures": 0
+  },
+  "transientDuringPromotion": "One Crisis Core detail request timed out while the previous worker was being removed. It passed after cleanup, and all eight detail checks then passed.",
+  "rootCauseLimit": "The successful correction changed health response framing, connection closure, fetch dispatch, and wire startup verification. The available evidence does not isolate which transport detail caused the earlier rejections."
+}

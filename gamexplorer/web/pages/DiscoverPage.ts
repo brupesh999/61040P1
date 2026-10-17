@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
+import { computed, defineComponent, nextTick, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
 import { client } from "../api.ts";
 import { GameCard } from "../components.ts";
 import { account, useRequest } from "../state.ts";
@@ -49,13 +49,20 @@ export default defineComponent({
       if (!account.user) return;
       if (apply(await changing.run(() => client.discover.clear({})))) draft.aspectName = "";
     }
-    function editFilter(filter: { aspectName: string; minScore: number }) {
+    async function editFilter(filter: { aspectName: string; minScore: number }) {
       draft.aspectName = filter.aspectName;
       draft.minScore = filter.minScore;
+      await nextTick();
+      document.getElementById('minimum-score')?.focus();
+    }
+    async function cancelEditing() {
+      draft.aspectName = "";
+      await nextTick();
+      document.getElementById('filter-aspect')?.focus();
     }
     onMounted(load);
     return {
-      account, results, draft, editing, missingOption, load, setFilter, removeFilter, clearFilters, editFilter,
+      account, results, draft, editing, missingOption, load, setFilter, removeFilter, clearFilters, editFilter, cancelEditing,
       loading: reading.busy, loadError: reading.error, saving: changing.busy, saveError: changing.error,
     };
   },
@@ -69,8 +76,8 @@ export default defineComponent({
         <div v-if="results" class="discovery-layout">
           <aside class="criteria-panel" aria-labelledby="criteria-heading">
             <div class="panel-heading"><h2 id="criteria-heading">Filters</h2></div>
-            <p class="muted criteria-help">Games must meet every selected minimum score.</p>
             <form @submit.prevent="setFilter">
+              <p v-if="editing" class="criteria-help" role="status">Editing {{ draft.aspectName }} <button type="button" class="text-button" @click="cancelEditing" :disabled="saving || loading">Cancel editing</button></p>
               <div class="field"><label for="filter-aspect">Aspect</label><select id="filter-aspect" v-model="draft.aspectName" :disabled="saving || loading || (!results.aspectNames.length && !results.filters.length)"><option value="" disabled>Choose an aspect</option><option v-for="aspect in results.aspectNames" :key="aspect.aspectName" :value="aspect.aspectName">{{ aspect.aspectName }}</option><option v-if="missingOption" :value="draft.aspectName">{{ draft.aspectName }}</option></select></div>
               <div class="range-heading"><label for="minimum-score">Minimum community average</label><output for="minimum-score">{{ draft.minScore }}<small>/10</small></output></div><input id="minimum-score" type="range" min="1" max="10" step="0.5" v-model.number="draft.minScore" :disabled="saving || loading"><div class="range-labels" aria-hidden="true"><span>1</span><span>10</span></div>
               <button class="primary full-button" :disabled="saving || loading || !draft.aspectName">{{ saving ? 'Updating…' : editing ? 'Update criterion' : 'Add criterion' }} <span aria-hidden="true">{{ editing ? '↻' : '+' }}</span></button>
@@ -83,7 +90,7 @@ export default defineComponent({
           <div class="discovery-results" :aria-busy="saving || loading">
             <div class="results-heading"><h2>Results</h2><span v-if="results.filters.length" class="result-total" role="status">{{ results.matches.length }} {{ results.matches.length === 1 ? 'match' : 'matches' }}</span></div>
             <div v-if="!results.filters.length" class="empty-state discovery-empty"><p>Select an aspect and add a minimum score to see results.</p></div>
-            <div v-else-if="!results.matches.length" class="empty-state discovery-empty"><span class="empty-glyph" aria-hidden="true">⌕</span><h3>No matching games</h3><p>Lower a minimum score or remove a filter. Games without ratings for a selected aspect do not match.</p><a class="button secondary" href="#/catalog">Browse games to rate</a></div>
+            <div v-else-if="!results.matches.length" class="empty-state discovery-empty"><span class="empty-glyph" aria-hidden="true">⌕</span><h3>No matching games</h3><p>Lower a minimum score or remove a filter. Games without ratings for a selected aspect will not match.</p><a class="button secondary" href="#/catalog">Browse games to rate</a></div>
             <div v-else class="game-grid discovery-grid"><GameCard v-for="(match, index) in results.matches" :key="match.game" :game="match.game" :info="match.info" :index="index"><div class="match-scores"><div v-for="score in match.scores" :key="score.aspectName" class="match-score"><span>{{ score.aspectName }}<small>{{ score.score?.count }} {{ score.score?.count === 1 ? 'rating' : 'ratings' }}</small></span><strong>{{ score.score?.average.toFixed(1) }}<small>/10</small></strong></div></div></GameCard></div>
           </div>
         </div>

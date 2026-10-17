@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-10-16T07:10:19.545Z",
+  "catalogCount": 69,
+  "verified": [
+    {
+      "game": "9d416467-3d6a-40bd-a824-7d393346ff12",
+      "title": "Devil May Cry HD Collection",
+      "steamAppId": 631510,
+      "coverStored": true
+    },
+    {
+      "game": "deeeb332-94a6-4d65-9ae4-b2b44b7ced27",
+      "title": "Devil May Cry 4 Special Edition",
+      "steamAppId": 329050,
+      "coverStored": true
+    },
+    {
+      "game": "8d337fa6-86f7-43e2-b7e5-b842dad2dda9",
+      "title": "CRISIS CORE \u2013FINAL FANTASY VII\u2013 REUNION",
+      "steamAppId": 1608070,
+      "coverStored": true
+    },
+    {
+      "game": "bc721c9a-f844-4301-a274-3ed899beea69",
+      "title": "NieR:Automata\u2122",
+      "steamAppId": 524220,
+      "coverStored": true
+    },
+    {
+      "game": "8a4e752b-3940-4d26-b3b0-f99d8efc9d46",
+      "title": "NieR Replicant\u2122 ver.1.22474487139...",
+      "steamAppId": 1113560,
+      "coverStored": true
+    },
+    {
+      "game": "ffaa6c36-91e8-4bee-bbf9-0d8d96b8b557",
+      "title": "FINAL FANTASY X/X-2 HD Remaster",
+      "steamAppId": 359870,
+      "coverStored": true
+    },
+    {
+      "game": "bd6e9437-3629-4bbb-8b08-96ff8ddaba79",
+      "title": "FINAL FANTASY\u00ae XIII",
+      "steamAppId": 292120,
+      "coverStored": true
+    },
+    {
+      "game": "3df0f596-6372-4013-bb43-9f29a18d2f67",
+      "title": "FINAL FANTASY XV WINDOWS EDITION",
+      "steamAppId": 637650,
+      "coverStored": true
+    }
+  ],
+  "existingHDCollectionIdentityPreserved": true,
+  "health": "ok",
+  "importCommit": "ade2a9117bad65d820d7db13abc131d1ab69e823",
+  "activeApplicationCommitAtCheck": "9112e59d20918918e551449e11afde9a9d802b2c",
+  "deploymentStatusAtCheck": "Both catalog deployments failed the worker health gate: 671a2480-4f6d-4449-9389-601c4ce2b92b and retry 347b604c-1f1c-4a68-a5e9-3a44a04fcbfe. The previous commit remains active.",
+  "limitations": [
+    "The eight entries and stored covers are verified in the shared live database; rollout completion is not claimed.",
+    "The previously created Dirge of Cerberus entry remains pending administrative removal."
+  ]
+}

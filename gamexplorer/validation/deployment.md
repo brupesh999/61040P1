@@ -102,3 +102,53 @@ in and the catalog still contains 60 entries. The screenshot shows the desktop l
 
 This is a CSS-only change. Design, artifact generation, source, and TypeScript checks
 pass; unchanged application behavior retains the previously saved 76-test evidence.
+
+
+## Catalog extension — October 16
+
+The user approved committing, pushing, and deploying the eight-game catalog extension.
+Commit `ade2a9117bad65d820d7db13abc131d1ab69e823` adds DMC HD Collection, DMC 4
+Special Edition, Crisis Core Reunion, NieR:Automata, NieR Replicant, FFX/X-2 HD
+Remaster, FFXIII, and FFXV Windows Edition to the import manifest.
+
+The first worker imported seven new games and attached 68 covers; HD Collection had
+already been added through the interface and retained its existing identity. The
+same-commit retry imported zero new games and attached the same 68 covers. Public
+reads verify each of the eight requested entries, its exact Steam cover metadata,
+and its detail page. The browser loaded all eight portrait images at 300 × 450.
+The live catalog contains 69 entries because the separately created Dirge of Cerberus
+entry remains pending removal; the original PSP Crisis Core was never created.
+
+Both deployments failed the platform's worker health gate:
+`671a2480-4f6d-4449-9389-601c4ce2b92b` and retry
+`347b604c-1f1c-4a68-a5e9-3a44a04fcbfe`. The platform reports that /health on port
+3000 did not return HTTP 2xx. Saved worker output confirms startup at 0.0.0.0:3000
+and completion of the import, but does not expose why the health probe failed.
+The existing public /health returns 200 with status ok, and Overview still marks
+`9112e59d2` current and Healthy. Those public checks exercise the previous active
+version against the shared database, not the rejected worker. No successful rollout
+of `ade2a9117` is claimed. The code still reads HOST/PORT and uses client.db() without
+a fixed database name, as required by the deployment guide. No code change or third
+retry was made without a diagnosed cause.
+
+- [Public catalog verification](catalog-additions-deployed-checks.json)
+- [Live DMC covers](screenshots/live-dmc-import.jpg)
+- [Failed worker health-check report](screenshots/catalog-deployment-health-failure.jpg)
+
+These verification notes and captures are local working-tree changes, not another
+pushed audit commit. Production has the requested catalog data; deployment of the
+submitted commit and removal of Dirge remained unresolved at that point.
+
+## Health correction deployed — October 16
+
+The later health correction at `f0a1529e44b01e856dfb67ab3694877de646a6e5`
+successfully deployed as `70b3379e-f6eb-4ee0-a89e-24ac067fd054`. The platform
+marks that commit current and Healthy. This supersedes the failed-rollout status
+above; Dirge removal remains pending. The catalog import and all eight requested
+Steam entries persist in the live database.
+
+The [successful hosted checks](health-success-deployed-checks.json) verify the
+deployment header on every health, catalog, detail, and frontend request. See the
+[health diagnosis and verification](health-checks.md#successful-rollout) for the
+tested correction and what the logs cannot establish. These are public read checks;
+they do not claim a completed authenticated production-write journey.

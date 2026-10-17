@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-16T17:04:46.296980+00:00",
+  "attemptedCommit": "3c9cfb90ff1f9eda979fcef23ae4468dcb780cfb",
+  "activeCommit": "9112e59d20918918e551449e11afde9a9d802b2c",
+  "deploymentId": "c1d7b792-0a2c-4330-98cb-1fba84ab4a82",
+  "deploymentOutcome": "failed worker health gate",
+  "publicChecksExercisePreviousActiveVersion": true,
+  "healthChecks": [
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    {
+      "method": "HEAD",
+      "status": 200
+    }
+  ],
+  "catalogCount": 69,
+  "requestedSteamEntriesPreserved": 8,
+  "savedWorkerOutput": [
+    "Catalog import: 0 games added; 68 covers attached.",
+    "Database health: {\"status\":\"ok\"}",
+    "Backend ready on http://0.0.0.0:3000/",
+    "First HTTP health probe received."
+  ],
+  "limitation": "The logs do not show a failed database health check or the HTTP response received by the platform. The hosted rejection remains unexplained."
+}

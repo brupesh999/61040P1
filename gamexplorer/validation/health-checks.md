@@ -69,3 +69,23 @@ recorded unavailable transitions. This rules out failed or stale readiness for
 those samples, but logging a returned Response does not prove its full transmission.
 The following correction uses fetch dispatch, explicit JSON framing and connection
 closure, and the raw socket startup self-check. The hosted cause is not yet claimed.
+
+## Successful rollout
+
+Commit `f0a1529e44b01e856dfb67ab3694877de646a6e5` passed the worker gate in
+deployment `70b3379e-f6eb-4ee0-a89e-24ac067fd054`. Overview marks it current and
+Healthy, and the deployment operation succeeded. Production output confirms
+`Wire health check: HTTP 200, complete JSON body, connection closed.`
+
+Three public GET checks spaced three seconds apart and one HEAD check returned
+200. The deployment ID header matched the new deployment on every health, catalog,
+detail, and frontend request. The catalog still contains 69 games, all eight added
+Steam entries retain their identities and cover metadata, and their detail endpoints
+passed. The browser rendered the public catalog. One detail request timed out during
+the traffic switch and succeeded after predecessor cleanup; all final checks passed.
+
+See [deployed checks](health-success-deployed-checks.json) and
+[Healthy/current deployment](screenshots/health-success-deployment.jpg). This final
+verification record was saved before the following interface refinement. The successful transport increment
+changed framing, connection closure, and dispatch together; the exact earlier failure
+mechanism is not established by the available logs.

@@ -367,3 +367,32 @@ explicitly outside the demonstrated guarantees.
 
 References: [fresh automated output](tests.txt), [fresh hosted report](rubric-deployed-checks.json),
 [design evolution](../design/evolution-p3.md), [HTTP API guide](../README.md#http-api-and-generated-contracts).
+
+## Focus and copy refinement — October 16
+
+The latest local suite passes **84 tests, 625 assertions**, with no failures; see
+[saved output](tests.txt). Design, generation, source/artifact, and TypeScript checks
+pass. The same 22 framework advisories remain, as explained in the audit above.
+These changes do not add or modify concepts, endpoint contracts, or database state.
+
+In an isolated preview at port 3013, a link to Devil May Cry 5's second aspect
+(Music) opened that card and focused its score slider. At 390 × 844 the slider was
+visible, about 408px from the viewport top; the document stayed 390px wide.
+Editing an existing Combat filter focused the minimum slider and displayed
+"Editing Combat". Cancel editing returned focus to the aspect selector and left
+the saved requirement intact. No review or criterion was submitted during these checks.
+The shared focus function is also used after aspect creation, but that new focus path
+was not separately exercised with a browser write in this pass.
+
+The requested introductory sentence was absent from the rendered page. With a
+saved minimum of 9.5 and no matches, the rendered explanation used "Games without
+ratings for a selected aspect will not match." Temporary viewport overrides were
+reset. [Filter edit capture](screenshots/filter-edit-focus.jpg),
+[direct rating link](screenshots/rating-link-focus.jpg),
+[final discovery copy](screenshots/discovery-copy-final.jpg).
+
+This pass strengthens navigation and keeps documentation consistent with the health
+rollout and current test results. It does not establish an Expert grade or replace the
+remaining beta video, visual-study export, private reflection, or hosted write journey.
+At the time of these browser checks, the interface changes were local; this section
+records local validation rather than claiming hosted verification of the refinement.

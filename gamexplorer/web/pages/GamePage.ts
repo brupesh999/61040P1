@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
+import { computed, defineComponent, nextTick, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
 import { client } from "../api.ts";
 import { account, notify, useRequest } from "../state.ts";
 
@@ -40,6 +40,12 @@ export default defineComponent({
     const loadingRequest = useRequest();
     const ratingRequest = useRequest();
     const aspectRequest = useRequest();
+    async function focusRating(aspect: string) {
+      await nextTick();
+      const target = document.getElementById('score-' + aspect) ?? document.getElementById('toggle-' + aspect);
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: 'center' });
+    }
     function myRating(aspect: GameDetail["aspects"][number]) {
       return aspect.ratings.find(rating => rating.user === account.user?.user);
     }
@@ -98,6 +104,7 @@ export default defineComponent({
       });
       expanded[result.aspect] = true;
       await load();
+      await focusRating(result.aspect);
       notify(`Added ${detail.value?.aspects.find(item => item.aspect === result.aspect)?.name ?? name.trim()}.`);
       await loadChoices();
       return true;
@@ -114,7 +121,10 @@ export default defineComponent({
         newAspect.description = "";
       }
     }
-    onMounted(() => { void load(); void loadChoices(); });
+    onMounted(() => {
+      void load().then(() => { if (props.focusAspect) return focusRating(props.focusAspect); });
+      void loadChoices();
+    });
     return {
       account, detail, coverFailed, checkCover, drafts, expanded, newAspect, removing, activeEditor, myRating,
       load, rate, removeRating, createAspect, loadChoices, addSelectedAspect,
@@ -138,7 +148,7 @@ export default defineComponent({
         <div v-if="detail.aspects.length === 0" class="empty-state"><span class="empty-glyph" aria-hidden="true">+</span><h3>No aspects yet</h3><button v-if="!account.user" class="primary" @click="$emit('sign-in')">Sign in to add an aspect</button></div>
         <div class="aspect-list" :aria-busy="loading">
           <article v-for="aspect in detail.aspects" :key="aspect.aspect" class="aspect" :class="{ 'is-expanded': expanded[aspect.aspect] }" :id="'aspect-' + aspect.aspect">
-            <h3 class="aspect-heading"><button class="aspect-toggle" @click="expanded[aspect.aspect] = !expanded[aspect.aspect]" :aria-expanded="!!expanded[aspect.aspect]" :aria-controls="'aspect-body-' + aspect.aspect">
+            <h3 class="aspect-heading"><button :id="'toggle-' + aspect.aspect" class="aspect-toggle" @click="expanded[aspect.aspect] = !expanded[aspect.aspect]" :aria-expanded="!!expanded[aspect.aspect]" :aria-controls="'aspect-body-' + aspect.aspect">
               <span class="aspect-label"><span class="expand-icon" aria-hidden="true">{{ expanded[aspect.aspect] ? '−' : '+' }}</span>{{ aspect.name }}<span v-if="myRating(aspect)" class="your-rating">You: {{ myRating(aspect).score }}/10</span></span>
               <span v-if="aspect.summary.count" class="community-summary"><span class="score-value">{{ aspect.summary.average.toFixed(1) }}<small>/10</small></span><span class="muted">{{ aspect.summary.count }} {{ aspect.summary.count === 1 ? 'rating' : 'ratings' }}</span></span>
               <span v-else class="unrated">Not rated yet</span>
