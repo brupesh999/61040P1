@@ -350,7 +350,7 @@ an instructor grade.
 | Integration | Real HTTP handler and MongoDB journeys; saved local browser writes; hosted read-only report | Fresh suite passes 76 tests and 555 assertions. Fresh hosted reads pass all 60 detail pages, persisted covers, 33 shared choices, health, unauthenticated/forged-session/origin refusals, and callback privacy. These do not claim authenticated production-write coverage. |
 | Interaction | Rating/edit/removal, My Ratings, discovery controls, shared picker, account switching, error/empty/loading states | The reviewed flows support clear tasks, immediate feedback, retained refused drafts, explicit unrated states, and confirmed removal without forced refreshes. Saved browser checks include phone-width layouts. |
 | Visual design | Current catalog and reviewer captures, interface spec, CSS/font sources | Consistent navy/ruby palette and typography, readable hierarchy, coherent cover grid, separate primary actions, and no recorded phone-width overflow. Sampled text contrast ratios range from 6.21:1 to 16.56:1; this samples key token pairs rather than claiming a full accessibility audit. |
-| Intentional development/technical writing | Git increments, evolution-p3, interface/authentication specs, READMEs and saved validation | Public records explain the generic concepts, preservation of P2 data, explicit aliases, and interface revisions. Records distinguish historical/current and local/hosted checks. Personal review and reflection belong to the private notebook and are not inferred from agent checks. |
+| Intentional development/technical writing | Git increments, current specifications, READMEs and saved validation | Public records explain the generic concepts, preservation of P2 data, explicit aliases, and interface revisions. Records distinguish historical/current and local/hosted checks. Personal review and reflection belong to the private notebook and are not inferred from agent checks. |
 
 The 22 checker advisories remain visible: 17 MISSING_ENDPOINT_FALLBACK diagnostics
 and five ORDER_SENSITIVE_FORMER diagnostics. The affected endpoint action/refusal and
@@ -366,7 +366,7 @@ Concurrent HTTP tests cover one process; crash recovery and distributed ordering
 explicitly outside the demonstrated guarantees.
 
 References: [fresh automated output](tests.txt), [fresh hosted report](rubric-deployed-checks.json),
-[design evolution](../design/evolution-p3.md), [HTTP API guide](../README.md#http-api-and-generated-contracts).
+[current concept design](../../p1.md#3-conceptual-design), [HTTP API guide](../README.md#http-api-and-generated-contracts).
 
 ## Focus and copy refinement — October 16
 
@@ -396,3 +396,20 @@ rollout and current test results. It does not establish an Expert grade or repla
 remaining beta video, visual-study export, private reflection, or hosted write journey.
 At the time of these browser checks, the interface changes were local; this section
 records local validation rather than claiming hosted verification of the refinement.
+
+
+## Personal validation — October 18
+
+The project author reported completing the personal validation journey on the deployed
+app and said it worked properly.
+
+
+## Submission check — October 19
+
+- Fresh suite: 84 passing tests, 625 assertions; saved in tests.txt.
+- Design, generation, source, artifact, and TypeScript checks pass; 22 advisories remain.
+- All 19 specified concept actions have direct test calls.
+- The two-page visual-study PDF, updated user journey, and test/database instructions are linked from the main README.
+- Live public health/frontend checks pass on c804f74; 70 catalog games and 33 aspect choices are available. Private reads refuse missing sessions.
+- The October 18 personal journey result is author-reported. The private journal has not been inspected in this check.
+- The [beta video](https://youtu.be/m5XII5H1tfU) is linked from the main README. The author described Commons sign-in, a Crisis Core Narrative Depth rating of 9, discovery minimums of 8 and 10, and updating the rating to 10 with a reload to confirm persistence. This description is author-reported, not an independent review of the recording.

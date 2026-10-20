@@ -1,12 +1,17 @@
-# Hosted deployment — updated October 16, 2026
+# Hosted deployment — checked October 19, 2026
 
 URL: https://gamexplorer.mit-sdg.dev
 
-Running application commit: `9112e59d20918918e551449e11afde9a9d802b2c`.
-Deployment ID: `57d68be1-e3ba-4ad9-9abb-144f9219a206`.
-The platform Overview reports Healthy and the deployed commit above.
-The initial beta deployment was commit `272b540c2731dde141fb5d73265e3f71feed8662`;
-the evidence below distinguishes that initial run from the concept refinement.
+- Verified live commit: `c804f742710f25a8898cb5b53d2ded661417acca`.
+- Deployment ID: `719a0153-a463-4d08-b93f-1bbf1ea2256e`.
+- GET/HEAD health, frontend HTML, and JavaScript bundle returned 200.
+- Catalog: 70 games; shared aspect choices: 33.
+- Unauthenticated account, My Ratings, and discovery reads returned 401.
+- All checked responses came from the deployment above.
+- The final submission adds README cleanup, the visual-study PDF, the beta video link, and the matching user journey; application source is unchanged from this verified deployment.
+- The logo and trailing period are retained to match the recorded demo.
+
+The sections below record earlier deployments and checks.
 
 ## Configuration
 
@@ -15,7 +20,7 @@ The public repository is `brupesh999/61040P1`, branch `main`. Package directorie
 3000; health path is `/health`. The platform provisions MongoDB and binds its URI
 to `MONGODB_URL` without copying local credentials. `PUBLIC_ORIGIN` is
 `https://gamexplorer.mit-sdg.dev`, and `IMPORT_STEAM_CATALOG=1` enables the idempotent
-60-game import through GameCatalog actions. No cover image files are downloaded.
+68-game import through GameCatalog actions. No cover image files are downloaded.
 The local database, demo credentials, and demo reviews were not copied.
 
 ## Evidence
