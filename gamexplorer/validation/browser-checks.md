@@ -412,4 +412,4 @@ app and said it worked properly.
 - The two-page visual-study PDF, updated user journey, and test/database instructions are linked from the main README.
 - Live public health/frontend checks pass on c804f74; 70 catalog games and 33 aspect choices are available. Private reads refuse missing sessions.
 - The October 18 personal journey result is author-reported. The private journal has not been inspected in this check.
-- The [beta video](https://youtu.be/m5XII5H1tfU) is linked from the main README. The author described Commons sign-in, a Crisis Core Narrative Depth rating of 9, discovery minimums of 8 and 10, and updating the rating to 10 with a reload to confirm persistence. This description is author-reported, not an independent review of the recording.
+- The [beta video](https://youtu.be/Y1i6PMFE8-U) is linked from the main README. The author described Commons sign-in, a Crisis Core Narrative Depth rating of 9, discovery minimums of 8 and 10, and updating the rating to 10 with a reload to confirm persistence. This description is author-reported, not an independent review of the recording.

@@ -10,7 +10,7 @@ Game reviews and discovery using per-aspect scores.
 - [Tests](gamexplorer/src/), [test instructions](#tests), and [saved output](gamexplorer/validation/tests.txt)
 - [Visual design study](gamexplorer/design/visual-study.pdf) ([Google Slides](https://docs.google.com/presentation/d/1brCUaB3Atrse3NUdq7dwBrI2gGlQhCvelLQqlNPdLbM/edit?usp=sharing))
 - [User journey](#user-journey)
-- [Narrated beta demo](https://youtu.be/m5XII5H1tfU)
+- [Narrated beta demo](https://youtu.be/Y1i6PMFE8-U)
 
 The design notebook is in the private individual repository at `reflections/journal.md`.
 
