@@ -1,9 +1,13 @@
 import { httpWire } from "@mit-sdg/sync-engine-http/tooling";
 import { assembleApplication } from "./src/assembly.ts";
 import { policy } from "./src/http.ts";
+import { MongoClient } from "mongodb";
+
+// Artifact generation inspects declarations only; this client is never connected.
+const toolingDb = new MongoClient("mongodb://127.0.0.1:27017/gamexplorer-artifacts").db();
 
 export default {
-  assemble: assembleApplication,
+  assemble: () => assembleApplication(toolingDb),
   title: "Gamexplorer",
   wireName: "GamexplorerWire",
   design: {

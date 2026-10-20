@@ -1,7 +1,16 @@
-import { defineComponent, onMounted, reactive, ref } from "vue/dist/vue.esm-bundler.js";
+import { defineComponent, onMounted, ref } from "vue/dist/vue.esm-bundler.js";
 import { client } from "../api.ts";
 import { GameCard, type GameInfo } from "../components.ts";
-import { account, gameHref, notify, useRequest } from "../state.ts";
+import { account, gameHref, useRequest } from "../state.ts";
+
+interface SteamChoice {
+  steamAppId: number;
+  title: string;
+  developer: string;
+  releaseYear: number;
+  coverUrl: string;
+  existing?: { game: string } | null;
+}
 
 export default defineComponent({
   components: { GameCard },
@@ -11,7 +20,12 @@ export default defineComponent({
     const searched = ref("");
     const loaded = ref(false);
     const games = ref<Array<GameInfo & { game: string }>>([]);
-    const draft = reactive({ title: "", developer: "", releaseYear: new Date().getFullYear() });
+    const steamQuery = ref("");
+    const steamGames = ref<SteamChoice[]>([]);
+    const steamSearched = ref(false);
+    const steamCoverFailures = ref<Record<number, boolean>>({});
+    const importing = ref<number | null>(null);
+    const steamListing = useRequest();
     const listing = useRequest();
     const adding = useRequest();
     async function search() {
@@ -24,27 +38,45 @@ export default defineComponent({
       loaded.value = true;
     }
     async function clearSearch() { query.value = ""; await search(); }
-    async function addGame() {
+    async function searchSteam() {
       if (!account.user) return;
-      const title = draft.title.trim();
-      const developer = draft.developer.trim();
-      const releaseYear = Number(draft.releaseYear);
-      if (!title || !developer || !Number.isInteger(releaseYear) || releaseYear < 1950 || releaseYear > 2100) {
-        adding.error.value = "Enter a title, developer, and whole release year from 1950 to 2100.";
+      const query = steamQuery.value.trim();
+      if (query.length < 2 || query.length > 100) {
+        steamListing.error.value = "Enter 2–100 characters to search Steam.";
         return;
       }
-      const result = await adding.run(() => client.games.add({ title, developer, releaseYear }));
+      const result = await steamListing.run(() => client.games.steam.search({ query }));
+      if (!result) return;
+      if ("error" in result) return steamListing.fail(result.error, {
+        INTERNAL_ERROR: "Steam search is unavailable. Try again shortly.",
+      });
+      steamGames.value = result.results.games;
+      steamCoverFailures.value = {};
+      steamSearched.value = true;
+      adding.error.value = "";
+    }
+    async function addGame(choice: SteamChoice) {
+      if (!account.user || adding.busy.value) return;
+      importing.value = choice.steamAppId;
+      const result = await adding.run(() => client.games.add({ steamAppId: choice.steamAppId }));
+      importing.value = null;
       if (!result) return;
       if ("error" in result) return adding.fail(result.error, {
         CONFLICT: "That game is already in the catalog. Search for its title to open it.",
-        INVALID_REQUEST: "Enter a title, developer, and whole release year from 1950 to 2100.",
+        INVALID_REQUEST: "Steam no longer has complete game information for this selection. Try another result.",
+        INTERNAL_ERROR: "Steam is unavailable. Try again shortly.",
       });
-      notify(`Added ${title}.`);
       window.location.hash = gameHref(result.game);
+    }
+    function checkSteamCover(event: Event, steamAppId: number) {
+      const image = event.target as HTMLImageElement;
+      steamCoverFailures.value[steamAppId] = image.naturalWidth >= image.naturalHeight;
     }
     onMounted(search);
     return {
-      account, query, searched, loaded, games, draft, search, clearSearch, addGame,
+      account, query, searched, loaded, games, search, clearSearch, addGame, gameHref,
+      steamQuery, steamGames, steamSearched, importing, searchSteam, steamCoverFailures, checkSteamCover,
+      searchingSteam: steamListing.busy, steamError: steamListing.error,
       loading: listing.busy, loadError: listing.error, saving: adding.busy, saveError: adding.error,
     };
   },
@@ -75,13 +107,22 @@ export default defineComponent({
 
       <details v-if="account.user" class="contribution-panel">
         <summary><strong>Add a game</strong><span class="summary-action" aria-hidden="true">+</span></summary>
-        <form class="form-grid" @submit.prevent="addGame">
-          <div class="field"><label for="new-title">Game title</label><input id="new-title" v-model="draft.title" placeholder="e.g. Devil May Cry 5" required :disabled="saving"></div>
-          <div class="field"><label for="new-developer">Developer</label><input id="new-developer" v-model="draft.developer" placeholder="e.g. Capcom" required :disabled="saving"></div>
-          <div class="field"><label for="new-year">Release year</label><input id="new-year" v-model.number="draft.releaseYear" type="number" min="1950" max="2100" step="1" required :disabled="saving"></div>
-          <p v-if="saveError" class="feedback error full-width" role="alert">{{ saveError }}</p>
-          <div class="form-actions full-width"><span class="muted">Games are shared with everyone.</span><button class="primary" :disabled="saving">{{ saving ? 'Adding…' : 'Add game' }}</button></div>
+        <form class="steam-search-form" @submit.prevent="searchSteam">
+          <div class="field"><label for="steam-search">Search Steam</label><input id="steam-search" v-model="steamQuery" type="search" minlength="2" maxlength="100" placeholder="Game title" required :disabled="searchingSteam || saving"></div>
+          <button class="secondary" :disabled="searchingSteam || saving">{{ searchingSteam ? 'Searching Steam…' : 'Search Steam' }}</button>
         </form>
+        <p v-if="steamError" class="feedback error" role="alert">{{ steamError }}</p>
+        <p v-if="saveError" class="feedback error" role="alert">{{ saveError }}</p>
+        <p v-if="searchingSteam" class="muted" role="status">Checking Steam game listings…</p>
+        <p v-else-if="steamSearched && !steamGames.length && !steamError" class="muted" role="status">No games with complete release information found. Try another title.</p>
+        <ul v-if="steamGames.length" class="steam-results" :aria-busy="searchingSteam || saving">
+          <li v-for="choice in steamGames" :key="choice.steamAppId" class="steam-result">
+            <span class="steam-result-cover" aria-hidden="true"><img v-if="!steamCoverFailures[choice.steamAppId]" :src="choice.coverUrl" alt="" width="60" height="90" loading="lazy" referrerpolicy="no-referrer" @load="checkSteamCover($event, choice.steamAppId)" @error="steamCoverFailures[choice.steamAppId] = true"><span v-else>{{ choice.title.slice(0, 1) }}</span></span>
+            <div class="steam-result-copy"><strong>{{ choice.title }}</strong><span class="muted">{{ choice.developer }} · {{ choice.releaseYear }}</span></div>
+            <a v-if="choice.existing?.game" class="button secondary" :href="gameHref(choice.existing.game)" :aria-label="'Open ' + choice.title">Open game</a>
+            <button v-else class="primary" @click="addGame(choice)" :aria-label="'Add ' + choice.title + ' to catalog'" :disabled="saving || searchingSteam">{{ importing === choice.steamAppId ? 'Adding…' : 'Add to catalog' }}</button>
+          </li>
+        </ul>
       </details>
       <div v-else class="contribution-prompt"><button class="text-button" @click="$emit('sign-in')">Sign in to add a game</button></div>
     </section>`,

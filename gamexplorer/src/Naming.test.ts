@@ -12,6 +12,7 @@ import { AspectManagingConcept } from "./concepts/fixtures/AspectManagingP2.ts";
 import { AspectRatingConcept } from "./concepts/fixtures/AspectRatingP2.ts";
 import { AspectFilteringConcept } from "./concepts/fixtures/AspectFilteringP2.ts";
 import { aspectNaming, checkAspectNames } from "./compositions/aspectVocabulary.ts";
+import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 let db: Db, reset: () => Promise<void>, close: () => Promise<void>;
 let handler: (request: Request) => Promise<Response>;
 beforeAll(async () => ({ db, reset, close } = await testDb("naming")));
@@ -46,7 +47,7 @@ test("presets are public suggestions and do not create game dimensions or rating
 test("custom names remain allowed and become shared choices for other games", async () => {
   const session = await signIn();
   const games: string[] = [];
-  for (const title of ["First game", "Second game"]) games.push((await call("/games/add", { title, developer: "Studio", releaseYear: 2020 }, session)).body.game);
+  for (const title of ["First game", "Second game"]) games.push((await new GameCatalogConcept(db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
   const first = await call("/aspects/create", { game: games[0], name: "Companion AI", description: "Companion decisions." }, session);
   expect(first.status).toBe(200);
   expect((await call("/aspects/options")).body.choices.options).toContainEqual({ name: "Companion AI", description: "Companion decisions.", aliases: "" });
@@ -60,7 +61,7 @@ test("Combat filters find legacy Combat Depth and new Combat games, keeping exis
   const session = await signIn();
   const user = (await call("/auth/me", {}, session)).body.me.user;
   const games: string[] = [];
-  for (const title of ["Legacy game", "New game"]) games.push((await call("/games/add", { title, developer: "Studio", releaseYear: 2020 }, session)).body.game);
+  for (const title of ["Legacy game", "New game"]) games.push((await new GameCatalogConcept(db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
   const { aspect } = await new AspectManagingConcept(db).createAspect({ game: games[0], name: "Combat Depth", description: "Old description." });
   await new AspectRatingConcept(db).rateAspect({ user, game: games[0], aspect, score: 9, microNote: "Original review." });
   const oldFiltering = new AspectFilteringConcept(db);

@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 
 const url = process.env.MONGODB_URL;
 if (!url) {
-  throw new Error("MONGODB_URL is not set. Add it to your .env file.");
+  throw new Error("MONGODB_URL is not set. Configure the database connection before starting the server.");
 }
 
 export const client = new MongoClient(url, {

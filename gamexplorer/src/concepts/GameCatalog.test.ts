@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type { Db } from "mongodb";
-import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound } from "./GameCatalog.ts";
+import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound, InvalidSteamGame, SteamGameExists, SteamUnavailable } from "./GameCatalog.ts";
 import { testDb } from "./testing.ts";
+import { FixtureSteam, steamGame } from "../testing/steam.ts";
 
 let db: Db;
 let reset: () => Promise<void>;
@@ -12,6 +13,84 @@ beforeAll(async () => ({ db, reset, close } = await testDb("catalog")));
 beforeEach(async () => {
   await reset();
   catalog = new GameCatalogConcept(db);
+});
+
+describe("Steam-backed catalog entries", () => {
+  test("principle: search does not add games; selecting a verified match stores its metadata and cover", async () => {
+    const source = new FixtureSteam([steamGame(620, "Portal 2", "Valve", 2011)]);
+    catalog = new GameCatalogConcept(db, source);
+    expect(await catalog._searchSteam({ query: "Portal" })).toEqual(source.games);
+    expect(await catalog._searchGames({ query: "" })).toEqual([]);
+    const { game } = await catalog.addSteamGame({ steamAppId: 620 });
+    expect(await catalog._get({ game })).toEqual([{ title: "Portal 2", developer: "Valve", releaseYear: 2011 }]);
+    expect(await catalog._fromSteam({ steamAppId: 620 })).toEqual({ game });
+    expect(await catalog._steamCover({ game })).toEqual({ steamAppId: 620, coverUrl: source.games[0]!.coverUrl });
+    expect(await catalog._fromSteam({ steamAppId: -1 })).toEqual({ game: "" });
+    expect(await catalog._fromSteam({ steamAppId: 999 })).toEqual({ game: "" });
+    expect(await catalog._searchSteam({ query: "x" })).toEqual([]);
+    expect(await catalog._searchSteam({ query: "x".repeat(101) })).toEqual([]);
+  });
+
+  test("existing IDs remain usable without Steam and without metadata replacement", async () => {
+    const source = new FixtureSteam([steamGame(620, "Portal 2", "Valve", 2011)]);
+    catalog = new GameCatalogConcept(db, source);
+    const first = await catalog.addSteamGame({ steamAppId: 620 });
+    source.available = false;
+    expect(await catalog.addSteamGame({ steamAppId: 620 })).toEqual(first);
+    expect(source.lookups).toBe(1);
+    expect(await catalog._searchGames({ query: "" })).toHaveLength(1);
+  });
+
+  test("linking a manual entry keeps its identity and uses the verified metadata", async () => {
+    const source = new FixtureSteam([steamGame(620, "Portal 2", "Valve", 2011)]);
+    catalog = new GameCatalogConcept(db, source);
+    const prior = await catalog.addGame({ title: "Portal 2", developer: "Old label", releaseYear: 2010 });
+    expect(await catalog.addSteamGame({ steamAppId: 620 })).toEqual(prior);
+    expect(await catalog._get(prior)).toEqual([{ title: "Portal 2", developer: "Valve", releaseYear: 2011 }]);
+    expect(await catalog._searchGames({ query: "" })).toHaveLength(1);
+  });
+
+  test("concurrent imports converge on one Steam identity", async () => {
+    const source = new FixtureSteam([steamGame(620, "Portal 2", "Valve", 2011)]);
+    catalog = new GameCatalogConcept(db, source);
+    const results = await Promise.all(Array.from({ length: 6 }, () => catalog.addSteamGame({ steamAppId: 620 })));
+    expect(new Set(results.map(result => result.game)).size).toBe(1);
+    expect(await catalog._searchGames({ query: "" })).toHaveLength(1);
+  });
+
+  test("invalid choices and provider failures leave the catalog unchanged", async () => {
+    const source = new FixtureSteam([]);
+    catalog = new GameCatalogConcept(db, source);
+    for (const steamAppId of [-1, 0, 1.5, NaN, Infinity, 0x1_0000_0000, 620]) {
+      await expect(catalog.addSteamGame({ steamAppId })).rejects.toThrow(InvalidSteamGame);
+    }
+    expect(source.lookups).toBe(1);
+    source.available = false;
+    await expect(catalog.addSteamGame({ steamAppId: 620 })).rejects.toThrow(SteamUnavailable);
+    await expect(catalog._searchSteam({ query: "Portal" })).rejects.toThrow(SteamUnavailable);
+    expect(await catalog._searchGames({ query: "" })).toEqual([]);
+  });
+
+  test("a source cannot replace another Steam identity's title or supply untrusted artwork", async () => {
+    const source = new FixtureSteam([steamGame(620, "Portal 2"), steamGame(621, "Portal 2")]);
+    catalog = new GameCatalogConcept(db, source);
+    const first = await catalog.addSteamGame({ steamAppId: 620 });
+    await expect(catalog.addSteamGame({ steamAppId: 621 })).rejects.toThrow(GameExists);
+    source.games.push({ ...steamGame(622, "Other"), coverUrl: "https://example.org/fake.jpg" });
+    await expect(catalog.addSteamGame({ steamAppId: 622 })).rejects.toThrow(InvalidSteamGame);
+    expect(await catalog._fromSteam({ steamAppId: 620 })).toEqual(first);
+    expect(await catalog._searchGames({ query: "" })).toHaveLength(1);
+  });
+
+  test("the same Steam identity cannot be assigned to two existing games", async () => {
+    const first = await catalog.addGame({ title: "First", developer: "Studio", releaseYear: 2020 });
+    const second = await catalog.addGame({ title: "Second", developer: "Studio", releaseYear: 2021 });
+    const coverUrl = steamGame(620, "Portal 2").coverUrl;
+    await catalog.setSteamCover({ ...first, steamAppId: 620, coverUrl });
+    await expect(catalog.setSteamCover({ ...second, steamAppId: 620, coverUrl })).rejects.toThrow(SteamGameExists);
+    expect(await catalog._steamCover(second)).toEqual({ steamAppId: 0, coverUrl: "" });
+    expect(await catalog._fromSteam({ steamAppId: 620 })).toEqual(first);
+  });
 });
 afterAll(async () => close());
 

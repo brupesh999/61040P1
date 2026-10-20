@@ -1,120 +1,140 @@
 bun test v1.4.2 (50a8a8387)
 
 src/app.test.ts:
-(pass) Rating aggregates remain consistent across reactions > P2 contributions remain editable through the current HTTP endpoints [614.29ms]
-(pass) Rating aggregates remain consistent across reactions > rejected updates preserve the saved rating and discovery aggregate [763.04ms]
-(pass) Rating aggregates remain consistent across reactions > overlapping reviewers leave discovery equal to the final stored average [1108.14ms]
-(pass) Rating aggregates remain consistent across reactions > removing the final rating removes discovery scores and a later rating restores them [650.96ms]
-(pass) Rating aggregates remain consistent across reactions > forged identities cannot remove another user's rating or filters [597.94ms]
-(pass) Gamexplorer user journey > catalog import is repeatable, exposes covers, and creates no ratings or aspects [596.96ms]
-(pass) Gamexplorer user journey > add a game, rate one aspect sparsely, discover it with a threshold filter, read notes [734.71ms]
-(pass) Gamexplorer user journey > search is public and works from an empty database [12.03ms]
-(pass) Access control is enforced on the server > every state-changing endpoint refuses a missing or invented session with 401 [40.36ms]
-(pass) Access control is enforced on the server > a logged-out session no longer authorizes anything [243.57ms]
-(pass) Access control is enforced on the server > a rating is always attributed to the session's user, never a claimed one [342.55ms]
-(pass) Access control is enforced on the server > a body-supplied session operator cannot authenticate without a cookie [12.19ms]
-(pass) Refusals surface as HTTP errors > duplicate usernames, bad credentials, duplicate games, bad scores, and missing targets [531.92ms]
+(pass) Rating aggregates remain consistent across reactions > P2 contributions remain editable through the current HTTP endpoints [517.20ms]
+(pass) Rating aggregates remain consistent across reactions > rejected updates preserve the saved rating and discovery aggregate [729.35ms]
+(pass) Rating aggregates remain consistent across reactions > overlapping reviewers leave discovery equal to the final stored average [1025.05ms]
+(pass) Rating aggregates remain consistent across reactions > removing the final rating removes discovery scores and a later rating restores them [620.45ms]
+(pass) Rating aggregates remain consistent across reactions > forged identities cannot remove another user's rating or filters [672.80ms]
+(pass) Gamexplorer user journey > catalog import is repeatable, exposes covers, and creates no ratings or aspects [581.14ms]
+(pass) Gamexplorer user journey > add a game, rate one aspect sparsely, discover it with a threshold filter, read notes [620.86ms]
+(pass) Gamexplorer user journey > search is public and works from an empty database [10.75ms]
+(pass) Access control is enforced on the server > every state-changing endpoint refuses a missing or invented session with 401 [31.20ms]
+(pass) Access control is enforced on the server > a logged-out session no longer authorizes anything [248.66ms]
+(pass) Access control is enforced on the server > a rating is always attributed to the session's user, never a claimed one [336.44ms]
+(pass) Access control is enforced on the server > a body-supplied session operator cannot authenticate without a cookie [12.52ms]
+(pass) Steam catalog HTTP workflow > a verified choice overrides forged browser metadata and repeated additions preserve reviews [330.75ms]
+{"action":"respond","actionId":"dc35835a-cf0d-40a3-ada0-0d89f1a1f610","error":{"name":"SteamUnavailable"},"level":"error","message":"Reaction \"Catalog.SearchSteam#2\": consequence input former failed","timestamp":"2026-10-20T21:47:39.117Z"}
+An application operation failed.
+(pass) Steam catalog HTTP workflow > manual metadata, operator IDs, malformed searches, and unavailable Steam cannot create catalog state [259.23ms]
+(pass) Refusals surface as HTTP errors > duplicate usernames, bad credentials, invalid Steam choices, bad scores, and missing targets [505.42ms]
 
 src/Naming.test.ts:
-(pass) presets are public suggestions and do not create game dimensions or ratings [18.79ms]
-(pass) custom names remain allowed and become shared choices for other games [308.29ms]
-(pass) Combat filters find legacy Combat Depth and new Combat games, keeping existing review identities [440.35ms]
-(pass) equivalent saved requirements retain the stricter minimum, then edit and remove as one [46.99ms]
-(pass) naming aliases work for another domain without game-specific rules [21.66ms]
-(pass) conflicting legacy dimension identities block startup without losing either review [33.24ms]
+(pass) presets are public suggestions and do not create game dimensions or ratings [20.40ms]
+(pass) custom names remain allowed and become shared choices for other games [323.53ms]
+(pass) Combat filters find legacy Combat Depth and new Combat games, keeping existing review identities [414.31ms]
+(pass) equivalent saved requirements retain the stricter minimum, then edit and remove as one [47.80ms]
+(pass) naming aliases work for another domain without game-specific rules [25.52ms]
+(pass) conflicting legacy dimension identities block startup without losing either review [37.43ms]
 
 src/frontend.test.ts:
-(pass) the Commons callback serves the app with no-referrer and absolute assets without reflecting codes [15.43ms]
+(pass) the Commons callback serves the app with no-referrer and absolute assets without reflecting codes [17.36ms]
 
 src/health.test.ts:
-(pass) production HTTP health accepts GET and HEAD with an empty or populated MongoDB [22.51ms]
-(pass) wire verification rejects a 200 response that leaves its connection open [1004.61ms]
-(pass) wire verification refuses a complete 503 response from an unready monitor [5.81ms]
-(pass) overlapping refreshes share a read and HTTP probes do not use the database pool [6.84ms]
-(pass) a lost database returns 503 without stale success and recovers after reconnection [18.10ms]
-(pass) HTTP readiness responds immediately while an unreachable database check is pending [3007.72ms]
-(pass) a stale success refuses health even while the previous result was healthy [9.91ms]
-(pass) scheduled checks detect database loss and recovery without any HTTP-triggered queries [4035.16ms]
+(pass) production HTTP health accepts GET and HEAD with an empty or populated MongoDB [26.59ms]
+(pass) wire verification rejects a 200 response that leaves its connection open [1002.29ms]
+(pass) wire verification refuses a complete 503 response from an unready monitor [3.38ms]
+(pass) overlapping refreshes share a read and HTTP probes do not use the database pool [4.35ms]
+(pass) a lost database returns 503 without stale success and recovers after reconnection [12.16ms]
+(pass) HTTP readiness responds immediately while an unreachable database check is pending [3006.84ms]
+(pass) a stale success refuses health even while the previous result was healthy [14.14ms]
+(pass) scheduled checks detect database loss and recovery without any HTTP-triggered queries [4028.36ms]
 
 src/commons.test.ts:
-(pass) Commons authentication through HTTP and MongoDB > sign-in issues private cookies; the same Commons subject keeps its reviews after a name change [204.08ms]
-(pass) Commons authentication through HTTP and MongoDB > another browser cannot supply an attempt in JSON or finish the caller's sign-in [56.33ms]
-(pass) Commons authentication through HTTP and MongoDB > a stolen code fails PKCE in another attempt and cannot be replayed [60.61ms]
-(pass) Commons authentication through HTTP and MongoDB > a local username is never automatically linked; a confirmed user can choose another [304.57ms]
-(pass) Commons authentication through HTTP and MongoDB > origin protection blocks sign-in and existing credentials cannot be supplied in JSON [66.41ms]
+(pass) Commons authentication through HTTP and MongoDB > the application registers exactly five concepts [9.97ms]
+(pass) Commons authentication through HTTP and MongoDB > P3 Commons links and active sessions retain their identity and contributions [204.08ms]
+(pass) Commons authentication through HTTP and MongoDB > sign-in issues private cookies; the same Commons subject keeps its reviews after a name change [195.22ms]
+(pass) Commons authentication through HTTP and MongoDB > another browser cannot supply an attempt in JSON or finish the caller's sign-in [68.53ms]
+(pass) Commons authentication through HTTP and MongoDB > a stolen code fails PKCE in another attempt and cannot be replayed [71.26ms]
+(pass) Commons authentication through HTTP and MongoDB > a local username is never automatically linked; a confirmed user can choose another [277.74ms]
+(pass) Commons authentication through HTTP and MongoDB > origin protection blocks sign-in and existing credentials cannot be supplied in JSON [61.09ms]
 
 src/concepts/DimensionDefining.test.ts:
-(pass) DimensionDefining > principle: names identify stable dimensions within each subject [19.76ms]
-(pass) DimensionDefining > duplicate normalized names are refused without changing the existing definition [17.01ms]
-(pass) DimensionDefining > blank names are refused and create no dimension [1.90ms]
-(pass) DimensionDefining > lists are ordered by normalized name and all unknown lookups answer no rows [18.13ms]
-(pass) DimensionDefining > one subject's definition cannot change or shadow another subject's definition [14.95ms]
-
-src/concepts/Federating.test.ts:
-(pass) Federating > its principle: Sam comes back to the same user after his Commons username changes, and neither Leo's link nor Sam's code read by Leo finishes a sign-in [38.05ms]
-(pass) Federating > start returns an address carrying a fresh nonce and challenge in the forms Commons accepts, and an attempt that expires in 10 minutes [18.73ms]
-(pass) Federating > finish refuses an unknown, expired, or confirmed attempt, or another nonce, with SIGN_IN_EXPIRED before contacting the other site [24.34ms]
-(pass) Federating > finish refuses a code the other site doesn't confirm with SIGN_IN_REFUSED, and the attempt stays unconfirmed [21.21ms]
-(pass) Federating > of two finishes of one attempt at once, one confirms it and the other is refused [21.23ms]
-(pass) Federating > link refuses an unconfirmed attempt with NOT_CONFIRMED and a subject already linked with ALREADY_LINKED [26.71ms]
-(pass) Federating > _linkable is true only for a confirmed, unexpired attempt whose subject is unlinked, and link still links after expiry [27.53ms]
+(pass) DimensionDefining > principle: names identify stable dimensions within each subject [18.98ms]
+(pass) DimensionDefining > duplicate normalized names are refused without changing the existing definition [16.16ms]
+(pass) DimensionDefining > blank names are refused and create no dimension [2.77ms]
+(pass) DimensionDefining > lists are ordered by normalized name and all unknown lookups answer no rows [15.03ms]
+(pass) DimensionDefining > one subject's definition cannot change or shadow another subject's definition [15.95ms]
 
 src/concepts/UserAuthenticating.test.ts:
-(pass) UserAuthenticating > P2 accounts retain their identity and upgrade their password hash only after a successful login [279.29ms]
-(pass) UserAuthenticating > external accounts have no password, can start sessions, and cannot take a local username [157.62ms]
-(pass) UserAuthenticating > new local passwords use Argon2id and expired sessions refuse use and logout [256.67ms]
-(pass) UserAuthenticating > principle: register, authenticate with exact credentials, resolve session, log out [245.98ms]
-(pass) UserAuthenticating > a duplicate username is refused with USERNAME_TAKEN [232.57ms]
-(pass) UserAuthenticating > empty username or password is refused and creates no user [4.72ms]
-(pass) UserAuthenticating > wrong password and unknown user are both refused with INVALID_CREDENTIALS [217.31ms]
-(pass) UserAuthenticating > an invented session is refused, and logging out twice is refused [243.18ms]
-(pass) UserAuthenticating > sessions are independent: logging out one leaves the other active [356.43ms]
+(pass) UserAuthenticating > P2 accounts retain their identity and upgrade their password hash only after a successful login [289.94ms]
+(pass) UserAuthenticating > external accounts have no password, can start sessions, and cannot take a local username [148.52ms]
+(pass) UserAuthenticating > new local passwords use Argon2id and expired sessions refuse use and logout [257.84ms]
+(pass) UserAuthenticating > principle: register, authenticate with exact credentials, resolve session, log out [228.53ms]
+(pass) UserAuthenticating > a duplicate username is refused with USERNAME_TAKEN [214.30ms]
+(pass) UserAuthenticating > empty username or password is refused and creates no user [5.28ms]
+(pass) UserAuthenticating > wrong password and unknown user are both refused with INVALID_CREDENTIALS [213.73ms]
+(pass) UserAuthenticating > an invented session is refused, and logging out twice is refused [234.43ms]
+(pass) UserAuthenticating > sessions are independent: logging out one leaves the other active [331.02ms]
 
 src/concepts/CommonsProvider.test.ts:
-(pass) CommonsProvider > the sign-in address names the app by its origin, carries the nonce as state, and the verifier's S256 challenge [0.60ms]
-(pass) CommonsProvider > redeeming posts exactly the code, the app, and the verifier, and returns Commons' user as the subject [1.68ms]
-Commons at http://localhost:57483 didn't redeem a sign-in code: Error: status 503
-Commons at http://localhost:57483 didn't redeem a sign-in code: Error: no user in the answer
-(pass) CommonsProvider > a refused code, an error, or an answer without a user returns undefined, and nothing is retried [0.67ms]
-Commons at http://localhost:57483 didn't redeem a sign-in code: TimeoutError: The operation timed out.
-(pass) CommonsProvider > Commons not answering within the timeout returns undefined [51.27ms]
+(pass) CommonsProvider > the sign-in address names the app by its origin, carries the nonce as state, and the verifier's S256 challenge [0.45ms]
+(pass) CommonsProvider > redeeming posts exactly the code, the app, and the verifier, and returns Commons' user as the subject [1.30ms]
+Commons at http://localhost:56021 didn't redeem a sign-in code: Error: status 503
+Commons at http://localhost:56021 didn't redeem a sign-in code: Error: no user in the answer
+(pass) CommonsProvider > a refused code, an error, or an answer without a user returns undefined, and nothing is retried [0.90ms]
+Commons at http://localhost:56021 didn't redeem a sign-in code: TimeoutError: The operation timed out.
+(pass) CommonsProvider > Commons not answering within the timeout returns undefined [50.52ms]
 Commons at http://127.0.0.1:9 didn't redeem a sign-in code: TypeError: Unable to connect. Is the computer able to access the url?
-(pass) CommonsProvider > a Commons that can't be reached returns undefined [0.50ms]
+(pass) CommonsProvider > a Commons that can't be reached returns undefined [0.54ms]
 
 src/concepts/ThresholdFiltering.test.ts:
-(pass) ThresholdFiltering > principle: all requirements must be present and met; withdrawing a value removes a match [68.86ms]
-(pass) ThresholdFiltering > negative values and thresholds above ten work without rating concepts [38.43ms]
-(pass) ThresholdFiltering > nonfinite values preserve the previous value [25.77ms]
-(pass) ThresholdFiltering > nonfinite minimums preserve the previous requirement [25.11ms]
-(pass) ThresholdFiltering > blank criteria are refused before recording values or requirements [2.61ms]
-(pass) ThresholdFiltering > name normalization replaces an existing criterion and value [38.52ms]
-(pass) ThresholdFiltering > criteria and removal are scoped to one owner [37.00ms]
-(pass) ThresholdFiltering > forgetting unknown values is idempotent and unknown items have no values [5.51ms]
-(pass) ThresholdFiltering > matching includes equality and orders by highest selected value [36.68ms]
+(pass) ThresholdFiltering > principle: all requirements must be present and met; withdrawing a value removes a match [77.49ms]
+(pass) ThresholdFiltering > negative values and thresholds above ten work without rating concepts [32.17ms]
+(pass) ThresholdFiltering > nonfinite values preserve the previous value [33.24ms]
+(pass) ThresholdFiltering > nonfinite minimums preserve the previous requirement [24.18ms]
+(pass) ThresholdFiltering > blank criteria are refused before recording values or requirements [2.69ms]
+(pass) ThresholdFiltering > name normalization replaces an existing criterion and value [44.78ms]
+(pass) ThresholdFiltering > criteria and removal are scoped to one owner [41.70ms]
+(pass) ThresholdFiltering > forgetting unknown values is idempotent and unknown items have no values [5.02ms]
+(pass) ThresholdFiltering > matching includes equality and orders by highest selected value [37.56ms]
 
 src/concepts/Compatibility.test.ts:
-(pass) P2 dimension identities, sparse reviews, and owner criteria remain usable without a database rewrite [81.83ms]
+(pass) P2 dimension identities, sparse reviews, and owner criteria remain usable without a database rewrite [96.92ms]
+
+src/concepts/UserAuthenticatingExternal.test.ts:
+(pass) UserAuthenticating external credentials > its principle: Sam comes back to the same user after his Commons username changes, and neither Leo's link nor Sam's code read by Leo finishes a sign-in [52.55ms]
+(pass) UserAuthenticating external credentials > a provider response arriving at the deadline cannot confirm an expired attempt [29.89ms]
+(pass) UserAuthenticating external credentials > start returns an address carrying a fresh nonce and challenge in the forms Commons accepts, and an attempt that expires in 10 minutes [28.64ms]
+(pass) UserAuthenticating external credentials > finish refuses an unknown, expired, or confirmed attempt, or another nonce, with SIGN_IN_EXPIRED before contacting the other site [38.53ms]
+(pass) UserAuthenticating external credentials > finish refuses a code the other site doesn't confirm with SIGN_IN_REFUSED, and the attempt stays unconfirmed [34.75ms]
+(pass) UserAuthenticating external credentials > of two finishes of one attempt at once, one confirms it and the other is refused [31.18ms]
+(pass) UserAuthenticating external credentials > link refuses an unconfirmed attempt with NOT_CONFIRMED and a subject already linked with ALREADY_LINKED [39.38ms]
+(pass) UserAuthenticating external credentials > _linkable is true only for a confirmed, unexpired attempt whose subject is unlinked, and linking is refused after expiry [44.73ms]
+
+src/concepts/SteamStore.test.ts:
+(pass) Steam search verifies base games, preserves source order, and reuses verified details [1.23ms]
+(pass) unavailable or malformed Steam responses are errors, not empty search results [0.49ms]
+(pass) metadata for another app and incomplete game metadata cannot be imported [0.30ms]
+(pass) a real stalled HTTP response is aborted within the configured deadline [53.25ms]
 
 src/concepts/GameCatalog.test.ts:
-(pass) GameCatalog > principle: an added game gets an identity usable to look it up and search for it [13.12ms]
-(pass) GameCatalog > a duplicate title, ignoring case and spaces, is refused with GAME_EXISTS [12.26ms]
-(pass) GameCatalog > blank fields or an out-of-range year are refused with INVALID_GAME [1.98ms]
-(pass) GameCatalog > search is case-insensitive, ordered by title, and empty for no match [13.34ms]
-(pass) GameCatalog > regex characters in a query are treated literally [16.44ms]
-(pass) GameCatalog > unknown games answer no rows [1.93ms]
-(pass) GameCatalog > a Steam cover can be attached and replaced without changing game metadata [16.90ms]
-(pass) GameCatalog > invalid cover identities and untrusted URLs preserve the previous cover [18.66ms]
-(pass) GameCatalog > attaching a cover to an unknown game is refused without creating a game [2.92ms]
+(pass) Steam-backed catalog entries > principle: search does not add games; selecting a verified match stores its metadata and cover [24.86ms]
+(pass) Steam-backed catalog entries > existing IDs remain usable without Steam and without metadata replacement [18.89ms]
+(pass) Steam-backed catalog entries > linking a manual entry keeps its identity and uses the verified metadata [20.50ms]
+(pass) Steam-backed catalog entries > concurrent imports converge on one Steam identity [54.91ms]
+(pass) Steam-backed catalog entries > invalid choices and provider failures leave the catalog unchanged [19.48ms]
+(pass) Steam-backed catalog entries > a source cannot replace another Steam identity's title or supply untrusted artwork [21.08ms]
+(pass) Steam-backed catalog entries > the same Steam identity cannot be assigned to two existing games [18.02ms]
+(pass) GameCatalog > principle: an added game gets an identity usable to look it up and search for it [19.82ms]
+(pass) GameCatalog > a duplicate title, ignoring case and spaces, is refused with GAME_EXISTS [15.43ms]
+(pass) GameCatalog > blank fields or an out-of-range year are refused with INVALID_GAME [2.02ms]
+(pass) GameCatalog > search is case-insensitive, ordered by title, and empty for no match [18.21ms]
+(pass) GameCatalog > regex characters in a query are treated literally [19.11ms]
+(pass) GameCatalog > unknown games answer no rows [2.54ms]
+(pass) GameCatalog > a Steam cover can be attached and replaced without changing game metadata [18.57ms]
+(pass) GameCatalog > invalid cover identities and untrusted URLs preserve the previous cover [24.03ms]
+(pass) GameCatalog > attaching a cover to an unknown game is refused without creating a game [16.18ms]
 
 src/concepts/Rating.test.ts:
-(pass) Rating > principle: independent evaluations contribute once, revisions replace, withdrawal preserves others [21.15ms]
-(pass) Rating > ratings can target whole books directly without creating evaluation dimensions or a game catalog [16.88ms]
-(pass) Rating > invalid scores preserve the previous evaluation [15.71ms]
-(pass) Rating > notes are trimmed before the 280-character bound and a refused note preserves state [15.34ms]
-(pass) Rating > means round to one decimal and empty targets answer zero count [19.11ms]
-(pass) Rating > an extra parent value cannot manufacture a second evaluation of the same target [18.91ms]
+(pass) Rating > principle: independent evaluations contribute once, revisions replace, withdrawal preserves others [24.82ms]
+(pass) Rating > ratings can target whole books directly without creating evaluation dimensions or a game catalog [18.95ms]
+(pass) Rating > invalid scores preserve the previous evaluation [19.02ms]
+(pass) Rating > notes are trimmed before the 280-character bound and a refused note preserves state [15.98ms]
+(pass) Rating > means round to one decimal and empty targets answer zero count [23.53ms]
+(pass) Rating > an extra parent value cannot manufacture a second evaluation of the same target [18.89ms]
 
- 84 pass
+ 100 pass
  0 fail
- 625 expect() calls
-Ran 84 tests across 13 files. [19.20s]
+ 728 expect() calls
+Ran 100 tests across 14 files. [19.98s]

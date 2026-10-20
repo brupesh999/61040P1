@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, test } from "bun:test";
-import { CommonsProvider } from "./Federating/provider.ts";
+import { CommonsProvider } from "./UserAuthenticating/provider.ts";
 
 const requests: unknown[] = [];
 let answer: () => Response | Promise<Response> = () => Response.json({});

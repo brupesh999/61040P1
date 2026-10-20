@@ -12,10 +12,9 @@ import {
   UsernameTaken,
   InvalidUsername,
   UnknownUser,
+  SignInExpired, SignInRefused, NotConfirmed, AlreadyLinked,
 } from "./concepts/UserAuthenticating.ts";
-import federatingSpec from "@design/concepts/Federating.md" with { type: "text" };
-import { FederatingConcept, AlreadyLinked, NotConfirmed, SignInExpired, SignInRefused } from "./concepts/Federating/Federating.ts";
-import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound } from "./concepts/GameCatalog.ts";
+import { GameCatalogConcept, GameExists, InvalidGame, InvalidCover, GameNotFound, InvalidSteamGame, SteamGameExists, SteamUnavailable } from "./concepts/GameCatalog.ts";
 import { DimensionExists, DimensionDefiningConcept, EmptyDimensionName } from "./concepts/DimensionDefining.ts";
 import {
   RatingConcept,
@@ -35,20 +34,15 @@ const userAuthenticating = registerConcept({
     UNKNOWN_SESSION: UnknownSession,
     INVALID_USERNAME: InvalidUsername,
     UNKNOWN_USER: UnknownUser,
+    SIGN_IN_EXPIRED: SignInExpired, SIGN_IN_REFUSED: SignInRefused, NOT_CONFIRMED: NotConfirmed, ALREADY_LINKED: AlreadyLinked,
   },
-});
-
-class CommonsFederating extends FederatingConcept<string> {}
-const commonsFederating = registerConcept({
-  class: CommonsFederating,
-  spec: federatingSpec,
-  refusals: { SIGN_IN_EXPIRED: SignInExpired, SIGN_IN_REFUSED: SignInRefused, NOT_CONFIRMED: NotConfirmed, ALREADY_LINKED: AlreadyLinked },
 });
 
 const gameCatalog = registerConcept({
   class: GameCatalogConcept,
   spec: gameCatalogSpec,
-  refusals: { INVALID_GAME: InvalidGame, GAME_EXISTS: GameExists, INVALID_COVER: InvalidCover, GAME_NOT_FOUND: GameNotFound },
+  refusals: { INVALID_GAME: InvalidGame, GAME_EXISTS: GameExists, INVALID_COVER: InvalidCover, GAME_NOT_FOUND: GameNotFound,
+    INVALID_STEAM_GAME: InvalidSteamGame, STEAM_GAME_EXISTS: SteamGameExists, STEAM_UNAVAILABLE: SteamUnavailable },
 });
 
 class GameDimensions extends DimensionDefiningConcept<string> {}
@@ -75,7 +69,6 @@ const filtering = registerConcept({
 
 export const applicationConceptSet = conceptSet({
   UserAuthenticating: userAuthenticating,
-  CommonsFederating: commonsFederating,
   GameCatalog: gameCatalog,
   GameDimensions: dimensions,
   DimensionRatings: ratings,

@@ -6,7 +6,7 @@ import { client, db } from "./db.ts";
 import { createHealthMonitor } from "./health.ts";
 import { checkHealthWire, HealthWireError } from "./healthWire.ts";
 import { frontendHandler } from "../web/serve.ts";
-import { CommonsProvider } from "./concepts/Federating/provider.ts";
+import { CommonsProvider } from "./concepts/UserAuthenticating/provider.ts";
 
 const { checkAspectNames } = await import("./compositions/aspectVocabulary.ts");
 await checkAspectNames(db);

@@ -6,7 +6,7 @@ The user's typography study pairs pixel lettering in games and interfaces with
 conventional text for readability. Keep locally hosted Pixelify Sans for the
 wordmark and page names such as Catalog and Discover.
 
-Replace the Martian Mono trial with locally hosted Geist Pixel Square for game
+Use locally hosted Geist Pixel Square for game
 titles, bold body text, section headings, navigation, labels, and buttons. This uses
 the user's preferred font from the typography slide. Keep ordinary paragraphs,
 metadata, reviews, input text, and numeric count badges in locally hosted Archivo.
@@ -71,7 +71,12 @@ messages without discarding unrelated form input.
 Catalog provides public title search and keyboard-operable game cards. Empty catalog,
 no search results, loading, and failed requests have distinct explanations. Adding a
 game remains an authenticated action and opens in a disclosure to keep browsing clear.
-Fields retain their values on refusal. Successfully adding a game opens its detail.
+The form searches Steam instead of accepting manual metadata. Search results show
+the title, developer, release year, and portrait cover. Existing entries offer Open
+game; new entries offer Add to catalog. Selection is verified on the server, and a
+successful addition opens the game's detail. Loading, no matches, and Steam being
+unavailable have separate feedback. Search text and results remain on a refused add.
+Public catalog browsing continues to work while Steam is unavailable.
 Cards and game detail show the portrait Steam library cover when a URL is stored in MongoDB.
 Images load directly from Steam; missing or failed images use the title tile. The
 import manifest is not read by the frontend. Detail pages link to the Steam source.

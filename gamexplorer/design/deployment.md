@@ -65,6 +65,26 @@ frontend API calls remain relative to `/api`. Endpoint authorization stays in th
 compositions. Authentication uses HttpOnly session and sign-in-attempt cookies;
 request JSON cannot override those credentials.
 
+## Local setup
+
+The local Compose stack builds with Bun 1.4.2 and starts MongoDB, the backend,
+and the frontend without a private environment file. Image builds exclude environment
+files and host dependencies. MongoDB must pass an authenticated ping before the
+backend starts; the backend must pass its readiness check before the frontend starts.
+The database-only startup command also waits for MongoDB health before returning.
+The backend's PUBLIC_ORIGIN matches the frontend browser address. Local startup
+imports the catalog through concept actions, without creating reviews.
+
+Default host ports are 27017, 3000, and 8080. MONGO_PORT, API_PORT, and WEB_PORT
+can select separate ports for an isolated checkout. Container-internal ports stay
+fixed. Development and preview commands supply the same local database default;
+production start still requires an explicit MONGODB_URL. A private override remains
+optional, and its contents must never enter the image or repository.
+
+Application assembly receives its database explicitly. Design checks and artifact
+generation use a disconnected database handle: inspecting declarations must not
+require credentials, a running database, or importing the production connection.
+
 Each automated test file uses a randomly named throwaway database, clears it between
 cases, and drops it during cleanup. All fixture data is created through concept
 actions or endpoints. Integration tests check failed updates preserve prior state,

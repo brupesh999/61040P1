@@ -1,5 +1,6 @@
+/** Archived P3 protocol: used only to create legacy compatibility fixtures. */
 import { type Collection, type Db, MongoServerError } from "mongodb";
-import type { Provider } from "./provider.ts";
+import type { Provider } from "../UserAuthenticating/provider.ts";
 
 export class SignInExpired extends Error {}
 export class SignInRefused extends Error {}

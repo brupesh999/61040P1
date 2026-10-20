@@ -9,8 +9,25 @@ Each result also includes its optional [Steam cover](former:Catalog.SteamCover).
 Catalog.Search at /games/search
 ```
 
-A signed-in user can [add a game](reaction:Catalog.AddGame). The journey starts from an
-empty database, so players add the games they want to review.
+A signed-in user can [search Steam](reaction:Catalog.SearchSteam). Authentication
+is resolved before the [Steam results](former:Catalog.SteamResults) are read.
+Each result identifies whether the game is already in the catalog through
+[its Steam identity](former:Catalog.ExistingSteamGame). Steam lookup belongs to
+GameCatalog's external provider; the composition passes no account data to it.
+
+```endpoints
+Catalog.SearchSteam at /games/steam/search
+```
+
+A signed-in user can [add a selected game](reaction:Catalog.AddGame) by Steam app ID.
+The backend obtains metadata from Steam through GameCatalog.addSteamGame; it does
+not trust browser-supplied titles, developers, years, or artwork URLs. A repeated
+selection opens the existing entry. Non-game apps, invalid IDs, and entries with
+incomplete release metadata are refused without writing catalog state. Provider
+failures return HTTP 500 with the framework's opaque `INTERNAL_ERROR` category;
+the Steam search and add controls explain that Steam is unavailable and offer a retry.
+Existing games remain browsable
+regardless of whether they have Steam metadata.
 
 ```endpoints
 Catalog.AddGame at /games/add
@@ -44,8 +61,8 @@ Catalog.CreateAspect at /aspects/create
 Each micro note on the game page is labelled with [the reviewer's username](former:Catalog.ReviewerName).
 
 The optional [Steam cover](former:Catalog.SteamCover) appears on the game detail page
-as well. Covers are publisher-supplied Steam store images attached through the
-catalog import action. There is no public endpoint accepting arbitrary artwork URLs.
+as well. Covers are publisher-supplied Steam store images attached through verified
+Steam selection or the administrative catalog import. There is no public endpoint accepting arbitrary artwork URLs.
 Games without a stored cover remain visible and usable.
 
 ## Shared aspect choices

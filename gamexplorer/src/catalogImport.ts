@@ -12,7 +12,8 @@ export interface SteamCatalogEntry {
 export async function importSteamCatalog(catalog: GameCatalogConcept, entries: readonly SteamCatalogEntry[]) {
   let created = 0;
   for (const entry of entries) {
-    let [found] = await catalog._getGame({ title: entry.title });
+    const steamMatch = await catalog._fromSteam({ steamAppId: entry.steamAppId });
+    let found = steamMatch.game ? steamMatch : (await catalog._getGame({ title: entry.title }))[0];
     if (!found) {
       try {
         found = await catalog.addGame(entry);

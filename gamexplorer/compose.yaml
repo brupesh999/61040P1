@@ -2,34 +2,50 @@ services:
   mongo:
     image: docker.io/library/mongo:8.0
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: dev
       MONGO_INITDB_ROOT_PASSWORD: dev
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--username", "dev", "--password", "dev", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping').ok"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
 
   backend:
     build: .
     command: bun src/main.ts
     init: true
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:${API_PORT:-3000}:3000"
     environment:
       MONGODB_URL: mongodb://dev:dev@mongo:27017/gamexplorer?authSource=admin
+      PUBLIC_ORIGIN: http://127.0.0.1:${WEB_PORT:-8080}
+      IMPORT_STEAM_CATALOG: "1"
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "bun", "-e", "const r = await fetch('http://127.0.0.1:3000/health'); process.exit(r.ok ? 0 : 1)"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
 
   frontend:
     build: .
     command: bun web/server.ts
     init: true
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:${WEB_PORT:-8080}:8080"
     environment:
       BACKEND_URL: http://backend:3000
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   mongo-data:

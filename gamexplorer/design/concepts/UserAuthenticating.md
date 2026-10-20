@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Identify users and prevent unauthorized access to user accounts, so that every rating and
-filter is attributed to an authenticated user. Authentication can come from a local
-password or an external identity confirmed by a composition.
+Prevent impersonation of registered accounts by recognizing accepted credentials and
+issuing sessions that expire or can be ended. Local passwords and externally verified
+identities are alternative credentials for this one purpose.
 
-Accounts may also have no local password. Compositions can register such a user and
-start their session after an independent identity provider has confirmed them. This
-concept never calls or reads Federating. Existing password accounts keep their identities.
+The concept owns users, sessions, external sign-in attempts, and subject-to-user links.
+The provider is an external service adapter, not another concept. Authorization for
+application content belongs in compositions.
 
 ## Principle
 
@@ -17,6 +17,13 @@ refused. Authenticating `mira` with the wrong password is refused; authenticatin
 exact credentials returns Mira's user together with a fresh session. While that session is
 active, `current` resolves it to Mira's user. After Mira logs out, `current` refuses the
 session because it is no longer active.
+
+For external sign-in, Sam starts an attempt and approves it on Commons. The returned
+code is verified against the attempt's nonce and PKCE verifier. Registering and linking
+Sam's confirmed external subject lets Sam start a session. A later sign-in with that
+subject reaches the same user even after the external username changes. Another
+browser's attempt, a stolen code, or a replay cannot establish that identity.
+Matching a local username never links accounts automatically.
 
 ## Types
 
@@ -35,6 +42,22 @@ a set of Sessions with
   a user User
   an expiresAt DateTime
 
+a set of Attempts with
+  a nonce String
+  a verifier String
+  an expiresAt DateTime
+
+a set of Confirmed Attempts with
+  a subject String
+
+a set of Links with
+  a unique subject String
+  a User
+
+Rule: an attempt, its nonce, and its verifier are unguessable. startExternal returns the attempt and its nonce only to its caller, and finishExternal refuses an attempt without its nonce. The verifier is sent only to the other site, with the code.
+Rule: UserAuthenticating may delete an attempt once it has expired.
+
+Rule: each external link refers to a user in Users.
 Rule: new password hashes use ConceptBox's Argon2id hashing. Existing PBKDF2 hashes are verified only for compatibility and replaced with Argon2id after successful login.
 Rule: an account without a passwordHash cannot authenticate by password.
 Rule: sessions expire 90 days after creation; existing sessions without an expiry no longer authorize requests.
@@ -86,6 +109,40 @@ startSession(user: User) : returns (user: User, session: Session, expiresAt: Dat
     add a new unguessable session for user, expiring 90 days from now
     returns user, session, expiresAt
 
+startExternal() : returns (attempt: Attempt, expiresAt: DateTime, address: String)
+  where true
+  then
+    add a new attempt with a fresh nonce and a fresh verifier that expires 10 minutes from now
+    set address to the other site's sign-in address, carrying the nonce and a hash of the verifier
+    returns attempt, expiresAt, address
+
+finishExternal(attempt: Attempt, nonce: String, code: String) : returns (username: String)
+  where attempt is unknown, expired, or in Confirmed Attempts, or nonce is not the attempt's nonce
+  then
+    refuses SIGN_IN_EXPIRED "This sign-in has expired. Start again."
+  where the other site refuses the code with the attempt's verifier, or doesn't answer
+  then
+    refuses SIGN_IN_REFUSED "The other site didn't confirm this sign-in. Start again."
+  where the other site confirms the code for its user subject, whose username is username
+  then
+    add attempt to Confirmed Attempts with subject
+    returns username
+
+linkExternal(attempt: Attempt, user: User) : returns (user: User)
+  where attempt is not in Confirmed Attempts or has expired
+  then
+    refuses NOT_CONFIRMED "This sign-in hasn't been confirmed."
+  where user is not in Users
+  then
+    refuses UNKNOWN_USER "This user could not be found."
+  where a link has the attempt's subject
+  then
+    refuses ALREADY_LINKED "This account on the other site is already linked."
+  where attempt is confirmed and unexpired, user is in Users, and no link has its subject
+  then
+    add a new link with the attempt's subject and user
+    returns user
+
 current(session: Session) : returns (user: User)
   where session is not in Sessions, has no expiry, or has expired
   then
@@ -109,6 +166,12 @@ logout(session: Session) : returns (user: User)
 ## Queries
 
 ```queries
+_externalUser(attempt: Attempt) : optional (user: User)
+  Returns the user linked to a confirmed attempt's subject, or no row when the attempt is unconfirmed or its subject is unlinked.
+
+_externalLinkable(attempt: Attempt) : one (linkable: Flag)
+  Returns true when the attempt is confirmed, unexpired, and its subject unlinked, and false otherwise.
+
 _getUser(username: String) : optional (user: User)
   Answers the user registered with username, and no row for an unknown username.
 

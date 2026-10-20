@@ -4,13 +4,13 @@ import { no, where } from "@mit-sdg/sync-engine/language";
 import { concepts } from "../concepts.ts";
 import { shape } from "./validators.ts";
 
-const { UserAuthenticating, CommonsFederating } = concepts;
+const { UserAuthenticating } = concepts;
 
 const StartCommons = endpoint(
   "/auth/commons/start",
   ({ attempt, expiresAt, address }) =>
     receive({})
-      .then(CommonsFederating.start({}).responds({ attempt, expiresAt, address }))
+      .then(UserAuthenticating.startExternal({}).responds({ attempt, expiresAt, address }))
       .then(respond({ attempt, expiresAt, address })),
   { validators: { input: shape({}) } },
 );
@@ -19,15 +19,15 @@ const FinishCommons = endpoint(
   "/auth/commons/finish",
   ({ attempt, state, code, username, user, session, expiresAt }) =>
     receive({ attempt, state, code })
-      .then(CommonsFederating.finish({ attempt, nonce: state, code }).responds({ username }))
+      .then(UserAuthenticating.finishExternal({ attempt, nonce: state, code }).responds({ username }))
       .then(
-        where(CommonsFederating._user({ attempt }).is({ user }))
+        where(UserAuthenticating._externalUser({ attempt }).is({ user }))
           .then(UserAuthenticating.startSession({ user }).responds({ session, expiresAt }))
           .then(respond({ user, session, expiresAt }))
           .named("returning"),
-        where(no(CommonsFederating._user({ attempt })))
+        where(no(UserAuthenticating._externalUser({ attempt })))
           .then(UserAuthenticating.registerExternal({ username }).responds({ user }))
-          .then(CommonsFederating.link({ attempt, user }).responds({}))
+          .then(UserAuthenticating.linkExternal({ attempt, user }).responds({}))
           .then(UserAuthenticating.startSession({ user }).responds({ session, expiresAt }))
           .then(respond({ user, session, expiresAt }))
           .named("new"),
@@ -39,13 +39,13 @@ const ChooseUsername = endpoint(
   "/auth/commons/choose",
   ({ attempt, username, user, session, expiresAt }) =>
     receive({ attempt, username }).then(
-      where(CommonsFederating._linkable({ attempt }).is({ linkable: true }))
+      where(UserAuthenticating._externalLinkable({ attempt }).is({ linkable: true }))
         .then(UserAuthenticating.registerExternal({ username }).responds({ user }))
-        .then(CommonsFederating.link({ attempt, user }).responds({}))
+        .then(UserAuthenticating.linkExternal({ attempt, user }).responds({}))
         .then(UserAuthenticating.startSession({ user }).responds({ session, expiresAt }))
         .then(respond({ user, session, expiresAt }))
         .named("linkable"),
-      where(CommonsFederating._linkable({ attempt }).is({ linkable: false }))
+      where(UserAuthenticating._externalLinkable({ attempt }).is({ linkable: false }))
         .then(respond({ error: "SIGN_IN_EXPIRED" }))
         .named("expired"),
     ),
@@ -54,7 +54,7 @@ const ChooseUsername = endpoint(
 
 /**
  * The HTTP settings for these endpoints: the category for each refusal, the endpoints that
- * start a session, and the sign-in cookie, which holds the attempt. Every refusal from CommonsFederating
+ * start a session, and the sign-in cookie, which holds the attempt. Every external sign-in refusal from UserAuthenticating
  * is FORBIDDEN, which, unlike UNAUTHORIZED, leaves the sign-in cookie in place.
  */
 export const commonsHttp = {

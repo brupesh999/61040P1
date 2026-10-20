@@ -1,7 +1,6 @@
 import { aspectNaming, dimensionNaming } from "./compositions/aspectVocabulary.ts";
 import { assemble } from "@mit-sdg/sync-engine/assembly";
 import type { Db } from "mongodb";
-import { db as defaultDb } from "./db.ts";
 import { composition as accounts } from "./compositions/Accounts.ts";
 import { composition as catalog } from "./compositions/Catalog.ts";
 import { composition as rating } from "./compositions/Rating.ts";
@@ -12,18 +11,17 @@ import { RatingConcept } from "./concepts/Rating.ts";
 import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 import { UserAuthenticatingConcept } from "./concepts/UserAuthenticating.ts";
 import { applicationConceptSet } from "./concepts.ts";
-import { FederatingConcept } from "./concepts/Federating/Federating.ts";
-import { MemoryProvider, type Provider } from "./concepts/Federating/provider.ts";
+import { MemoryProvider, type Provider } from "./concepts/UserAuthenticating/provider.ts";
 import { composition as commons } from "./compositions/Commons.ts";
+import { SteamStore, type SteamSource } from "./concepts/GameCatalog/steam.ts";
 
-/** Tests pass their own database; the server uses the one named by MONGODB_URL. */
-export function assembleApplication(db: Db = defaultDb, provider: Provider = new MemoryProvider()) {
+/** The host supplies its database; importing the design never opens a production connection. */
+export function assembleApplication(db: Db, provider: Provider = new MemoryProvider(), steam: SteamSource = new SteamStore()) {
   return assemble({
     conceptSet: applicationConceptSet,
     instances: {
-      UserAuthenticating: new UserAuthenticatingConcept(db),
-      CommonsFederating: new FederatingConcept<string>(db, provider, "CommonsFederating"),
-      GameCatalog: new GameCatalogConcept(db),
+      UserAuthenticating: new UserAuthenticatingConcept(db, undefined, provider),
+      GameCatalog: new GameCatalogConcept(db, steam),
       GameDimensions: new DimensionDefiningConcept(db, dimensionNaming),
       DimensionRatings: new RatingConcept(db),
       GameDiscovery: new ThresholdFilteringConcept(db, aspectNaming),

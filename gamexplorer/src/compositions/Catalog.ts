@@ -39,17 +39,41 @@ const Search = endpoint(
   { input: { required: ["query"] }, validators: { input: shape({ query: "string" }) } },
 );
 
+const ExistingSteamGame = former("the existing game for Steam app (steamAppId)", ({ steamAppId }, { game }) =>
+  where(GameCatalog._fromSteam({ steamAppId }).is({ game })).form({ game }),
+);
+
+const SteamResults = former("the Steam results for (query)",
+  ({ query }, { steamAppId, title, developer, releaseYear, coverUrl }) => form({
+    games: each(GameCatalog._searchSteam({ query }).is({ steamAppId, title, developer, releaseYear, coverUrl })).form({
+      steamAppId, title, developer, releaseYear, coverUrl, existing: ExistingSteamGame({ steamAppId }),
+    }),
+  }),
+);
+
+const SearchSteam = endpoint("/games/steam/search", ({ session, user, query }) =>
+  receive({ session, query })
+    .then(UserAuthenticating.current({ session }).responds({ user }))
+    .then(respond({ results: SteamResults({ query }) })),
+  { input: { required: ["session", "query"] }, validators: { input: value => {
+    const checked = shape({ session: "string", query: "string" })(value);
+    if (!checked.ok) return checked;
+    const length = (value as { query: string }).query.trim().length;
+    return length >= 2 && length <= 100 ? { ok: true } : { ok: false, detail: "Enter 2–100 characters to search Steam." };
+  } } },
+);
+
 const AddGame = endpoint(
   "/games/add",
-  ({ session, user, title, developer, releaseYear, game }) =>
-    receive({ session, title, developer, releaseYear })
+  ({ session, user, steamAppId, game }) =>
+    receive({ session, steamAppId })
       .then(UserAuthenticating.current({ session }).responds({ user }))
-      .then(GameCatalog.addGame({ title, developer, releaseYear }).responds({ game }))
+      .then(GameCatalog.addSteamGame({ steamAppId }).responds({ game }))
       .then(respond({ game })),
   {
-    input: { required: ["session", "title", "developer", "releaseYear"] },
+    input: { required: ["session", "steamAppId"] },
     validators: {
-      input: shape({ session: "string", title: "string", developer: "string", releaseYear: "number" }),
+      input: shape({ session: "string", steamAppId: "number" }),
     },
   },
 );
@@ -134,6 +158,9 @@ export const composition = {
   AspectOptions,
   Search,
   SearchResults,
+  ExistingSteamGame,
+  SteamResults,
+  SearchSteam,
   AddGame,
   GameDetail,
   GamePage,

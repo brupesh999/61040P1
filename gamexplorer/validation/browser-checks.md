@@ -1,4 +1,38 @@
-# Beta browser validation — October 15, 2026
+# Browser validation
+
+## P4 local validation — October 20, 2026
+
+- A separate checkout containing the current changes installed with the frozen
+  lockfile and no private environment files. Container build/start, host watch mode,
+  and production preview passed against a separate MongoDB volume. The image used
+  Bun 1.4.2 and contained zero environment files. Normal local startup imported
+  68 games without reviews. Database-only startup also waited for a new empty
+  volume to become healthy; all 16 catalog tests passed immediately afterward.
+- The real Steam search returned Hades. Selecting it stored its title, developer,
+  release year, and official portrait URL; the 300 × 450 cover loaded. Combat was
+  added through the shared picker, then rated 9/10 with a review. Restarting the
+  backend and frontend retained the session, game, score, and review. Combat ≥ 8
+  returned Hades in Discovery.
+- Searching Steam again offered **Open game** for the existing identity. An unmatched
+  search showed its empty state. Search results had no horizontal overflow at
+  815px or 390px. Browser diagnostics recorded no warnings or errors during this run.
+- [Automated output](tests.txt): 100 passing tests and 728 assertions. Tests cover
+  forged identity/metadata, missing sessions, invalid IDs, duplicate and concurrent
+  imports, provider failures, and a real stalled HTTP response. Fixtures use actions
+  or endpoints; only the external provider is substituted in integration tests.
+- UserAuthenticating now owns both password and Commons sign-in. The application
+  registers exactly five concepts. Compatibility tests create P3 links through archived
+  actions and verify that the refined application retains account IDs, active sessions,
+  reviews, and discovery criteria. Late provider responses and expired linking are refused.
+- Design, generation, source, artifact, and TypeScript checks passed. The checker
+  reports 18 endpoint-fallback warnings and six source-order advisories. Authenticated
+  Steam success/refusal/provider-failure paths answer in tests; its result order is
+  intentionally preserved. These static advisories remain visible, not suppressed.
+- This validates local P4 changes. Hosted P4 write/persistence/error checks and the
+  final P4 recording remain outstanding. A read-only check found no duplicate Steam
+  IDs among the current 70 hosted catalog entries.
+
+## Beta browser checks — October 15, 2026
 
 These checks exercised the current source in a real browser against a local
 `NODE_ENV=production` server on port 3011 and a separate MongoDB test database.

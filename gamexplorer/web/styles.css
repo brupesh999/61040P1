@@ -31,7 +31,7 @@
 
 :root {
   --font-body: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  /* Typography trial: set this to var(--font-body) to restore the previous font. */
+  /* Shared emphasis font for headings, controls, and scores. */
   --font-emphasis: "Geist Pixel Square", ui-monospace, monospace;
   color-scheme: dark;
   --bg: #0e1116;
@@ -150,6 +150,23 @@ main { max-width: 1248px; margin: 0 auto; padding: 0 40px 5rem; min-height: calc
 .contribution-panel > summary::-webkit-details-marker { display: none; }
 .contribution-panel .summary-action { color: var(--pink); white-space: nowrap; font-weight: 600; }
 .contribution-panel[open] > summary { border-bottom: 1px solid var(--border); }
+.steam-search-form { padding: 1.4rem; display: flex; align-items: end; gap: 1rem; }
+.steam-search-form .field { flex: 1; min-width: 0; }
+.steam-search-form button { min-height: 44px; }
+.contribution-panel > .feedback, .contribution-panel > p.muted { margin: 0 1.4rem 1.4rem; }
+.steam-results { list-style: none; margin: 0; padding: 0 1.4rem 1.4rem; }
+.steam-result { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border); }
+.steam-result-cover { width: 60px; height: 90px; display: grid; place-items: center; background: var(--bg); border-radius: 3px; overflow: hidden; }
+.steam-result-cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.steam-result-copy { display: flex; flex-direction: column; gap: .4rem; overflow-wrap: anywhere; }
+.steam-result-copy strong { font-family: var(--font-emphasis); font-weight: 400; }
+@media (max-width: 600px) {
+  .steam-search-form { padding: 1rem; gap: .6rem; }
+  .steam-results { padding: 0 1rem 1rem; }
+  .steam-result { grid-template-columns: 60px minmax(0, 1fr); }
+  .steam-result-cover { grid-row: span 2; }
+  .steam-result > button, .steam-result > a { grid-column: 2; justify-self: start; }
+}
 .form-grid { padding: 1.4rem; display: grid; grid-template-columns: 1.5fr 1fr 130px; gap: 1.2rem; }
 .form-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .form-actions .muted { font-size: .79rem; }

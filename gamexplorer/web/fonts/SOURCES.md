@@ -19,9 +19,6 @@ The unmodified `fonts/webfonts/GeistPixel-Square.woff2` is distributed locally w
 its [SIL Open Font License](GeistPixel-OFL.txt). The CSS variable `--font-emphasis`
 controls this choice; setting it to `var(--font-body)` restores the system font.
 
-The previous `MartianMono.ttf` and its [license](MartianMono-OFL.txt) remain available
-for reverting the comparison, but the interface no longer loads that font.
-
 Archivo, by the Archivo Project Authors / Omnibus-Type, is used for paragraphs,
 metadata, reviews, inputs, and numeric count badges. The normal and italic variable
 faces support weights 100–900 and are served at normal width.

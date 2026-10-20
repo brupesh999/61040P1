@@ -10,7 +10,7 @@ A checked-in manifest records 68 selected games, their metadata, Steam app IDs, 
 official portrait library-cover URLs, source pages, and retrieval date. Steam's public
 store metadata is consulted when preparing the manifest, not on every catalog view.
 The importer replays this manifest through GameCatalog actions. It appends missing
-games, updates covers for matching titles, and can be rerun without duplicating games.
+games, matches Steam IDs before titles, and can be rerun without duplicating games.
 Additional cover references for existing demo titles update those titles only; they
 do not create more catalog entries. At runtime, MongoDB is the source of game metadata
 and cover URLs. The manifest is import input, not a frontend data source.
@@ -53,10 +53,9 @@ The cover query always answers one result, using app ID 0 and an empty URL when 
 cover exists. This avoids propagating an absent nested former into its parent and
 accidentally hiding catalog entries or failing game-detail requests without artwork.
 
-The beta imports a small selection. Importing the full Steam catalog would also need
-Steam-ID-based identity matching, incremental metadata synchronization, and server-side
-pagination and indexed search. The current title-based importer and unpaginated search
-are not intended for that volume.
+The initial import is a small selection. Importing the full Steam catalog would also
+need incremental metadata synchronization, server-side pagination, and indexed search.
+The current unpaginated catalog search is not intended for that volume.
 
 The selection includes the requested Final Fantasy VII (original PC edition), VII
 Remake Intergrade, VII Rebirth, XIV Online, XVI, Phoenix Wright: Ace Attorney Trilogy,
@@ -74,7 +73,18 @@ year, and verified portrait URL. The original PSP Crisis Core and Dirge of Cerbe
 are not part of this import. Rerunning the import attaches covers to matching games
 already added through the interface without replacing their identities or contributions.
 
-Non-Steam games such as Zelda are deferred. GameCatalog identities already exist
-independently of Steam IDs and manually added games need no Steam metadata. Supporting
-their cover sources will require a separate refinement; this import does not make
-Steam membership a requirement for a game to exist in the catalog.
+## Adding games in P4
+
+Signed-in users search Steam and select a game. GameCatalog's provider reads Steam's
+public store-search and app-details JSON, checks the app type and required metadata,
+and supplies the official portrait URL. These storefront endpoints are not a stable,
+versioned Steamworks API; timeouts and unavailable responses produce retry feedback.
+No API key is needed. Search checks at most ten listings, with three detail requests
+at a time and a bounded five-minute cache. Metadata is stored only after selection;
+catalog views read MongoDB. Missing portrait artwork uses the existing title fallback.
+
+An existing Steam ID opens the same game without another provider request. A matching
+manual title can receive Steam metadata without changing its identity or reviews.
+GameCatalog identities remain independent of Steam IDs, so older non-Steam entries
+remain valid. Adding new non-Steam games through the public interface, including Zelda,
+is deferred until another verified source is supported.

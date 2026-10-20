@@ -10,20 +10,29 @@ import { importSteamCatalog } from "./catalogImport.ts";
 import { AspectManagingConcept } from "./concepts/fixtures/AspectManagingP2.ts";
 import { AspectRatingConcept } from "./concepts/fixtures/AspectRatingP2.ts";
 import { AspectFilteringConcept } from "./concepts/fixtures/AspectFilteringP2.ts";
+import { FixtureSteam, steamGame } from "./testing/steam.ts";
 
 /**
  * Drives the real HTTP handler, reactions, and concepts against a throwaway Mongo database.
- * Nothing is mocked and state is created through concept actions or endpoints.
+ * Steam supplies fixture metadata; core application logic is not mocked.
+ * State is created through concept actions or endpoints.
  */
 let db: Db;
 let reset: () => Promise<void>;
 let close: () => Promise<void>;
 let handler: (request: Request) => Promise<Response>;
+let steam: FixtureSteam;
 
 beforeAll(async () => ({ db, reset, close } = await testDb("app")));
 beforeEach(async () => {
   await reset();
-  const application = assembleApplication(db);
+  steam = new FixtureSteam([
+    steamGame(1, "Lantern Tales", "Tiny Owl", 2021),
+    steamGame(2, "Shiny Blaster", "Big Studio", 2023),
+    steamGame(3, "Hades", "Supergiant", 2020),
+    steamGame(4, "G", "D", 2020),
+  ]);
+  const application = assembleApplication(db, undefined, steam);
   handler = createHttpHandler({ application, gateway: createGateway({ application }), policy: gamexplorerPolicy("http://127.0.0.1:3000") });
 });
 afterAll(async () => close());
@@ -55,7 +64,7 @@ async function ratedAspect() {
   const reviewer = await signUp("reviewer");
   const buyer = await signUp("buyer");
   const added = await call("/games/add", {
-    session: reviewer, title: "Lantern Tales", developer: "Tiny Owl", releaseYear: 2021,
+    session: reviewer, steamAppId: 1,
   });
   expect(added.status).toBe(200);
   const game = added.body.game as string;
@@ -77,9 +86,9 @@ describe("Rating aggregates remain consistent across reactions", () => {
   test("P2 contributions remain editable through the current HTTP endpoints", async () => {
     const session = await signUp("returning-player");
     const user = (await call("/auth/me", { session })).body.me.user;
-    const game = (await call("/games/add", {
-      session, title: "Returning Game", developer: "Existing Studio", releaseYear: 2020,
-    })).body.game;
+    const { game } = await new GameCatalogConcept(db).addGame({
+      title: "Returning Game", developer: "Existing Studio", releaseYear: 2020,
+    });
     // Use the actual former implementation's actions to reproduce persisted P2 state.
     const { aspect } = await new AspectManagingConcept(db).createAspect({
       game, name: "Pacing", description: "An existing dimension.",
@@ -243,16 +252,12 @@ describe("Gamexplorer user journey", () => {
 
     const { body: added } = await call("/games/add", {
       session: reviewer,
-      title: "Lantern Tales",
-      developer: "Tiny Owl",
-      releaseYear: 2021,
+      steamAppId: 1,
     });
     const game = added.game as string;
     const { body: other } = await call("/games/add", {
       session: reviewer,
-      title: "Shiny Blaster",
-      developer: "Big Studio",
-      releaseYear: 2023,
+      steamAppId: 2,
     });
 
     const story = (await call("/aspects/create", { session: reviewer, game, name: "Narrative Depth", description: "" })).body.aspect;
@@ -303,7 +308,8 @@ describe("Gamexplorer user journey", () => {
 describe("Access control is enforced on the server", () => {
   test("every state-changing endpoint refuses a missing or invented session with 401", async () => {
     const attempts: Array<[string, Record<string, unknown>]> = [
-      ["/games/add", { session: "invented", title: "X", developer: "Y", releaseYear: 2020 }],
+      ["/games/add", { session: "invented", steamAppId: 1 }],
+      ["/games/steam/search", { session: "invented", query: "Lantern" }],
       ["/aspects/create", { session: "invented", game: "g", name: "n", description: "" }],
       ["/ratings/rate", { session: "invented", aspect: "a", score: 5, microNote: "" }],
       ["/ratings/remove", { session: "invented", aspect: "a" }],
@@ -325,18 +331,20 @@ describe("Access control is enforced on the server", () => {
       expect(missing.body.error).toBe("UNAUTHORIZED");
     }
     expect((await call("/games/search", { query: "" })).body.results.games).toEqual([]);
+    expect(steam.lookups).toBe(0);
+    expect(steam.searches).toBe(0);
   });
 
   test("a logged-out session no longer authorizes anything", async () => {
     const session = await signUp("mira");
     expect((await call("/auth/me", { session })).body.me.username).toBe("mira");
     expect((await call("/auth/logout", { session })).status).toBe(200);
-    expect((await call("/games/add", { session, title: "X", developer: "Y", releaseYear: 2020 })).status).toBe(401);
+    expect((await call("/games/add", { session, steamAppId: 1 })).status).toBe(401);
   });
 
   test("a rating is always attributed to the session's user, never a claimed one", async () => {
     const mira = await signUp("mira");
-    const game = (await call("/games/add", { session: mira, title: "G", developer: "D", releaseYear: 2020 })).body.game;
+    const game = (await call("/games/add", { session: mira, steamAppId: 4 })).body.game;
     const aspect = (await call("/aspects/create", { session: mira, game, name: "Pacing", description: "" })).body.aspect;
     // An extra "user" field is ignored: the endpoint only ever rates as the session's user.
     const forged = await call("/ratings/rate", { session: mira, aspect, score: 5, microNote: "", user: "someone-else" });
@@ -346,20 +354,67 @@ describe("Access control is enforced on the server", () => {
   });
 
   test("a body-supplied session operator cannot authenticate without a cookie", async () => {
-    const result = await call("/games/add", { session: { $ne: null }, title: "X", developer: "Y", releaseYear: 2020 });
+    const result = await call("/games/add", { session: { $ne: null }, steamAppId: 1 });
     expect(result.status).toBe(401);
     expect(result.body.error).toBe("UNAUTHORIZED");
   });
 });
 
+describe("Steam catalog HTTP workflow", () => {
+  test("a verified choice overrides forged browser metadata and repeated additions preserve reviews", async () => {
+    const session = await signUp("steam-reviewer");
+    const search = await call("/games/steam/search", { session, query: "Lantern" });
+    expect(search.status).toBe(200);
+    expect(search.body.results.games).toHaveLength(1);
+    expect(search.body.results.games[0]).toMatchObject({ steamAppId: 1, title: "Lantern Tales" });
+    expect((await call("/games/search", { query: "" })).body.results.games).toEqual([]);
+    const added = await call("/games/add", {
+      session, steamAppId: 1, title: "Forged title", developer: "Fake developer", releaseYear: 1950,
+      coverUrl: "https://example.org/fake.jpg", user: "someone-else",
+    });
+    expect(added.status).toBe(200);
+    const game = added.body.game;
+    const aspect = (await call("/aspects/create", { session, game, name: "Pacing", description: "" })).body.aspect;
+    await call("/ratings/rate", { session, aspect, score: 9, microNote: "Preserve this review." });
+    const before = (await call("/games/detail", { game })).body;
+    expect(before.page).toMatchObject({ title: "Lantern Tales", developer: "Tiny Owl", releaseYear: 2021,
+      cover: { steamAppId: 1, coverUrl: steam.games[0]!.coverUrl } });
+    expect((await call("/games/steam/search", { session, query: "Lantern" })).body.results.games[0].existing).toEqual({ game });
+    steam.available = false;
+    expect((await call("/games/add", { session, steamAppId: 1 })).body).toEqual({ game });
+    expect((await call("/games/detail", { game })).body).toEqual(before);
+    expect((await call("/games/search", { query: "" })).body.results.games).toHaveLength(1);
+  });
+
+  test("manual metadata, operator IDs, malformed searches, and unavailable Steam cannot create catalog state", async () => {
+    const session = await signUp("steam-player");
+    for (const payload of [
+      { title: "Manual game", developer: "Studio", releaseYear: 2020 },
+      { steamAppId: { $ne: null } }, { steamAppId: "1" }, { steamAppId: 1.5 }, { steamAppId: 999 },
+    ]) {
+      const result = await call("/games/add", { session, ...payload });
+      expect(result.status).toBe(400);
+      expect(result.body).toEqual({ error: "INVALID_REQUEST" });
+    }
+    for (const query of ["", "x", "x".repeat(101)]) {
+      expect((await call("/games/steam/search", { session, query })).status).toBe(400);
+    }
+    expect(steam.searches).toBe(0);
+    steam.available = false;
+    expect((await call("/games/add", { session, steamAppId: 1 })).status).toBe(500);
+    expect((await call("/games/steam/search", { session, query: "Lantern" })).status).toBe(500);
+    expect((await call("/games/search", { query: "" })).body.results.games).toEqual([]);
+  });
+});
+
 describe("Refusals surface as HTTP errors", () => {
-  test("duplicate usernames, bad credentials, duplicate games, bad scores, and missing targets", async () => {
+  test("duplicate usernames, bad credentials, invalid Steam choices, bad scores, and missing targets", async () => {
     const session = await signUp("mira");
     expect((await call("/auth/register", { username: "mira", password: "x" })).body.error).toBe("CONFLICT");
     expect((await call("/auth/login", { username: "mira", password: "wrong" })).body.error).toBe("UNAUTHORIZED");
-    const game = (await call("/games/add", { session, title: "Hades", developer: "SG", releaseYear: 2020 })).body.game;
-    expect((await call("/games/add", { session, title: "hades", developer: "SG", releaseYear: 2020 })).body.error).toBe("CONFLICT");
-    expect((await call("/games/add", { session, title: "", developer: "SG", releaseYear: 2020 })).body.error).toBe("INVALID_REQUEST");
+    const game = (await call("/games/add", { session, steamAppId: 3 })).body.game;
+    expect((await call("/games/add", { session, steamAppId: 3 })).body.game).toBe(game);
+    expect((await call("/games/add", { session, steamAppId: -1 })).body.error).toBe("INVALID_REQUEST");
     const aspect = (await call("/aspects/create", { session, game, name: "Pacing", description: "" })).body.aspect;
     expect((await call("/aspects/create", { session, game, name: "pacing", description: "" })).body.error).toBe("CONFLICT");
     expect((await call("/aspects/create", { session, game: "nope", name: "Pacing", description: "" })).status).toBe(404);

@@ -4,8 +4,12 @@ import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import type { Db } from "mongodb";
 import { assembleApplication } from "./assembly.ts";
 import { gamexplorerPolicy } from "./http.ts";
-import { MemoryProvider } from "./concepts/Federating/provider.ts";
+import { MemoryProvider } from "./concepts/UserAuthenticating/provider.ts";
 import { testDb } from "./concepts/testing.ts";
+import { UserAuthenticatingConcept } from "./concepts/UserAuthenticating.ts";
+import { FederatingConcept as P3Federating } from "./concepts/fixtures/FederatingP3.ts";
+import { concepts } from "./concepts.ts";
+import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
 
 const ORIGIN = "http://127.0.0.1:3011";
 const SESSION = "__Host-gamexplorer-session";
@@ -52,6 +56,37 @@ async function commonsLogin(client: ReturnType<typeof browser>, subject = "commo
 }
 
 describe("Commons authentication through HTTP and MongoDB", () => {
+  test("the application registers exactly five concepts", () => {
+    expect(Object.keys(concepts).sort()).toEqual([
+      "UserAuthenticating", "GameCatalog", "GameDimensions", "DimensionRatings", "GameDiscovery",
+    ].sort());
+  });
+
+  test("P3 Commons links and active sessions retain their identity and contributions", async () => {
+    // Original P3 protocol actions create the old collection layout, never direct writes.
+    const accounts = new UserAuthenticatingConcept(db);
+    const { user } = await accounts.registerExternal({ username: "legacy-commons" });
+    const oldSession = await accounts.startSession({ user });
+    const legacy = new P3Federating<string>(db, provider, "CommonsFederating");
+    const start = await legacy.start();
+    const approval = provider.approve(start.address, { subject: "legacy-subject", username: "legacy-commons" });
+    await legacy.finish({ attempt: start.attempt, nonce: approval.state, code: approval.code });
+    await legacy.link({ attempt: start.attempt, user });
+    const client = browser();
+    client.jar.set(SESSION, oldSession.session);
+    const { game } = await new GameCatalogConcept(db).addGame({ title: "Legacy game", developer: "Studio", releaseYear: 2024 });
+    const aspect = (await client.post("/aspects/create", { game, name: "Combat", description: "" })).body.aspect;
+    await client.post("/ratings/rate", { aspect, score: 9, microNote: "Existing review." });
+    await client.post("/discover/set", { aspectName: "Combat", minScore: 8 });
+    // Reassemble to represent the refined application reading existing persistent state.
+    const refined = assembleApplication(db, provider);
+    handle = createHttpHandler({ application: refined, gateway: createGateway({ application: refined }), policy: gamexplorerPolicy(ORIGIN) });
+    expect((await client.post("/auth/me")).body.me.user).toBe(user);
+    expect(await commonsLogin(client, "legacy-subject", "changed-name")).toBe(user);
+    expect((await client.post("/ratings/mine")).body.mine.ratings[0]).toMatchObject({ game, score: 9, microNote: "Existing review." });
+    expect((await client.post("/discover/results")).body.results.matches[0].game).toBe(game);
+  });
+
   test("sign-in issues private cookies; the same Commons subject keeps its reviews after a name change", async () => {
     const sam = browser();
     const start = await sam.post("/auth/commons/start");
@@ -66,7 +101,7 @@ describe("Commons authentication through HTTP and MongoDB", () => {
     expect(sam.jar.has(SESSION)).toBe(true);
     const user = finish.body.user;
     expect((await sam.post("/auth/me")).body).toEqual({ me: { user, username: "sam" } });
-    const game = (await sam.post("/games/add", { title: "A Game", developer: "Studio", releaseYear: 2024 })).body.game;
+    const { game } = await new GameCatalogConcept(db).addGame({ title: "A Game", developer: "Studio", releaseYear: 2024 });
     const aspect = (await sam.post("/aspects/create", { game, name: "Combat", description: "" })).body.aspect;
     expect((await sam.post("/ratings/rate", { aspect, score: 9, microNote: "Responsive combat." })).status).toBe(200);
     expect((await sam.post("/discover/set", { aspectName: "Combat", minScore: 8 })).body.results.matches).toHaveLength(1);

@@ -1,9 +1,13 @@
 import { MongoServerError, type Collection, type Db } from "mongodb";
+import { SteamStore, SteamUnavailable, type SteamGame, type SteamSource } from "./GameCatalog/steam.ts";
+export { SteamUnavailable } from "./GameCatalog/steam.ts";
 
 export class InvalidGame extends Error {}
 export class GameExists extends Error {}
 export class InvalidCover extends Error {}
 export class GameNotFound extends Error {}
+export class InvalidSteamGame extends Error {}
+export class SteamGameExists extends Error {}
 
 interface GameDoc {
   _id: string;
@@ -24,17 +28,39 @@ function escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function validCover(steamAppId: number, coverUrl: string): boolean {
+  try {
+    const url = new URL(coverUrl);
+    return typeof coverUrl === "string" && Number.isInteger(steamAppId) && steamAppId > 0 &&
+      url.protocol === "https:" && !url.username && !url.password && !url.port &&
+      ["shared.fastly.steamstatic.com", "shared.akamai.steamstatic.com", "shared.cloudflare.steamstatic.com",
+        "cdn.akamai.steamstatic.com", "cdn.cloudflare.steamstatic.com"].includes(url.hostname) &&
+      /\.(?:jpg|jpeg|png|webp)$/i.test(url.pathname) &&
+      [`/steam/apps/${steamAppId}/`, `/store_item_assets/steam/apps/${steamAppId}/`].some(prefix => url.pathname.startsWith(prefix));
+  } catch { return false; }
+}
+
+function validSteamGame(game: SteamGame): boolean {
+  return typeof game.title === "string" && !!game.title.trim() &&
+    typeof game.developer === "string" && !!game.developer.trim() &&
+    Number.isInteger(game.releaseYear) && game.releaseYear >= 1950 && game.releaseYear <= 2100 &&
+    validCover(game.steamAppId, game.coverUrl);
+}
+
 export class GameCatalogConcept {
   private readonly games: Collection<GameDoc>;
   private indexed = false;
 
-  constructor(db: Db) {
+  constructor(db: Db, private readonly steam: SteamSource = new SteamStore()) {
     this.games = db.collection<GameDoc>("gameCatalog.games");
   }
 
   async #ensureIndexes() {
     if (this.indexed) return;
     await this.games.createIndex({ titleKey: 1 }, { unique: true });
+    await this.games.createIndex({ steamAppId: 1 }, {
+      unique: true, partialFilterExpression: { steamAppId: { $type: "number" } },
+    });
     this.indexed = true;
   }
 
@@ -84,22 +110,69 @@ export class GameCatalogConcept {
     return found ? [{ game: found._id }] : [];
   }
 
-  async setSteamCover({ game, steamAppId, coverUrl }: { game: string; steamAppId: number; coverUrl: string }) {
-    const hosts = new Set([
-      "shared.fastly.steamstatic.com", "shared.akamai.steamstatic.com",
-      "shared.cloudflare.steamstatic.com", "cdn.akamai.steamstatic.com",
-      "cdn.cloudflare.steamstatic.com",
-    ]);
-    let valid = false;
+  async _fromSteam({ steamAppId }: { steamAppId: number }) {
+    if (!Number.isInteger(steamAppId) || steamAppId <= 0 || steamAppId > 0xffff_ffff) return { game: "" };
+    const found = await this.games.findOne({ steamAppId });
+    return { game: found?._id ?? "" };
+  }
+
+  async _searchSteam({ query }: { query: string }) {
+    const text = typeof query === "string" ? query.trim() : "";
+    if (text.length < 2 || text.length > 100) return [];
+    return (await this.steam.search(text)).filter(validSteamGame);
+  }
+
+  async addSteamGame({ steamAppId }: { steamAppId: number }) {
+    if (!Number.isInteger(steamAppId) || steamAppId <= 0 || steamAppId > 0xffff_ffff) {
+      throw new InvalidSteamGame("Choose a Steam game with published developer and release-year information.");
+    }
+    await this.#ensureIndexes();
+    const stored = await this._fromSteam({ steamAppId });
+    if (stored.game) return stored;
+    let source: SteamGame | null;
+    try { source = await this.steam.lookup(steamAppId); }
+    catch { throw new SteamUnavailable(); }
+    if (!source || source.steamAppId !== steamAppId || !validSteamGame(source)) {
+      throw new InvalidSteamGame("Choose a Steam game with published developer and release-year information.");
+    }
+    const metadata = { title: source.title.trim(), developer: source.developer.trim(), titleKey: keyOf(source.title),
+      releaseYear: source.releaseYear, steamAppId, coverUrl: source.coverUrl };
     try {
-      const url = new URL(coverUrl);
-      valid = typeof coverUrl === "string" && Number.isInteger(steamAppId) && steamAppId > 0 &&
-        url.protocol === "https:" && !url.username && !url.password && !url.port &&
-        hosts.has(url.hostname) && /\.(?:jpg|jpeg|png|webp)$/i.test(url.pathname) &&
-        [`/steam/apps/${steamAppId}/`, `/store_item_assets/steam/apps/${steamAppId}/`].some(prefix => url.pathname.startsWith(prefix));
-    } catch { /* Refuse malformed URLs with the same public error. */ }
-    if (!valid) throw new InvalidCover("A cover needs a positive Steam app ID and its HTTPS Steam store image URL.");
-    const result = await this.games.updateOne({ _id: game }, { $set: { steamAppId, coverUrl } });
+      const existing = await this.games.findOne({ titleKey: metadata.titleKey });
+      if (existing) {
+        if (existing.steamAppId !== undefined && existing.steamAppId !== steamAppId) {
+          throw new GameExists("A game with this title already exists.");
+        }
+        const updated = await this.games.findOneAndUpdate({
+          _id: existing._id, $or: [{ steamAppId: { $exists: false } }, { steamAppId }],
+        }, { $set: metadata }, { returnDocument: "after" });
+        if (!updated) throw new GameExists("A game with this title already exists.");
+        return { game: updated._id };
+      }
+      const game = crypto.randomUUID();
+      await this.games.insertOne({ _id: game, ...metadata });
+      return { game };
+    } catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000) {
+        const winner = await this._fromSteam({ steamAppId });
+        if (winner.game) return winner;
+        throw new GameExists("A game with this title already exists.");
+      }
+      throw error;
+    }
+  }
+
+  async setSteamCover({ game, steamAppId, coverUrl }: { game: string; steamAppId: number; coverUrl: string }) {
+    if (!validCover(steamAppId, coverUrl)) throw new InvalidCover("A cover needs a positive Steam app ID and its HTTPS Steam store image URL.");
+    await this.#ensureIndexes();
+    let result;
+    try { result = await this.games.updateOne({ _id: game }, { $set: { steamAppId, coverUrl } }); }
+    catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000) {
+        throw new SteamGameExists("This Steam game is already in the catalog.");
+      }
+      throw error;
+    }
     if (result.matchedCount === 0) throw new GameNotFound("This game could not be found.");
     return {};
   }
