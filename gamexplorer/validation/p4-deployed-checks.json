@@ -1,0 +1,165 @@
+{
+  "checkedAt": "2026-10-21T00:39:02.142Z",
+  "applicationCommit": "cb73d777aa644c72301241605ecb29d66b75b399",
+  "origin": "https://gamexplorer.mit-sdg.dev",
+  "catalogGames": 70,
+  "scope": "Real deployed HTTP, MongoDB persistence, access control, and Steam provider. Test ratings and filters removed; two empty test accounts retained.",
+  "checks": [
+    {
+      "check": "GET health returns 200 without caching",
+      "passed": true
+    },
+    {
+      "check": "health reports ready",
+      "passed": true
+    },
+    {
+      "check": "HEAD health returns 200 without caching",
+      "passed": true
+    },
+    {
+      "check": "pre-deployment game identities remain in catalog",
+      "passed": true
+    },
+    {
+      "check": "existing aspects and reviews preserved: Devil May Cry 5",
+      "passed": true
+    },
+    {
+      "check": "Steam search requires authentication",
+      "passed": true
+    },
+    {
+      "check": "private ratings require authentication",
+      "passed": true
+    },
+    {
+      "check": "JSON cannot supply a session",
+      "passed": true
+    },
+    {
+      "check": "foreign origins cannot start sign-in",
+      "passed": true
+    },
+    {
+      "check": "Commons callback uses the deployed origin",
+      "passed": true
+    },
+    {
+      "check": "Commons uses PKCE S256",
+      "passed": true
+    },
+    {
+      "check": "sign-in attempt uses private cookies",
+      "passed": true
+    },
+    {
+      "check": "wrong Commons state is refused",
+      "passed": true
+    },
+    {
+      "check": "local account registration and session work",
+      "passed": true
+    },
+    {
+      "check": "session cookie is private",
+      "passed": true
+    },
+    {
+      "check": "second account registration works",
+      "passed": true
+    },
+    {
+      "check": "real Steam search answers",
+      "passed": true
+    },
+    {
+      "check": "Steam result identifies the existing HD Collection",
+      "passed": true
+    },
+    {
+      "check": "repeat Steam selection preserves identity",
+      "passed": true
+    },
+    {
+      "check": "invalid Steam IDs are refused",
+      "passed": true
+    },
+    {
+      "check": "short Steam searches are refused",
+      "passed": true
+    },
+    {
+      "check": "rating save works",
+      "passed": true
+    },
+    {
+      "check": "rating belongs to the session user",
+      "passed": true
+    },
+    {
+      "check": "other account cannot read a forged owner's ratings",
+      "passed": true
+    },
+    {
+      "check": "other account cannot delete this rating",
+      "passed": true
+    },
+    {
+      "check": "discovery includes the exact average threshold",
+      "passed": true
+    },
+    {
+      "check": "discovery excludes a threshold above the average",
+      "passed": true
+    },
+    {
+      "check": "forged filter owner cannot change another account's criteria",
+      "passed": true
+    },
+    {
+      "check": "rating update works",
+      "passed": true
+    },
+    {
+      "check": "invalid updates are refused and preserve the saved rating",
+      "passed": true
+    },
+    {
+      "check": "logout works",
+      "passed": true
+    },
+    {
+      "check": "signed-out private reads are refused",
+      "passed": true
+    },
+    {
+      "check": "password login works after authentication consolidation",
+      "passed": true
+    },
+    {
+      "check": "rating persists after sign-out and new login",
+      "passed": true
+    },
+    {
+      "check": "rating removal works",
+      "passed": true
+    },
+    {
+      "check": "removal restores the prior review state",
+      "passed": true
+    },
+    {
+      "check": "idempotent selection adds no duplicate catalog entries",
+      "passed": true
+    }
+  ],
+  "deploymentId": "572d174d-2b63-4b58-baa9-a4652a793337",
+  "deploymentStatus": "Succeeded",
+  "platformHealth": "Healthy",
+  "browserValidation": {
+    "existingCommonsSessionRetained": true,
+    "steamSearchAndExistingGameLinkRendered": true
+  },
+  "resume": "The pending deployment showed Needs attention; Resume was used, then the same deployment succeeded."
+}

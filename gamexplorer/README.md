@@ -7,7 +7,7 @@
 - Fixtures use concept actions or endpoints. `MONGODB_URL` can override local MongoDB.
 - [Saved results](validation/tests.txt): 100 tests, 728 assertions (October 20, isolated local database).
 - Design, generated-artifact, and TypeScript checks passed; 24 sync-engine advisories remain.
-- The author's October 18 hosted validation covers P3; P4 hosted validation is still required.
+- [P4 hosted validation](validation/p4-deployed-checks.json): 37 checks passed on `cb73d777`; deployment succeeded and health passed.
 
 ## HTTP API and generated contracts
 

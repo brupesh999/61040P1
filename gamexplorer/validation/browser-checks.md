@@ -29,8 +29,26 @@
   Steam success/refusal/provider-failure paths answer in tests; its result order is
   intentionally preserved. These static advisories remain visible, not suppressed.
 - This validates local P4 changes. Hosted P4 write/persistence/error checks and the
-  final P4 recording remain outstanding. A read-only check found no duplicate Steam
+  final P4 recording were outstanding at this local check. The hosted check below
+  records the later deployment. A read-only check found no duplicate Steam
   IDs among the current 70 hosted catalog entries.
+
+## P4 hosted validation — October 20, 2026
+
+- Deployed application commit `cb73d777aa644c72301241605ecb29d66b75b399`.
+  Deployment `572d174d-2b63-4b58-baa9-a4652a793337` succeeded after its pending
+  operation was resumed; the Overview showed Healthy and the correct commit.
+- [37 production checks passed](p4-deployed-checks.json): GET/HEAD health, real Steam
+  search and idempotent selection, validation errors, rating save/update/removal,
+  persistence after a fresh login, origin/cookie protection, and cross-account
+  rating/filter isolation. The 70 existing game identities remained present.
+- Temporary test ratings and criteria were removed and the previous review state
+  restored. Two empty password test accounts remain; no passwords or session values
+  are included in the report. The test setup and cleanup used HTTP endpoints.
+- In the browser, the author's existing Commons session remained signed in.
+  Searching Steam for Devil May Cry HD Collection displayed its metadata and an
+  Open game link. This checks the retained session and the live interface; it does
+  not claim a new human Commons approval or a completed P4 recording.
 
 ## Beta browser checks — October 15, 2026
 
