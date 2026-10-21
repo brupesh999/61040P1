@@ -20,14 +20,31 @@
   forged identity/metadata, missing sessions, invalid IDs, duplicate and concurrent
   imports, provider failures, and a real stalled HTTP response. Fixtures use actions
   or endpoints; only the external provider is substituted in integration tests.
+- The current five specifications define 20 actions, all exercised with assertions:
+  nine in the UserAuthenticating tests (including external credentials), three in
+  GameCatalog, one in DimensionDefining, two in Rating, and five in ThresholdFiltering.
+  The tests check refusal effects as well as successful calls; compatibility fixtures
+  create historical state through the corresponding archived actions.
 - UserAuthenticating now owns both password and Commons sign-in. The application
   registers exactly five concepts. Compatibility tests create P3 links through archived
   actions and verify that the refined application retains account IDs, active sessions,
   reviews, and discovery criteria. Late provider responses and expired linking are refused.
 - Design, generation, source, artifact, and TypeScript checks passed. The checker
-  reports 18 endpoint-fallback warnings and six source-order advisories. Authenticated
-  Steam success/refusal/provider-failure paths answer in tests; its result order is
-  intentionally preserved. These static advisories remain visible, not suppressed.
+  reports 18 endpoint-fallback warnings and six source-order advisories. Review of
+  all 18 endpoints found action success/refusal paths or complementary found/missing
+  and true/false guards; tests check authentication failures and domain refusals.
+  The checker does not establish these paths as total. Six formers preserve specified
+  query ordering for catalog/Steam results, aspects, reviews, personal ratings, and
+  discovery. These static advisories remain visible, not suppressed; passing checks
+  do not prove the absence of every runtime failure.
+- A declaration-only reproduction checked sync-engine 1.1.0's diagnostic limits.
+  The same `UserAuthenticating.current` chain passes fallback analysis with
+  `.responds({})`, but warns with `.responds({ user })`. The latter binding is
+  required to derive ownership on the server. A collection former warns both
+  without arrangement and with `.arranged(title)`: the installed diagnostic tests
+  for the `order` property, which both arrangement variants contain. Adding sorts
+  therefore cannot clear those six notices. No unconditional answer siblings,
+  diagnostic filters, or dependency patches were introduced to hide the notices.
 - This validates local P4 changes. Hosted P4 write/persistence/error checks and the
   final P4 recording were outstanding at this local check. The hosted check below
   records the later deployment. A read-only check found no duplicate Steam

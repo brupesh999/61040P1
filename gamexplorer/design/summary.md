@@ -31,7 +31,8 @@ and the P4 refinements.
 ## Authentication and access control
 
 - UserAuthenticating handles password and Commons credentials under one account-authentication
-  purpose. P3's separate Federating instance exceeded the five-concept limit; P4 moves
+  purpose. P3's separate Federating instance brought the total to six, beyond the
+  course's expected 3–5 concepts. P4 moves
   its verified sign-in protocol into UserAuthenticating. Existing external links and
   sessions keep their stored identities. Matching usernames never merge accounts.
   Local password accounts remain available for testers outside the class.

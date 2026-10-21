@@ -12,15 +12,15 @@ application content belongs in compositions.
 
 ## Principle
 
-Mira registers username `mira` with a password. A second registration of `mira` is
-refused. Authenticating `mira` with the wrong password is refused; authenticating with the
+Mira *registers* username `mira` with a password. A second registration of `mira` is
+refused. *Authenticating* `mira` with the wrong password is refused; *authenticating* with the
 exact credentials returns Mira's user together with a fresh session. While that session is
-active, `current` resolves it to Mira's user. After Mira logs out, `current` refuses the
+active, *current* resolves it to Mira's user. After Mira *logs out*, *current* refuses the
 session because it is no longer active.
 
-For external sign-in, Sam starts an attempt and approves it on Commons. The returned
-code is verified against the attempt's nonce and PKCE verifier. Registering and linking
-Sam's confirmed external subject lets Sam start a session. A later sign-in with that
+For external sign-in, Sam *starts an attempt* and approves it on Commons. *Finishing*
+the attempt verifies the returned code against its nonce and PKCE verifier. *Registering* and *linking*
+Sam's confirmed external subject lets Sam *start a session*. A later sign-in with that
 subject reaches the same user even after the external username changes. Another
 browser's attempt, a stolen code, or a replay cannot establish that identity.
 Matching a local username never links accounts automatically.
@@ -58,6 +58,7 @@ Rule: an attempt, its nonce, and its verifier are unguessable. startExternal ret
 Rule: UserAuthenticating may delete an attempt once it has expired.
 
 Rule: each external link refers to a user in Users.
+Rule: usernames are trimmed before registration and lookup; comparison is case-sensitive. Passwords are not trimmed.
 Rule: new password hashes use ConceptBox's Argon2id hashing. Existing PBKDF2 hashes are verified only for compatibility and replaced with Argon2id after successful login.
 Rule: an account without a passwordHash cannot authenticate by password.
 Rule: sessions expire 90 days after creation; existing sessions without an expiry no longer authorize requests.
@@ -67,15 +68,15 @@ Rule: sessions expire 90 days after creation; existing sessions without an expir
 
 ```actions
 register(username: String, password: String) : returns (user: User)
-  where username or password is empty
+  where trimmed username or password is empty
   then
     refuses EMPTY_CREDENTIALS "Username and password must not be empty."
-  where an entry in Users already has username equal to username
+  where trimmed username and password are non-empty and an entry in Users already has that username
   then
     refuses USERNAME_TAKEN "The requested username is already registered."
-  where username and password are non-empty and no entry in Users has username equal to username
+  where trimmed username and password are non-empty and no entry in Users has that username
   then
-    add a new user with username and an Argon2id passwordHash containing its generated salt
+    add a new user with trimmed username and an Argon2id passwordHash containing its generated salt
     returns user
 
 authenticate(username: String, password: String) : returns (user: User, session: Session, expiresAt: DateTime)
@@ -117,13 +118,13 @@ startExternal() : returns (attempt: Attempt, expiresAt: DateTime, address: Strin
     returns attempt, expiresAt, address
 
 finishExternal(attempt: Attempt, nonce: String, code: String) : returns (username: String)
-  where attempt is unknown, expired, or in Confirmed Attempts, or nonce is not the attempt's nonce
+  where attempt is initially unknown, expired, or confirmed, or nonce does not match; also refuse if the provider confirms but attempt expired or another finish confirmed it while waiting
   then
     refuses SIGN_IN_EXPIRED "This sign-in has expired. Start again."
-  where the other site refuses the code with the attempt's verifier, or doesn't answer
+  where the initial attempt and nonce checks passed, and the other site refuses the code with the attempt's verifier or doesn't answer
   then
     refuses SIGN_IN_REFUSED "The other site didn't confirm this sign-in. Start again."
-  where the other site confirms the code for its user subject, whose username is username
+  where nonce matches, the other site confirms the code for its user subject whose username is username, and attempt is still unconfirmed and unexpired
   then
     add attempt to Confirmed Attempts with subject
     returns username
