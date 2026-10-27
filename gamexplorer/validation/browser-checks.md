@@ -1,5 +1,25 @@
 # Browser validation
 
+## P4 test organization and design review — October 24, 2026
+
+- Preserved all 37 existing integration/host tests while separating them into
+  focused suites under `tests/integration/`. Shared setup handles HTTP requests,
+  cookies, and per-suite disposable databases; concepts and reactions remain real.
+  Concept tests stay in `src/concepts/`.
+- Added two integration scenarios: two-criterion discovery through missing ratings,
+  revisions, and final removal; and application reassembly over stored sessions,
+  reviews, filters, and account ownership. All fixture writes use actions/endpoints.
+- In a temporary copy, deliberately replacing criterion intersection with union
+  made the new discovery test fail: three games matched where only one met both
+  criteria. The working implementation was unchanged.
+- [Full output](tests.txt): 102 tests passed with 784 assertions. Design, generation,
+  source/artifact, and TypeScript checks passed; the same 24 advisories remain.
+  Earlier repeat runs were interrupted by Mac maintenance sleep, confirmed in the
+  system power log. A continuous final run passed in 33.6 seconds.
+- Revised concept principles and composition explanations to distinguish mechanisms,
+  ownership, and score projection. The design summary explains the decisions with
+  concrete examples. This pass changes tests and documentation, not app behavior.
+
 ## P4 local validation — October 20, 2026
 
 - A separate checkout containing the current changes installed with the frozen

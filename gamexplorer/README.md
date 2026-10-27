@@ -5,7 +5,7 @@
 - [Test commands and database setup](../README.md#tests).
 - Tests create and delete disposable databases; the app database is unchanged.
 - Fixtures use concept actions or endpoints. `MONGODB_URL` can override local MongoDB.
-- [Saved results](validation/tests.txt): 100 tests, 728 assertions (October 20, isolated local database).
+- [Saved results](validation/tests.txt): 102 tests, 784 assertions (October 24, isolated local database).
 - Design, generated-artifact, and TypeScript checks passed; 24 sync-engine advisories remain.
 - [P4 hosted validation](validation/p4-deployed-checks.json): 37 checks passed on `cb73d777`; deployment succeeded and health passed.
 

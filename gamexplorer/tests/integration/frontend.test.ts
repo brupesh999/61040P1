@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { frontendHandler } from "../web/serve.ts";
+import { frontendHandler } from "../../web/serve.ts";
 
 test("the Commons callback serves the app with no-referrer and absolute assets without reflecting codes", async () => {
   const serve = await frontendHandler();

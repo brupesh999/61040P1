@@ -1,9 +1,10 @@
 # Accounts
 
-Gamexplorer identifies people through `UserAuthenticating`. Every endpoint that changes
-state on someone's behalf resolves the presented session with `UserAuthenticating.current`
-first, so a caller can never choose which user a rating, game, or filter belongs to. An
-unknown or logged-out session is refused with `UNKNOWN_SESSION` and nothing changes.
+Gamexplorer identifies people through `UserAuthenticating`. Protected content endpoints
+resolve the cookie's session with `UserAuthenticating.current` before reading personal
+data or changing state. That identity determines rating authorship and filter ownership;
+catalog contributions require sign-in but remain publicly visible. An unknown or
+logged-out session is refused with `UNKNOWN_SESSION` before the content action runs.
 
 [Registering](reaction:Accounts.Register) creates the account and immediately authenticates
 with the same credentials, so a new user is signed in without a second step.

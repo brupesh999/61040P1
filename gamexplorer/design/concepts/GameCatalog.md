@@ -2,23 +2,20 @@
 
 ## Purpose
 
-Maintain a canonical repository of video game entries and their basic metadata, so every
-other part of the application can refer to one game by one identity.
+Prevent references to the same video game from splitting across duplicate catalog
+entries. Each game has one searchable identity and associated metadata.
 
 ## Principle
 
-When a game is *added* with a title, developer, and release year, it receives a unique
-identifier that can be used to reference the game across the system, and searching the
-catalog for part of its title finds it. Adding a second game with the same title, ignoring
-case, surrounding spaces, and repeated internal whitespace, is refused.
+After a caller *adds* a game with a title, developer, and release year, searching for
+part of that title returns the game's identity. A second manual addition with the same
+normalized title is refused; the existing identity remains searchable.
 
 A caller may also search the configured Steam catalog source and *add* a selected
 Steam app ID. The catalog verifies the source metadata and stores it with the
 official cover URL. Repeating that addition returns the existing identity, even
 if the source title has changed. An existing entry with the same title and no
-Steam identity is linked in place, preserving references and reviews. Manual
-addition remains available to administrative imports and concept-level callers;
-the application's public add endpoint requires a Steam selection.
+Steam identity is linked in place, preserving its identity.
 
 The Steam provider is an external metadata source, not another application concept.
 It receives search terms and app IDs, never users, sessions, dimensions, or ratings.

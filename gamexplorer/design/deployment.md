@@ -90,6 +90,11 @@ cases, and drops it during cleanup. All fixture data is created through concept
 actions or endpoints. Integration tests check failed updates preserve prior state,
 removing the final rating removes its discovery contribution, and session identity
 controls rating and filter ownership even when requests include forged identities.
+Integration suites in `tests/integration/` separate catalog, ratings, discovery,
+authentication, compatibility, and HTTP-error behavior. Shared setup in `tests/support/`
+constructs the real application and cookie boundary; each suite owns its database
+and provider fixtures. Restart checks reassemble the application over the same database.
+Multi-criterion checks distinguish a missing rating from a score below the threshold.
 
 The design notebook and reflections belong in the private individual repository at
 `reflections/journal.md`. They are not published in this application repository.

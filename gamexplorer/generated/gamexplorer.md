@@ -208,7 +208,7 @@ Former "the Steam results for (query)" — inputs (query); bindings (steamAppId,
 ### the discovery cover of (game)
 
 Authored path: `Discovery.SteamCover`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 34.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 36.
 
 ```former
 Former "the discovery cover of (game)" — inputs (game); bindings (steamAppId, coverUrl); promises exactly one record — forms:
@@ -221,7 +221,7 @@ Former "the discovery cover of (game)" — inputs (game); bindings (steamAppId, 
 ### the catalog entry of (game)
 
 Authored path: `Discovery.GameInfo`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 32.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 34.
 
 ```former
 Former "the catalog entry of (game)" — inputs (game); bindings (title, developer, releaseYear); promises at most one record — forms:
@@ -236,7 +236,7 @@ Former "the catalog entry of (game)" — inputs (game); bindings (title, develop
 ### the current user (user)
 
 Authored path: `Accounts.CurrentUser`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 27.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 28.
 
 ```former
 Former "the current user (user)" — inputs (user); bindings (username); promises exactly one record — forms:
@@ -249,7 +249,7 @@ Former "the current user (user)" — inputs (user); bindings (username); promise
 ### the score of (game) on (aspectName)
 
 Authored path: `Discovery.MatchedScore`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 33.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 35.
 
 ```former
 Former "the score of (game) on (aspectName)" — inputs (game, aspectName); bindings (target, average, count); promises at most one record — forms:
@@ -263,7 +263,7 @@ Former "the score of (game) on (aspectName)" — inputs (game, aspectName); bind
 ### the discovery results of (owner)
 
 Authored path: `Discovery.DiscoveryResults`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 7.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 9.
 
 ```former
 Former "the discovery results of (owner)" — inputs (owner); bindings (aspectName, minScore, available, game, filtered); promises exactly one record — forms:
@@ -407,8 +407,8 @@ Former "the shared aspect choices" — inputs (); bindings (name, description, a
 ### Accounts.Login
 
 Authored path: `Accounts.Login`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 10.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 14.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 11.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 15.
 
 ```reaction
 when RequestBoundary.request (password, path: "/auth/login", requestId, username)
@@ -419,8 +419,8 @@ then
 ### Accounts.Login#2
 
 Authored path: `Accounts.Login`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 10.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 14.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 11.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 15.
 
 ```reaction
 when UserAuthenticating.authenticate (password, username, expiresAt, session, user), asked by Accounts.Login
@@ -433,8 +433,8 @@ then
 ### Accounts.Logout
 
 Authored path: `Accounts.Logout`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 20.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 25.
 
 ```reaction
 when RequestBoundary.request (path: "/auth/logout", requestId, session)
@@ -445,8 +445,8 @@ then
 ### Accounts.Logout#2
 
 Authored path: `Accounts.Logout`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 20.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 25.
 
 ```reaction
 when UserAuthenticating.logout (session, user), asked by Accounts.Logout
@@ -459,8 +459,8 @@ then
 ### Accounts.Me
 
 Authored path: `Accounts.Me`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 20.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
 
 ```reaction
 when RequestBoundary.request (path: "/auth/me", requestId, session)
@@ -471,8 +471,8 @@ then
 ### Accounts.Me#2
 
 Authored path: `Accounts.Me`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 19.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 23.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 20.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 24.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Accounts.Me
@@ -485,8 +485,8 @@ then
 ### Accounts.Register
 
 Authored path: `Accounts.Register`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 8.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 13.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 9.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 14.
 
 ```reaction
 when RequestBoundary.request (password, path: "/auth/register", requestId, username)
@@ -497,8 +497,8 @@ then
 ### Accounts.Register#2
 
 Authored path: `Accounts.Register`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 8.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 13.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 9.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 14.
 
 ```reaction
 when UserAuthenticating.register (password, username, user), asked by Accounts.Register
@@ -509,8 +509,8 @@ then
 ### Accounts.Register#3
 
 Authored path: `Accounts.Register`.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 8.
-- Covered by [Accounts](../design/compositions/Accounts.md), line 13.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 9.
+- Covered by [Accounts](../design/compositions/Accounts.md), line 14.
 
 ```reaction
 when UserAuthenticating.authenticate (password, username, expiresAt, session, user), asked by Accounts.Register#2
@@ -905,8 +905,8 @@ then
 ### Discovery.ClearFilters
 
 Authored path: `Discovery.ClearFilters`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 20.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 26.
 
 ```reaction
 when RequestBoundary.request (path: "/discover/clear", requestId, session)
@@ -917,8 +917,8 @@ then
 ### Discovery.ClearFilters#2
 
 Authored path: `Discovery.ClearFilters`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 20.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 26.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Discovery.ClearFilters
@@ -929,8 +929,8 @@ then
 ### Discovery.ClearFilters#3
 
 Authored path: `Discovery.ClearFilters`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 20.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 26.
 
 ```reaction
 when GameDiscovery.clearCriteria (owner: user), asked by Discovery.ClearFilters#2
@@ -943,8 +943,8 @@ then
 ### Discovery.RemoveFilter
 
 Authored path: `Discovery.RemoveFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 17.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 23.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 19.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 25.
 
 ```reaction
 when RequestBoundary.request (aspectName, path: "/discover/remove", requestId, session)
@@ -955,8 +955,8 @@ then
 ### Discovery.RemoveFilter#2
 
 Authored path: `Discovery.RemoveFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 17.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 23.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 19.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 25.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Discovery.RemoveFilter
@@ -969,8 +969,8 @@ then
 ### Discovery.RemoveFilter#3
 
 Authored path: `Discovery.RemoveFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 17.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 23.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 19.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 25.
 
 ```reaction
 when GameDiscovery.removeCriterion (criterion: aspectName, owner: user), asked by Discovery.RemoveFilter#2
@@ -983,8 +983,8 @@ then
 ### Discovery.Results
 
 Authored path: `Discovery.Results`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 6.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 13.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 8.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 15.
 
 ```reaction
 when RequestBoundary.request (path: "/discover/results", requestId, session)
@@ -995,8 +995,8 @@ then
 ### Discovery.Results#2
 
 Authored path: `Discovery.Results`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 6.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 13.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 8.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 15.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Discovery.Results
@@ -1009,8 +1009,8 @@ then
 ### Discovery.SetFilter
 
 Authored path: `Discovery.SetFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 16.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 22.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
 
 ```reaction
 when RequestBoundary.request (aspectName, minScore, path: "/discover/set", requestId, session)
@@ -1021,8 +1021,8 @@ then
 ### Discovery.SetFilter#2
 
 Authored path: `Discovery.SetFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 16.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 22.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
 
 ```reaction
 when UserAuthenticating.current (session, user), asked by Discovery.SetFilter
@@ -1035,8 +1035,8 @@ then
 ### Discovery.SetFilter#3
 
 Authored path: `Discovery.SetFilter`.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 16.
-- Covered by [Discovery](../design/compositions/Discovery.md), line 22.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 18.
+- Covered by [Discovery](../design/compositions/Discovery.md), line 24.
 
 ```reaction
 when GameDiscovery.setCriterion (criterion: aspectName, minimum: minScore, owner: user), asked by Discovery.SetFilter#2

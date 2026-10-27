@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { MongoClient, type CommandStartedEvent, type Db } from "mongodb";
-import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
-import { testDb } from "./concepts/testing.ts";
-import { createHealthMonitor } from "./health.ts";
-import { checkHealthWire } from "./healthWire.ts";
+import { GameCatalogConcept } from "../../src/concepts/GameCatalog.ts";
+import { testDb } from "../../src/concepts/testing.ts";
+import { createHealthMonitor } from "../../src/health.ts";
+import { checkHealthWire } from "../../src/healthWire.ts";
 
 let db: Db;
 let close: () => Promise<void>;

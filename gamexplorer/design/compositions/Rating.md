@@ -1,10 +1,10 @@
 # Rating
 
 A signed-in user can [rate one aspect](reaction:Rating.Rate). Authentication supplies the
-rater. A GameDimensions query verifies that the dimension exists; neither the request nor
-the Rating action supplies a parent game. The endpoint passes only the user's identity, dimension identity, score,
-and note to DimensionRatings. Rating/removal responses acknowledge only the aspect identity;
-the unused parent-game response field is removed. An unknown aspect answers ASPECT_NOT_FOUND.
+rater. A GameDimensions query verifies that the dimension exists; its identity already
+determines which game's aspect is being rated. The endpoint passes only the user's
+identity, dimension identity, score, and note to DimensionRatings. Rating/removal
+responses acknowledge the aspect identity. An unknown aspect answers ASPECT_NOT_FOUND.
 
 [Removal](reaction:Rating.Remove) uses the same lookup and authenticated identity. The
 [personal ratings endpoint](reaction:Rating.Mine) and [former](former:Rating.MyRatings)
@@ -31,7 +31,9 @@ Queries occur only in where; then contains actions. The filtering concept does n
 Rating's state or a review count. A name-to-game association and the 1–10 discovery policy
 are explicit application choices. Rating owns the authoritative evaluations; filtering owns
 its received numeric values. The reactions update this application projection within the
-completed rating request. Full workflow tests verify creation, replacement, refusal, and
+completed rating request. For example, scores of 9 and 7 produce a discovery value of 8;
+withdrawing the 7 produces 9, and withdrawing the last score removes the value entirely.
+Full workflow tests verify creation, replacement, refusal, and
 final-removal behavior. A concurrent HTTP test submits three reviewers' replacements and
 removals against one dimension and checks the resulting discovery boundary against the
 stored average. It covers in-process contention; it does not establish crash recovery or

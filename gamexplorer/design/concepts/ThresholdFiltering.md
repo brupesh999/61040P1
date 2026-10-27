@@ -13,9 +13,9 @@ score, or a measured temperature can be filtered without assuming a 1–10 ratin
 ## Principle
 
 After values are *recorded* for two items, an owner *sets a criterion* that only one item
-meets, and that item is the only match. Setting another required criterion narrows the
+meets, and that item is the only match. *Setting* another required criterion narrows the
 matches to items meeting both. If a required value is *forgotten*, that item stops matching
-until a suitable value is recorded again.
+until a suitable value is *recorded* again.
 
 ## Types
 

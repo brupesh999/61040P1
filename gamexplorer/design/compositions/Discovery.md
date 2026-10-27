@@ -1,7 +1,9 @@
 # Discovery
 
-Discovery filters belong to the signed-in user. In P1 the criteria were a single global set,
-which meant one person's filter would change everyone's results.
+Discovery filters belong to the signed-in user, so changing one person's requirements
+does not change another person's results. Each game must meet every selected minimum.
+For example, Combat ≥ 8 and Narrative Depth ≥ 7 exclude a game with Combat 9 if
+Narrative Depth is below 7 or has no ratings. Missing evidence cannot satisfy a requirement.
 
 A signed-in user can [read their discovery results](reaction:Discovery.Results). The
 [discovery results](former:Discovery.DiscoveryResults) list their current filters, every
@@ -16,7 +18,7 @@ Discovery.Results at /discover/results
 The user can [set a minimum score](reaction:Discovery.SetFilter) for an aspect name,
 [remove a filter](reaction:Discovery.RemoveFilter), or
 [clear every filter](reaction:Discovery.ClearFilters). Each of these answers with the updated
-discovery results, so the page refreshes in one round trip without reloading.
+discovery results, so Vue can update the criteria and matches without a page reload.
 
 ```endpoints
 Discovery.SetFilter at /discover/set

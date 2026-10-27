@@ -10,7 +10,8 @@ Subject identities have no properties within this concept until supplied to defi
 The concept does not authenticate callers, validate subjects against a catalog, or rate
 anything. The instantiation may supply an immutable vocabulary of suggested names and explicit
 aliases. Unknown names remain valid and become shared suggestions once defined. These
-string values are configuration, not state obtained from another concept. Renaming and deletion are outside this increment: a defined dimension remains
+string values are configuration, not state obtained from another concept.
+Renaming and deletion are outside this increment: a defined dimension remains
 available so existing references do not silently change meaning.
 
 ## Principle
@@ -78,5 +79,5 @@ _names() : many (name: String, description: String, aliases: String)
 _nameConflicts() : many (subject: Subject, name: String)
   Answers legacy subjects containing multiple dimension identities that now resolve to
   one configured canonical name. Empty for consistent data. This diagnostic never merges
-  dimensions or modifies reviews; startup refuses such a naming policy for manual review.
+  dimensions or modifies any other state. The caller decides how to handle a conflict.
 ```

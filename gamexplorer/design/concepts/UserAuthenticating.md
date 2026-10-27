@@ -12,18 +12,14 @@ application content belongs in compositions.
 
 ## Principle
 
-Mira *registers* username `mira` with a password. A second registration of `mira` is
-refused. *Authenticating* `mira` with the wrong password is refused; *authenticating* with the
-exact credentials returns Mira's user together with a fresh session. While that session is
-active, *current* resolves it to Mira's user. After Mira *logs out*, *current* refuses the
-session because it is no longer active.
+Mira *registers* with a username and password, then *authenticates* with those credentials
+to obtain a session. While it is active, *current* identifies Mira's account. After Mira
+*logs out*, that session can no longer identify her.
 
-For external sign-in, Sam *starts an attempt* and approves it on Commons. *Finishing*
-the attempt verifies the returned code against its nonce and PKCE verifier. *Registering* and *linking*
-Sam's confirmed external subject lets Sam *start a session*. A later sign-in with that
-subject reaches the same user even after the external username changes. Another
-browser's attempt, a stolen code, or a replay cannot establish that identity.
-Matching a local username never links accounts automatically.
+Alternatively, Sam *starts an external attempt* and approves it at the provider.
+*Finishing* the attempt verifies that identity. *Registering* an account and *linking*
+the confirmed identity let Sam *start a session*. A later verified sign-in reaches the
+same account even if the provider's username changes.
 
 ## Types
 

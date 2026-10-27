@@ -1,38 +1,22 @@
-import { afterAll, beforeAll, beforeEach, expect, test } from "bun:test";
-import type { Db } from "mongodb";
-import { createGateway } from "@mit-sdg/sync-engine/boundary";
-import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
-import { assembleApplication } from "./assembly.ts";
-import { gamexplorerPolicy } from "./http.ts";
-import { testDb } from "./concepts/testing.ts";
-import { DimensionDefiningConcept, DimensionExists } from "./concepts/DimensionDefining.ts";
-import { ThresholdFilteringConcept } from "./concepts/ThresholdFiltering.ts";
-import { RatingConcept } from "./concepts/Rating.ts";
-import { AspectManagingConcept } from "./concepts/fixtures/AspectManagingP2.ts";
-import { AspectRatingConcept } from "./concepts/fixtures/AspectRatingP2.ts";
-import { AspectFilteringConcept } from "./concepts/fixtures/AspectFilteringP2.ts";
-import { aspectNaming, checkAspectNames } from "./compositions/aspectVocabulary.ts";
-import { GameCatalogConcept } from "./concepts/GameCatalog.ts";
-let db: Db, reset: () => Promise<void>, close: () => Promise<void>;
-let handler: (request: Request) => Promise<Response>;
-beforeAll(async () => ({ db, reset, close } = await testDb("naming")));
-beforeEach(async () => {
-  await reset();
-  const application = assembleApplication(db);
-  handler = createHttpHandler({ application, gateway: createGateway({ application }), policy: gamexplorerPolicy("http://127.0.0.1:3000") });
-});
-afterAll(async () => close());
-async function call(path: string, body: Record<string, unknown> = {}, session?: string) {
-  const response = await handler(new Request(`http://127.0.0.1:3000/api${path}`, {
-    method: "POST", headers: { "Content-Type": "application/json", Origin: "http://127.0.0.1:3000", ...(session ? { Cookie: `__Host-gamexplorer-session=${session}` } : {}) }, body: JSON.stringify(body),
-  }));
-  return { status: response.status, body: await response.json() as any, cookies: response.headers.getSetCookie() };
+import { expect, test } from "bun:test";
+import { integrationSuite, SESSION } from "../support/application.ts";
+import { DimensionDefiningConcept, DimensionExists } from "../../src/concepts/DimensionDefining.ts";
+import { ThresholdFilteringConcept } from "../../src/concepts/ThresholdFiltering.ts";
+import { RatingConcept } from "../../src/concepts/Rating.ts";
+import { AspectManagingConcept } from "../../src/concepts/fixtures/AspectManagingP2.ts";
+import { AspectRatingConcept } from "../../src/concepts/fixtures/AspectRatingP2.ts";
+import { AspectFilteringConcept } from "../../src/concepts/fixtures/AspectFilteringP2.ts";
+import { aspectNaming, checkAspectNames } from "../../src/compositions/aspectVocabulary.ts";
+import { GameCatalogConcept } from "../../src/concepts/GameCatalog.ts";
+
+const suite = integrationSuite("naming");
+function call(path: string, body: Record<string, unknown> = {}, session?: string) {
+  if (!session) return suite.browser().post(path, body);
+  const client = suite.browser();
+  client.jar.set(SESSION, session);
+  return client.post(path, body);
 }
-async function signIn() {
-  const result = await call("/auth/register", { username: "reviewer", password: "naming-test-password" });
-  expect(result.status).toBe(200);
-  return result.cookies.find(cookie => cookie.startsWith("__Host-gamexplorer-session="))!.split(";")[0]!.split("=")[1]!;
-}
+const signIn = () => suite.signUp("reviewer");
 
 test("presets are public suggestions and do not create game dimensions or ratings", async () => {
   const result = await call("/aspects/options");
@@ -47,7 +31,7 @@ test("presets are public suggestions and do not create game dimensions or rating
 test("custom names remain allowed and become shared choices for other games", async () => {
   const session = await signIn();
   const games: string[] = [];
-  for (const title of ["First game", "Second game"]) games.push((await new GameCatalogConcept(db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
+  for (const title of ["First game", "Second game"]) games.push((await new GameCatalogConcept(suite.db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
   const first = await call("/aspects/create", { game: games[0], name: "Companion AI", description: "Companion decisions." }, session);
   expect(first.status).toBe(200);
   expect((await call("/aspects/options")).body.choices.options).toContainEqual({ name: "Companion AI", description: "Companion decisions.", aliases: "" });
@@ -61,13 +45,13 @@ test("Combat filters find legacy Combat Depth and new Combat games, keeping exis
   const session = await signIn();
   const user = (await call("/auth/me", {}, session)).body.me.user;
   const games: string[] = [];
-  for (const title of ["Legacy game", "New game"]) games.push((await new GameCatalogConcept(db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
-  const { aspect } = await new AspectManagingConcept(db).createAspect({ game: games[0], name: "Combat Depth", description: "Old description." });
-  await new AspectRatingConcept(db).rateAspect({ user, game: games[0], aspect, score: 9, microNote: "Original review." });
-  const oldFiltering = new AspectFilteringConcept(db);
+  for (const title of ["Legacy game", "New game"]) games.push((await new GameCatalogConcept(suite.db).addGame({ title, developer: "Studio", releaseYear: 2020 })).game);
+  const { aspect } = await new AspectManagingConcept(suite.db).createAspect({ game: games[0], name: "Combat Depth", description: "Old description." });
+  await new AspectRatingConcept(suite.db).rateAspect({ user, game: games[0], aspect, score: 9, microNote: "Original review." });
+  const oldFiltering = new AspectFilteringConcept(suite.db);
   await oldFiltering.recordScore({ game: games[0], aspectName: "Combat Depth", average: 9, count: 1 });
   await oldFiltering.setFilter({ owner: user, aspectName: "Combat Depth", minScore: 8 });
-  await checkAspectNames(db);
+  await checkAspectNames(suite.db);
   const added = await call("/aspects/create", { game: games[1], name: "Combat", description: "" }, session);
   expect((await call("/ratings/rate", { aspect: added.body.aspect, score: 8, microNote: "New review." }, session)).status).toBe(200);
   const results = (await call("/discover/results", {}, session)).body.results;
@@ -86,11 +70,11 @@ test("Combat filters find legacy Combat Depth and new Combat games, keeping exis
 });
 
 test("equivalent saved requirements retain the stricter minimum, then edit and remove as one", async () => {
-  const old = new AspectFilteringConcept(db);
+  const old = new AspectFilteringConcept(suite.db);
   await old.recordScore({ game: "g", aspectName: "Combat Depth", average: 8, count: 1 });
   await old.setFilter({ owner: "u", aspectName: "Combat Depth", minScore: 9 });
   await old.setFilter({ owner: "u", aspectName: "Combat", minScore: 7 });
-  const filtering = new ThresholdFilteringConcept(db, aspectNaming);
+  const filtering = new ThresholdFilteringConcept(suite.db, aspectNaming);
   expect(await filtering._criteria({ owner: "u" })).toEqual([{ criterion: "Combat", minimum: 9 }]);
   expect(await filtering._matches({ owner: "u" })).toEqual([]);
   await filtering.setCriterion({ owner: "u", criterion: "Combat", minimum: 8 });
@@ -104,7 +88,7 @@ test("equivalent saved requirements retain the stricter minimum, then edit and r
 });
 
 test("naming aliases work for another domain without game-specific rules", async () => {
-  const dimensions = new DimensionDefiningConcept(db, { aliases: { Readability: "Clarity" }, presets: [{ name: "Clarity", description: "Clear explanations." }] });
+  const dimensions = new DimensionDefiningConcept(suite.db, { aliases: { Readability: "Clarity" }, presets: [{ name: "Clarity", description: "Clear explanations." }] });
   const first = await dimensions.define({ subject: "book", name: "Readability", description: "" });
   expect(await dimensions._get({ dimension: first.dimension })).toEqual([{ subject: "book", name: "Clarity", description: "Clear explanations." }]);
   await expect(dimensions.define({ subject: "book", name: "Clarity", description: "" })).rejects.toThrow(DimensionExists);
@@ -112,13 +96,13 @@ test("naming aliases work for another domain without game-specific rules", async
 });
 
 test("conflicting legacy dimension identities block startup without losing either review", async () => {
-  const old = new AspectManagingConcept(db);
+  const old = new AspectManagingConcept(suite.db);
   const a = await old.createAspect({ game: "g", name: "Combat", description: "One." });
   const b = await old.createAspect({ game: "g", name: "Combat Depth", description: "Two." });
-  const ratings = new AspectRatingConcept(db);
+  const ratings = new AspectRatingConcept(suite.db);
   for (const aspect of [a.aspect, b.aspect]) await ratings.rateAspect({ user: "u", game: "g", aspect, score: 8, microNote: "Kept." });
-  await expect(checkAspectNames(db)).rejects.toThrow("Aspect aliases would combine existing dimensions");
-  const current = new RatingConcept(db);
+  await expect(checkAspectNames(suite.db)).rejects.toThrow("Aspect aliases would combine existing dimensions");
+  const current = new RatingConcept(suite.db);
   expect(await current._forTarget({ target: a.aspect })).toEqual([{ rater: "u", score: 8, note: "Kept." }]);
   expect(await current._forTarget({ target: b.aspect })).toEqual([{ rater: "u", score: 8, note: "Kept." }]);
 });
